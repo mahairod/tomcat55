@@ -74,12 +74,8 @@ public interface Channel {
      * @param options int - sender options, see class documentation
      * @return ClusterMessage[] - the replies from the members, if any. 
      */
-    public ChannelMessage[] send(Member[] destination, Serializable msg, int options) throws ChannelException;
+    public void send(Member[] destination, Serializable msg, int options) throws ChannelException;
 
-    
-    public void setChannelSender(ChannelSender sender);
-    public void setChannelReceiver(ChannelReceiver receiver);
-    public void setMembershipService(MembershipService service);
     
     /**
      * Sends a heart beat through the interceptor stacks

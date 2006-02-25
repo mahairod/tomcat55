@@ -60,7 +60,12 @@ public interface ChannelMessage extends Serializable {
      * @return String
      */
     public String getUniqueId();
-
     
+    public void setMessage(byte[] data);
+    
+    public byte[] getMessage();
+    
+    public int getOptions();
+    public void setOptions(int options);
 
 }

@@ -60,12 +60,11 @@ public class ChannelCoordinator extends ChannelInterceptorBase implements Messag
      * @param options int - sender options, see class documentation
      * @return ClusterMessage[] - the replies from the members, if any.
      */
-    public ChannelMessage[] sendMessage(Member[] destination, ClusterData msg, InterceptorPayload payload) throws IOException {
+    public void sendMessage(Member[] destination, ChannelMessage msg, InterceptorPayload payload) throws IOException {
         if ( destination == null ) destination = membershipService.getMembers();
         for ( int i=0; i<destination.length; i++ ) {
             clusterSender.sendMessage(msg,destination[i]);
         }
-        return null;
     }
 
 
@@ -133,7 +132,7 @@ public class ChannelCoordinator extends ChannelInterceptorBase implements Messag
     }
     
     public void messageReceived(ChannelMessage msg) {
-        if ( msg instanceof ClusterData ) this.messageReceived((ClusterData)msg);
+        super.messageReceived(msg);
     }
 
 

@@ -16,9 +16,10 @@
 
 package org.apache.catalina.groups.tcp;
 
-import org.apache.catalina.groups.io.*;
+import org.apache.catalina.groups.ChannelMessage;
 
 /**
+ * @author Filip Hanik
  * @author Peter Rossbach
  * @version $Revision: 303993 $ $Date: 2005-07-16 16:05:54 -0500 (Sat, 16 Jul 2005) $
  * @since 5.5.7
@@ -32,7 +33,7 @@ public interface IDataSender
     public int getPort();
     public void connect() throws java.io.IOException;
     public void disconnect();
-    public void sendMessage(ClusterData data) throws java.io.IOException;
+    public void sendMessage(ChannelMessage data) throws java.io.IOException;
     public boolean isConnected();
     public void setSuspect(boolean suspect);
     public boolean getSuspect();

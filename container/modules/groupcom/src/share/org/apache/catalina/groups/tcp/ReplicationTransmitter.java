@@ -403,7 +403,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     
     /**
      * Send data to one member
-     * @see org.apache.catalina.cluster.ClusterSender#sendMessage(org.apache.catalina.cluster.ClusterMessage, org.apache.catalina.cluster.Member)
+     * @see org.apache.catalina.groups.ClusterSender#sendMessage(org.apache.catalina.groups.ClusterMessage, org.apache.catalina.groups.Member)
      */
     public void sendMessage(ChannelMessage message, Member member) throws IOException {       
         long time = 0 ;
@@ -411,12 +411,9 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
             time = System.currentTimeMillis();
         }
         try {
-            ClusterData data = null;
-            if ( message instanceof ClusterData ) data = (ClusterData)message;
-            else data = serialize(message);
             String key = getKey(member);
             IDataSender sender = (IDataSender) map.get(key);
-            sendMessageData(data, sender);
+            sendMessageData(message, sender);
         } finally {
             if (doTransmitterProcessingStats) {
                 addProcessingStats(time);
@@ -424,23 +421,13 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
         }
     }
     
-    /**
-     * Send to all senders at same cluster domain as message from address
-     * @param message Cluster message to send
-     * @since 5.5.10
-     */
-    public void sendMessageClusterDomain(ChannelMessage message) throws IOException {
-        sendMessage(message,true);
-    
-    }
-
     public void sendMessage(ChannelMessage message) throws IOException {
         sendMessage(message,false);
     }
 
     /**
      * send message to all senders (broadcast)
-     * @see org.apache.catalina.cluster.ClusterSender#sendMessage(org.apache.catalina.cluster.ClusterMessage)
+     * @see org.apache.catalina.groups.ClusterSender#sendMessage(org.apache.catalina.groups.ClusterMessage)
      */
     public void sendMessage(ChannelMessage message, boolean domainOnly) throws IOException {
         long time = 0;
@@ -448,15 +435,13 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
             time = System.currentTimeMillis();
         }
         try {
-            ClusterData data = serialize(message);
             IDataSender[] senders = getSenders();
             for (int i = 0; i < senders.length; i++) {
-
                 IDataSender sender = senders[i];
                 //domain filter
                 String domain = message.getAddress().getDomain();
                 if ( domainOnly && !(domain.equals(sender.getDomain())) ) continue;
-                sendMessageData(data, sender);
+                sendMessageData(message, sender);
             }
         } finally {
             if (doTransmitterProcessingStats) {
@@ -470,7 +455,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     /**
      * start the sender and register transmitter mbean
      * 
-     * @see org.apache.catalina.cluster.ClusterSender#start()
+     * @see org.apache.catalina.groups.ClusterSender#start()
      */
     public void start() throws java.io.IOException {
     }
@@ -478,7 +463,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     /*
      * stop the sender and deregister mbeans (transmitter, senders)
      * 
-     * @see org.apache.catalina.cluster.ClusterSender#stop()
+     * @see org.apache.catalina.groups.ClusterSender#stop()
      */
     public synchronized void stop() {
         Iterator i = map.entrySet().iterator();
@@ -556,7 +541,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      * add new cluster member and create sender ( s. replicationMode) transfer
      * current properties to sender
      * 
-     * @see org.apache.catalina.cluster.ClusterSender#add(org.apache.catalina.cluster.Member)
+     * @see org.apache.catalina.groups.ClusterSender#add(org.apache.catalina.groups.Member)
      */
     public synchronized void add(Member member) {
         try {
@@ -575,7 +560,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     /**
      * remove sender from transmitter. ( deregister mbean and disconnect sender )
      * 
-     * @see org.apache.catalina.cluster.ClusterSender#remove(org.apache.catalina.cluster.Member)
+     * @see org.apache.catalina.groups.ClusterSender#remove(org.apache.catalina.groups.Member)
      */
     public synchronized void remove(Member member) {
         String key = getKey(member);
@@ -628,23 +613,6 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
         return member.getHost() + ":" + member.getPort();
     }
 
-    
-    
-
-    /**
-     * serialize message and add timestamp from message
-     * handle compression
-     * @see GZIPOutputStream
-     * @param msg cluster message
-     * @return cluster message as byte array
-     * @throws IOException
-     * @since 5.5.10
-     */
-    protected ClusterData serialize(ChannelMessage msg) throws IOException {
-        return XByteBuffer.serialize(msg, 0, msg.getAddress());
-    }
- 
-
     /**
      * Send message to concrete sender. If autoConnect is true, check is
      * connection broken and the reconnect the complete sender.
@@ -659,7 +627,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      * @return true if the message got sent, false otherwise
      * @throws java.io.IOException If an error occurs
      */
-    protected boolean sendMessageData(ClusterData data,
+    protected boolean sendMessageData(ChannelMessage data,
                                       IDataSender sender) {
         if (sender == null)
             throw new RuntimeException("Sender not available. Make sure sender information is available to the ReplicationTransmitter.");

@@ -19,7 +19,7 @@ package org.apache.catalina.cluster.deploy;
 import java.io.Serializable;
 
 import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.cluster.Member;
+import org.apache.catalina.groups.Member;
 import org.apache.catalina.cluster.ClusterMessageBase;
 
 /**
@@ -33,7 +33,6 @@ public class FileMessage extends ClusterMessageBase implements ClusterMessage, S
     private int messageNumber;
     private byte[] data;
     private int dataLength;
-    private org.apache.catalina.cluster.Member address;
     
     private long totalLength;
     private long totalNrOfMsgs;
@@ -89,12 +88,7 @@ public class FileMessage extends ClusterMessageBase implements ClusterMessage, S
     public void setTotalLength(long totalLength) {
         this.totalLength = totalLength;
     }
-    public org.apache.catalina.cluster.Member getAddress() {
-        return address;
-    }
-    public void setAddress(org.apache.catalina.cluster.Member address) {
-        this.address = address;
-    }
+
     public String getUniqueId() {
         StringBuffer result = new StringBuffer(getFileName());
         result.append("#-#");

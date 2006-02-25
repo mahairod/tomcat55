@@ -32,7 +32,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.ClusterDeployer;
 import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.cluster.Member;
+import org.apache.catalina.groups.Member;
 import org.apache.commons.modeler.Registry;
 import org.apache.catalina.cluster.ClusterListener;
 
@@ -384,9 +384,7 @@ public class FarmWarDeployer extends ClusterListener implements ClusterDeployer,
         if (log.isInfoEnabled())
             log.info("Cluster wide remove of web app " + contextPath);
         // send to other nodes
-        Member[] members = getCluster().getMembers();
-        Member localMember = getCluster().getLocalMember();
-        UndeployMessage msg = new UndeployMessage(localMember, System
+        UndeployMessage msg = new UndeployMessage(System
                 .currentTimeMillis(), "Undeploy:" + contextPath + ":"
                 + System.currentTimeMillis(), contextPath, undeploy);
         if (log.isDebugEnabled())

@@ -18,7 +18,7 @@
 package org.apache.catalina.groups.tcp;
 
 /**
- * Manifest constants for the <code>org.apache.catalina.cluster.tcp</code>
+ * Manifest constants for the <code>org.apache.catalina.groups.tcp</code>
  * package.
  *
  * @author Peter Rossbach
@@ -27,6 +27,6 @@ package org.apache.catalina.groups.tcp;
 
 public class Constants {
 
-    public static final String Package = "org.apache.catalina.cluster.tcp";
+    public static final String Package = "org.apache.catalina.groups.tcp";
 
 }

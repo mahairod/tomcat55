@@ -29,7 +29,7 @@ import java.util.Iterator;
 import org.apache.catalina.groups.ChannelMessage;
 import org.apache.catalina.groups.ChannelReceiver;
 import org.apache.catalina.groups.MessageListener;
-import org.apache.catalina.groups.io.ClusterData;
+
 import org.apache.catalina.groups.io.ListenCallback;
 import org.apache.catalina.groups.io.ObjectReader;
 import org.apache.catalina.groups.io.XByteBuffer;
@@ -115,7 +115,7 @@ public class ReplicationListener
     /**
      * start cluster receiver
      * @throws Exception
-     * @see org.apache.catalina.cluster.ClusterReceiver#start()
+     * @see org.apache.catalina.groups.ClusterReceiver#start()
      */
     public void start() {
         try {
@@ -222,7 +222,7 @@ public class ReplicationListener
     /**
      * Close Selector.
      *
-     * @see org.apache.catalina.cluster.tcp.ClusterReceiverBase#stopListening()
+     * @see org.apache.catalina.groups.tcp.ClusterReceiverBase#stopListening()
      */
     protected void stopListening() {
         // Bugzilla 37529: http://issues.apache.org/bugzilla/show_bug.cgi?id=37529
@@ -239,23 +239,6 @@ public class ReplicationListener
                 selector = null;
             }
         }
-    }
-
-    /**
-     * deserialize the receieve cluster message
-     * @param data uncompress data
-     * @return The message
-     * @throws IOException
-     * @throws ClassNotFoundException
-     */
-    //protected ClusterMessage deserialize(byte[] data)
-    protected Serializable deserialize(ClusterData data) throws IOException, ClassNotFoundException {
-        boolean compress = false;
-        Serializable message = null;
-        if (data != null) {
-            message = XByteBuffer.deserialize(data);
-        }
-        return message;
     }
 
     // ----------------------------------------------------------
@@ -311,20 +294,9 @@ public class ReplicationListener
         }
     }
 
-    public void messageDataReceived(ClusterData data) {
+    public void messageDataReceived(ChannelMessage data) {
         if ( this.listener != null ) {
-            try {
-                Serializable msg = deserialize(data);
-                listener.messageReceived((ChannelMessage)msg);
-            }catch ( java.io.IOException x ) {
-                if ( log.isErrorEnabled() ) {
-                    log.error("Unable to receive and deserialize cluster data. IOException.",x);
-                }
-            }catch ( java.lang.ClassNotFoundException cx ) {
-                if ( log.isErrorEnabled() ) {
-                    log.error("Unable to receive and deserialize cluster data. ClassNotFoundException.",cx);
-                }
-            }
+            listener.messageReceived(data);
         }
     }
 
@@ -423,7 +395,7 @@ public class ReplicationListener
     }
 
     /* (non-Javadoc)
-     * @see org.apache.catalina.cluster.io.ListenCallback#sendAck()
+     * @see org.apache.catalina.groups.io.ListenCallback#sendAck()
      */
     public void sendAck() throws IOException {
         // do nothing

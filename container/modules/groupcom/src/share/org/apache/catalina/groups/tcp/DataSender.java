@@ -23,9 +23,9 @@ import java.net.Socket;
 import java.net.SocketException;
 
 import org.apache.catalina.groups.ChannelMessage;
+import org.apache.catalina.groups.io.ClusterData;
 import org.apache.catalina.groups.io.XByteBuffer;
 import org.apache.catalina.util.StringManager;
-import org.apache.catalina.groups.io.*;
 
 /**
  * Send cluster messages with only one socket. Ack and keep Alive Handling is
@@ -561,7 +561,7 @@ public class DataSender implements IDataSender {
 
     /**
      * Connect other cluster member receiver 
-     * @see org.apache.catalina.cluster.tcp.IDataSender#connect()
+     * @see org.apache.catalina.groups.tcp.IDataSender#connect()
      */
     public synchronized void connect() throws java.io.IOException {
         if(!isMessageTransferStarted) {
@@ -626,10 +626,10 @@ public class DataSender implements IDataSender {
     /**
      * Send message
      * 
-     * @see org.apache.catalina.cluster.tcp.IDataSender#sendMessage(,
-     *      ClusterData)
+     * @see org.apache.catalina.groups.tcp.IDataSender#sendMessage(,
+     *      ChannelMessage)
      */
-    public synchronized void sendMessage(ClusterData data)
+    public synchronized void sendMessage(ChannelMessage data)
             throws java.io.IOException {
         pushMessage(data);
     }
@@ -784,14 +784,14 @@ public class DataSender implements IDataSender {
      * 
      * @see #closeSocket()
      * @see #openSocket()
-     * @see #writeData(ClusterData)
+     * @see #writeData(ChannelMessage)
      * 
      * @param data
      *            data to send
      * @throws java.io.IOException
      * @since 5.5.10
      */
-    protected void pushMessage( ClusterData data)
+    protected void pushMessage( ChannelMessage data)
             throws java.io.IOException {
         long time = 0 ;
         if(doProcessingStats) {
@@ -810,26 +810,27 @@ public class DataSender implements IDataSender {
              writeData(data);
              messageTransfered = true ;
         } catch (java.io.IOException x) {
-//            if(data.getResend() == ChannelMessage.RESEND_ALLOWED || 
-//                    (data.getResend() == ChannelMessage.RESEND_DEFAULT && isResend() )) {
-//                // second try with fresh connection
-//                dataResendCounter++;
-//                if (log.isTraceEnabled())
-//                    log.trace(sm.getString("IDataSender.send.again", address.getHostAddress(),
-//                            new Integer(port)),x);
-//                synchronized(this) {
-//                    closeSocket();
-//                    openSocket();
-//                }
-//                try {
-//                    writeData(data);
-//                    messageTransfered = true;
-//                } catch (IOException xx) {
-//                    exception = xx;
-//                    throw xx ;
-//                }
-//            } else 
+            if( true ) { //allow resend
+                // second try with fresh connection
+                dataResendCounter++;
+                if (log.isTraceEnabled())
+                    log.trace(sm.getString("IDataSender.send.again", address.getHostAddress(),
+                            new Integer(port)),x);
+                synchronized(this) {
+                    closeSocket();
+                    openSocket();
+                }
+                try {
+                    writeData(data);
+                    messageTransfered = true;
+                } catch (IOException xx) {
+                    xx.fillInStackTrace();
+                    exception = xx;
+                    throw xx ;
+                }
+            } else 
             {
+                
                 synchronized(this) {
                     closeSocket();
                 }
@@ -850,7 +851,7 @@ public class DataSender implements IDataSender {
                 }
             } else {
                 dataFailureCounter++;
-                throw exception;
+                if ( exception != null ) throw exception;
             }
         }
     }
@@ -862,13 +863,13 @@ public class DataSender implements IDataSender {
      * @throws IOException
      * @since 5.5.10
      */
-    protected void writeData(ClusterData data) throws IOException { 
+    protected void writeData(ChannelMessage data) throws IOException { 
         synchronized(this) {
             isMessageTransferStarted = true ;
         }
         try {
             OutputStream out = socket.getOutputStream();
-            out.write(XByteBuffer.createDataPackage(data));
+            out.write(XByteBuffer.createDataPackage((ClusterData)data));
             out.flush();
             if (isWaitForAck())
                 waitForAck(ackTimeout);

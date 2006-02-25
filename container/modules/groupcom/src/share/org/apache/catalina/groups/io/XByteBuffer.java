@@ -171,10 +171,10 @@ public class XByteBuffer
             if ( index != start || ((bufSize-start)<14) ) break;
             //next 4 bytes are compress flag not needed for count packages
             //then get the size 4 bytes
-            int size = toInt(buf, pos+4);
+            int size = toInt(buf, pos);
             //now the total buffer has to be long enough to hold
-            //START_DATA.length+8+size+END_DATA.length
-            pos = start + START_DATA.length + 8 + size;
+            //START_DATA.length+4+size+END_DATA.length
+            pos = start + START_DATA.length + 4 + size;
             if ( (pos + END_DATA.length) > bufSize) break;
             //and finally check the footer of the package END_DATA
             int newpos = firstIndexOf(buf, pos, END_DATA);
@@ -207,20 +207,40 @@ public class XByteBuffer
             throws java.io.IOException {
         int psize = countPackages();
         if (psize == 0) throw new java.lang.IllegalStateException("No package exists in XByteBuffer");
-        int options = toInt(buf, START_DATA.length);
-        int size = toInt(buf, START_DATA.length +4);
+        int size = toInt(buf, START_DATA.length);
         byte[] data = new byte[size];
-        System.arraycopy(buf, START_DATA.length + 8, data, 0, size);
-        ClusterData cdata = new ClusterData() ;
-        cdata.setMessage(data);
-        cdata.setOptions(options);
+        System.arraycopy(buf, START_DATA.length + 4, data, 0, size);
+        ClusterData cdata = ClusterData.getDataFromPackage(data);
         if (clearFromBuffer) {
-            int totalsize = START_DATA.length + 8 + size + END_DATA.length;
+            int totalsize = START_DATA.length + 4 + size + END_DATA.length;
             bufSize = bufSize - totalsize;
             System.arraycopy(buf, totalsize, buf, 0, bufSize);
         }
         return cdata;
     }
+    
+    /**
+     * Creates a complete data package
+     * @param indata - the message data to be contained within the package
+     * @param compressed - compression flag for the indata buffer
+     * @return - a full package (header,compress,size,data,footer)
+     * 
+     */
+    public static byte[] createDataPackage(ClusterData cdata) throws java.io.IOException {
+        byte[] data = cdata.getDataPackage();
+        int length = 
+            START_DATA.length + //header length
+            4 + //data length indicator
+            data.length + //actual data length
+            END_DATA.length; //footer length
+        byte[] result = new byte[length];
+        System.arraycopy(START_DATA, 0, result, 0, START_DATA.length);
+        System.arraycopy(toBytes(data.length), 0, result, START_DATA.length, 4);
+        System.arraycopy(data, 0, result, START_DATA.length + 4, data.length);
+        System.arraycopy(END_DATA, 0, result, START_DATA.length + 4 + data.length, END_DATA.length);
+        return result;
+    }
+        
 
     /**
      * Convert four bytes to an int
@@ -341,37 +361,12 @@ public class XByteBuffer
         return result;
     }
 
-    /**
-     * Creates a complete data package
-     * @param indata - the message data to be contained within the package
-     * @param compressed - compression flag for the indata buffer
-     * @return - a full package (header,compress,size,data,footer)
-     * 
-     */
-    public static byte[] createDataPackage(ClusterData cdata)
-            throws java.io.IOException {
-        byte[] data = cdata.getMessage();
-        byte[] options = XByteBuffer.toBytes(cdata.getOptions());
-        int length = 
-            START_DATA.length + //header length
-            4 + //options flag
-            4 + //data length indicator
-            data.length + //actual data length
-            END_DATA.length; //footer length
-        byte[] result = new byte[length];
-        System.arraycopy(START_DATA, 0, result, 0, START_DATA.length);
-        System.arraycopy(options, 0, result, START_DATA.length, 4);
-        System.arraycopy(toBytes(data.length), 0, result, START_DATA.length + 4, 4);
-        System.arraycopy(data, 0, result, START_DATA.length + 8, data.length);
-        System.arraycopy(END_DATA, 0, result, START_DATA.length + 8 + data.length, END_DATA.length);
-        return result;
-    }
     
-    public static Serializable deserialize(ClusterData data) 
+    public static Serializable deserialize(byte[] data) 
         throws IOException, ClassNotFoundException, ClassCastException {
         Object message = null;
         if (data != null) {
-            InputStream  instream = new ByteArrayInputStream(data.getMessage());
+            InputStream  instream = new ByteArrayInputStream(data);
             ReplicationStream stream = new ReplicationStream(instream,new ClassLoader[] {XByteBuffer.class.getClassLoader()});
             message = stream.readObject();
             instream.close();
@@ -389,25 +384,19 @@ public class XByteBuffer
      * Serializes a message into cluster data
      * @param msg ClusterMessage
      * @param compress boolean
-     * @return ClusterData
+     * @return 
      * @throws IOException
      */
-    public static ClusterData serialize(Serializable msg, int options, Member local) throws IOException {
-        ClusterData data = new ClusterData();
-        data.setAddress(local);
-        data.setType(msg.getClass().getName());
-        data.setUniqueId(UUID.randomUUID().toString());
-        data.setTimestamp(System.currentTimeMillis());
-        data.setOptions(options);
+    public static byte[] serialize(Serializable msg) throws IOException {
         ByteArrayOutputStream outs = new ByteArrayOutputStream();
         ObjectOutputStream out = new ObjectOutputStream(outs);
         out.writeObject(msg);
         // flush out the gzip stream to byte buffer
-        if(out != null) {
-            out.flush();
-            out.close();
-        }
-        data.setMessage(outs.toByteArray());
+//        if(out != null) {
+//            out.flush();
+//            out.close();
+//        }
+        byte[] data = outs.toByteArray();
         return data;
     }
 

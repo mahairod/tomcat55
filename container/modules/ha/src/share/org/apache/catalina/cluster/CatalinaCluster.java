@@ -23,8 +23,10 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Valve;
 import org.apache.commons.logging.Log;
-import org.apache.catalina.cluster.io.ReplicationStream;
+import org.apache.catalina.groups.io.ReplicationStream;
 import java.io.IOException;
+import org.apache.catalina.groups.Channel;
+import org.apache.catalina.groups.Member;
 
 
 
@@ -124,5 +126,6 @@ public interface CatalinaCluster extends Cluster {
     public Valve[] getValves();
     
     public void setChannel(Channel channel);
+    public Channel getChannel();
 
 }
