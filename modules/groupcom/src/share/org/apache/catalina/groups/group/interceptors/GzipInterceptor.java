@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import java.util.Arrays;
 
 
 
@@ -35,7 +36,8 @@ import java.util.zip.GZIPOutputStream;
  * @version 1.0
  */
 public class GzipInterceptor extends ChannelInterceptorBase {
-   
+    public static final int DEFAULT_BUFFER_SIZE = 2048;
+    
     public void sendMessage(Member[] destination, ChannelMessage msg, InterceptorPayload payload) throws IOException {
         try {
             msg.setMessage(compress(msg.getMessage()));
@@ -55,7 +57,7 @@ public class GzipInterceptor extends ChannelInterceptorBase {
         }
     }
     
-    public byte[] compress(byte[] data) throws IOException {
+    public static byte[] compress(byte[] data) throws IOException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         GZIPOutputStream gout = new GZIPOutputStream(bout);
         gout.write(data);
@@ -64,14 +66,29 @@ public class GzipInterceptor extends ChannelInterceptorBase {
         return bout.toByteArray();
     }
     
-    public byte[] decompress(byte[] data) throws IOException {
+    /**
+     * @todo Fix to create an automatically growing buffer.
+     * @param data byte[]
+     * @return byte[]
+     * @throws IOException
+     */
+    public static byte[] decompress(byte[] data) throws IOException {
         ByteArrayInputStream bin = new ByteArrayInputStream(data);
         GZIPInputStream gin = new GZIPInputStream(bin);
-        byte[] tmp = new byte[data.length];
+        byte[] tmp = new byte[DEFAULT_BUFFER_SIZE];
         int length = gin.read(tmp);
         byte[] result = new byte[length];
         System.arraycopy(tmp,0,result,0,length);
         return result;
+    }
+    
+    public static void main(String[] arg) throws Exception {
+        byte[] data = new byte[1024];
+        Arrays.fill(data,(byte)1);
+        byte[] compress = compress(data);
+        byte[] decompress = decompress(compress);
+        System.out.println("Debug test");
+        
     }
     
 }
