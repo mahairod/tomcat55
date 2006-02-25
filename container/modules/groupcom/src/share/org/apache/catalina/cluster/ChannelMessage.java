@@ -23,10 +23,6 @@ import java.io.Serializable;
  */
 public interface ChannelMessage extends Serializable {
     
-    public final static int RESEND_FORBIDDEN = 0 ;
-    public final static int RESEND_ALLOWED = 1 ;
-    public final static int RESEND_DEFAULT = 2 ;
-    
     /**
      * Get the address that this message originated from.  This would be set
      * if the message was being relayed from a host other than the one

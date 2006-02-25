@@ -641,7 +641,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      * @since 5.5.10
      */
     protected ClusterData serialize(ChannelMessage msg) throws IOException {
-        return XByteBuffer.serialize(msg, 0, false);
+        return XByteBuffer.serialize(msg, 0, msg.getAddress());
     }
  
 

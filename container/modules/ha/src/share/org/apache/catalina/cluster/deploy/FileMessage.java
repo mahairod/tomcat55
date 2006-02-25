@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.Member;
+import org.apache.catalina.cluster.ClusterMessageBase;
 
 /**
  * Contains the data for a file being transferred over TCP, this is 
@@ -28,19 +29,16 @@ import org.apache.catalina.cluster.Member;
  * @version 1.0
  */
 
-public class FileMessage implements ClusterMessage, Serializable {
+public class FileMessage extends ClusterMessageBase implements ClusterMessage, Serializable {
     private int messageNumber;
     private byte[] data;
     private int dataLength;
     private org.apache.catalina.cluster.Member address;
     
-    private long timestamp;
     private long totalLength;
     private long totalNrOfMsgs;
     private String fileName;
     private String contextPath;
-    private int resend = ClusterMessage.RESEND_FORBIDDEN;
-    private int options = ClusterMessage.RESEND_DEFAULT ;
     
     public FileMessage(Member source,
                        String fileName,
@@ -106,12 +104,7 @@ public class FileMessage implements ClusterMessage, Serializable {
         return result.toString();
     }
 
-    public long getTimestamp() {
-        return timestamp;
-    }
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
+    
     public String getFileName() {
         return fileName;
     }
@@ -121,35 +114,5 @@ public class FileMessage implements ClusterMessage, Serializable {
     public String getContextPath() {
         return contextPath;
     }
-
-    /**
-     * @return Returns the compress.
-     * @since 5.5.10 
-     */
-    public int getOptions() {
-
-        return options;
-    }
-    /**
-     * @param compress The compress to set.
-     * @since 5.5.10
-     */
-    public void setOptions(int options) {
-
-        this.options = options;
-    }
-    /**
-     * @return Returns the resend.
-     * @since 5.5.10
-     */
-    public int getResend() {
-        return resend;
-    }
-    /**
-     * @param resend The resend to set.
-     * @since 5.5.10
-     */
-    public void setResend(int resend) {
-        this.resend = resend;
-    }
+    
 }

@@ -18,6 +18,7 @@ package org.apache.catalina.cluster.session;
 
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.Member;
+import org.apache.catalina.cluster.ClusterMessageBase;
 
 /**
  * Session cluster message
@@ -27,7 +28,7 @@ import org.apache.catalina.cluster.Member;
  * 
  * @version $Revision: 326110 $ $Date: 2005-10-18 09:08:36 -0500 (Tue, 18 Oct 2005) $
  */
-public class SessionMessageImpl implements SessionMessage, java.io.Serializable {
+public class SessionMessageImpl extends ClusterMessageBase implements SessionMessage, java.io.Serializable {
     
     public SessionMessageImpl() {
     }
@@ -40,13 +41,11 @@ public class SessionMessageImpl implements SessionMessage, java.io.Serializable 
     private int mEvtType = -1;
     private byte[] mSession;
     private String mSessionID;
-    private Member mSrc;
+
     private String mContextName;
     private long serializationTimestamp;
     private boolean timestampSet = false ;
     private String uniqueId;
-    private int resend = ClusterMessage.RESEND_DEFAULT ;
-    private int options = 0;
 
 
     private SessionMessageImpl( String contextName,
@@ -145,26 +144,6 @@ public class SessionMessageImpl implements SessionMessage, java.io.Serializable 
         }
     }
 
-    /**
-     * Get the address that this message originated from.  This would be set
-     * if the message was being relayed from a host other than the one
-     * that originally sent it.
-     */
-    public Member getAddress()
-    {
-        return this.mSrc;
-    }
-
-    /**
-     * Use this method to set the address that this message originated from.
-     * This can be used when re-sending the EVT_GET_ALL_SESSIONS message to
-     * another machine in the group.
-     */
-    public void setAddress(Member src)
-    {
-        this.mSrc = src;
-    }
-
     public String getContextName() {
        return mContextName;
     }
@@ -173,37 +152,6 @@ public class SessionMessageImpl implements SessionMessage, java.io.Serializable 
     }
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
-    }
-
-    /**
-     * @return Returns the compress.
-     * @since 5.5.10 
-     */
-    public int getOptions() {
-
-        return options;
-    }
-    /**
-     * @param compress The compress to set.
-     * @since 5.5.10
-     */
-    public void setOptions(int options) {
-
-        this.options = options;
-    }
-    /**
-     * @return Returns the resend.
-     * @since 5.5.10
-     */
-    public int getResend() {
-        return resend;
-    }
-    /**
-     * @param resend The resend to set.
-     * @since 5.5.10
-     */
-    public void setResend(int resend) {
-        this.resend = resend;
     }
 
 }

@@ -28,6 +28,8 @@ import org.apache.catalina.cluster.MembershipService;
 import org.apache.catalina.cluster.MessageListener;
 import org.apache.catalina.cluster.io.ClusterData;
 import org.apache.catalina.cluster.io.XByteBuffer;
+import java.io.Serializable;
+import org.apache.catalina.cluster.ChannelListener;
 
 /**
  * The GroupChannel manages the replication channel. It coordinates
@@ -41,7 +43,7 @@ public class GroupChannel extends ChannelInterceptorBase implements Channel {
     private ChannelCoordinator coordinator = new ChannelCoordinator();
     private ChannelInterceptor interceptors = null;
     private MembershipListener membershipListener;
-    private MessageListener messageListener;
+    private ChannelListener channelListener;
 
     public GroupChannel() {
         addInterceptor(this);
@@ -80,12 +82,10 @@ public class GroupChannel extends ChannelInterceptorBase implements Channel {
      * @param options int - sender options, see class documentation
      * @return ClusterMessage[] - the replies from the members, if any.
      */
-    public ChannelMessage[] send(Member[] destination, ChannelMessage msg, int options) throws ChannelException {
+    public ChannelMessage[] send(Member[] destination, Serializable msg, int options) throws ChannelException {
         if ( msg == null ) return null;
-        msg.setAddress(getMembershipService().getLocalMember());
-        msg.setTimestamp(System.currentTimeMillis());
         try {
-            ClusterData data = XByteBuffer.serialize(msg, options,false);
+            ClusterData data = XByteBuffer.serialize(msg, options,getMembershipService().getLocalMember());
             return getFirstInterceptor().sendMessage(destination, data, null);
         }catch ( Exception x ) {
             throw new ChannelException(x);
@@ -96,8 +96,8 @@ public class GroupChannel extends ChannelInterceptorBase implements Channel {
         if ( msg == null ) return;
         else if ( msg instanceof ClusterData ) {
             try {
-                ChannelMessage fwd = XByteBuffer.deserialize( (ClusterData) msg, false);
-                if ( messageListener != null ) messageListener.messageReceived(fwd);
+                Serializable fwd = XByteBuffer.deserialize( (ClusterData) msg);
+                if ( channelListener != null ) channelListener.messageReceived(fwd,msg.getAddress());
             }catch ( Exception x ) {
                 log.error("Unable to deserialize channel message.",x);
             }
@@ -179,16 +179,18 @@ public class GroupChannel extends ChannelInterceptorBase implements Channel {
         this.membershipListener = membershipListener;
     }
 
-    public void setMessageListener(MessageListener messageListener) {
-        this.messageListener = messageListener;
+    public void setChannelListener(ChannelListener channelListener) {
+
+        this.channelListener = channelListener;
     }
 
     public MembershipListener getMembershipListener() {
         return membershipListener;
     }
 
-    public MessageListener getMessageListener() {
-        return messageListener;
+    public ChannelListener getChannelListener() {
+
+        return channelListener;
     }
 
     /**
