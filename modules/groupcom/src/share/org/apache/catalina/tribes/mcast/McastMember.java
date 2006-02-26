@@ -22,6 +22,7 @@ import java.io.ObjectOutput;
 
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.io.XByteBuffer;
+import java.util.Arrays;
 
 /**
  * A <b>membership</b> implementation using simple multicast.
@@ -53,7 +54,8 @@ public class McastMember implements Member, java.io.Externalizable {
     /**
      * The listen host for this member
      */
-    protected String host;
+    protected byte[] host;
+    protected transient String hostname;
     /**
      * The tcp listen port for this member
      */
@@ -96,8 +98,8 @@ public class McastMember implements Member, java.io.Externalizable {
     public McastMember(String domain,
                        String host,
                        int port,
-                       long aliveTime) {
-        this.host = host;
+                       long aliveTime) throws IOException {
+        setHostname(host);
         this.port = port;
         this.domain = domain;
         this.memberAliveTime=aliveTime;
@@ -140,7 +142,7 @@ public class McastMember implements Member, java.io.Externalizable {
         //dlen - 4 bytes
         //domain - dlen bytes
         byte[] domaind = getDomain().getBytes();
-        byte[] addr = java.net.InetAddress.getByName(host).getAddress();
+        byte[] addr = host;
         byte[] data = new byte[8+4+addr.length+4+domaind.length];
         long alive=System.currentTimeMillis()-getServiceStartTime();
         System.arraycopy(XByteBuffer.toBytes((long)alive),0,data,0,8);
@@ -176,7 +178,7 @@ public class McastMember implements Member, java.io.Externalizable {
        byte[] domaind = new byte[dlen];
        System.arraycopy(data, 20, domaind, 0, domaind.length);
        member.setDomain(new String(domaind));
-       member.setHost(addressToString(addr));
+       member.setHost(addr);
        member.setPort(XByteBuffer.toInt(portd, 0));
        member.setMemberAliveTime(XByteBuffer.toLong(alived, 0));
        return member;
@@ -191,7 +193,7 @@ public class McastMember implements Member, java.io.Externalizable {
      * @return a unique name to the cluster
      */
     public String getName() {
-        return "tcp://"+host+":"+port;
+        return "tcp://"+getHostname()+":"+getPort();
     }
     
     /**
@@ -214,8 +216,20 @@ public class McastMember implements Member, java.io.Externalizable {
      * Return the TCP listen host for this member
      * @return IP address or host name
      */
-    public String getHost()  {
-        return this.host;
+    public byte[] getHost()  {
+        return host;
+    }
+    
+    public String getHostname() {
+        if ( this.hostname != null ) return hostname;
+        else {
+            try {
+                this.hostname = java.net.InetAddress.getByAddress(host).getHostName();
+                return this.hostname;
+            }catch ( IOException x ) {
+                throw new RuntimeException("Unable to parse hostname.",x);
+            }
+        }
     }
 
     /**
@@ -242,7 +256,7 @@ public class McastMember implements Member, java.io.Externalizable {
      * String representation of this object
      */
     public String toString()  {
-        return "org.apache.catalina.groups.mcast.McastMember["+getName()+","+domain+","+host+","+port+", alive="+memberAliveTime+"]";
+        return "org.apache.catalina.tribes.mcast.McastMember["+getName()+","+domain+","+host+","+port+", alive="+memberAliveTime+"]";
     }
 
     /**
@@ -250,7 +264,7 @@ public class McastMember implements Member, java.io.Externalizable {
      * @return The hash code
      */
     public int hashCode() {
-        return this.getName().hashCode();
+        return getHost()[0]+getHost()[1]+getHost()[2]+getHost()[3];
     }
 
     /**
@@ -259,11 +273,13 @@ public class McastMember implements Member, java.io.Externalizable {
      */
     public boolean equals(Object o) {
         if ( o instanceof McastMember )    {
-            return this.getName().equals(((McastMember)o).getName());
+            return Arrays.equals(this.getHost(),((McastMember)o).getHost()) &&
+                   this.getPort() == ((McastMember)o).getPort();
         }
         else
             return false;
     }
+    
 
     /**
      * Converts for bytes (ip address) to a string representation of it<BR>
@@ -325,9 +341,15 @@ public class McastMember implements Member, java.io.Externalizable {
         }
         return new String(buf, charPos, 15 - charPos);
     }
-    public void setHost(String host) {
+    public void setHost(byte[] host) {
         this.host = host;
     }
+    
+    public void setHostname(String host) throws IOException {
+        hostname = host;
+        this.host = java.net.InetAddress.getByName(host).getAddress();
+    }
+    
     public void setMsgCount(int msgCount) {
         this.msgCount = msgCount;
     }

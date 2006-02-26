@@ -135,7 +135,7 @@ public class McastServiceImpl
         receivePacket = new DatagramPacket(new byte[1000],1000);
         receivePacket.setAddress(address);
         receivePacket.setPort(port);
-        membership = new McastMembership(member.getName());
+        membership = new McastMembership(member);
         timeToExpiration = expireTime;
         this.service = service;
         this.sendFrequency = sendFrequency;
