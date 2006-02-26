@@ -248,7 +248,7 @@ public class McastService implements MembershipService,MembershipListener {
             localMember = new McastMember(domain, host, port, 100);
         } else {
             localMember.setDomain(domain);
-            localMember.setHost(host);
+            localMember.setHostname(host);
             localMember.setPort(port);
             localMember.setMemberAliveTime(100);
         }

@@ -48,7 +48,7 @@ public interface Member {
     /**
      * Returns the TCP listen host for the TCP implementation
      */
-    public String getHost();
+    public byte[] getHost();
     /**
      * Returns the TCP listen portfor the TCP implementation
      */

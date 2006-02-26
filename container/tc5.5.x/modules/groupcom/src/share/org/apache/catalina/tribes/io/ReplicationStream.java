@@ -71,7 +71,7 @@ public final class ReplicationStream extends ObjectInputStream {
     public Class resolveClass(ObjectStreamClass classDesc)
         throws ClassNotFoundException, IOException {
         String name = classDesc.getName();
-        boolean tryRepFirst = name.startsWith("org.apache.catalina.groups");
+        boolean tryRepFirst = name.startsWith("org.apache.catalina.tribes");
         try {
             try
             {

@@ -277,7 +277,7 @@ public class FastAsyncSocketSender extends DataSender {
     /**
      * Connect to socket and start background thread to push queued messages
      * 
-     * @see org.apache.catalina.groups.tcp.IDataSender#connect()
+     * @see org.apache.catalina.tribes.tcp.IDataSender#connect()
      */
     public void connect() throws java.io.IOException {
         super.connect();
@@ -289,7 +289,7 @@ public class FastAsyncSocketSender extends DataSender {
     /**
      * Disconnect socket ad stop queue thread
      * 
-     * @see org.apache.catalina.groups.tcp.IDataSender#disconnect()
+     * @see org.apache.catalina.tribes.tcp.IDataSender#disconnect()
      */
     public void disconnect() {
         stopThread();
@@ -304,7 +304,7 @@ public class FastAsyncSocketSender extends DataSender {
     /**
      * Send message to queue for later sending.
      * 
-     * @see org.apache.catalina.groups.tcp.DataSender#pushMessage(ChannelMessage)
+     * @see org.apache.catalina.tribes.tcp.DataSender#pushMessage(ChannelMessage)
      */
     public void sendMessage(ChannelMessage data)
             throws java.io.IOException {

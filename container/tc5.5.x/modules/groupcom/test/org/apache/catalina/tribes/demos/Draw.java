@@ -65,7 +65,7 @@ public class Draw implements ActionListener, ChannelListener,MembershipListener 
         this.jmx = jmx;
         if (no_channel)
             return;
-
+        mainFrame = new JFrame();
         ReplicationListener rl = new ReplicationListener();
         rl.setTcpListenAddress(bind);
         rl.setTcpListenPort(port);
@@ -187,7 +187,7 @@ public class Draw implements ActionListener, ChannelListener,MembershipListener 
     }
 
     public void go() throws Exception {
-        mainFrame = new JFrame();
+        
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         panel = new DrawPanel(this);
         panel.setBackground(background_color);
