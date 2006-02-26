@@ -18,7 +18,7 @@
 package org.apache.catalina.tribes;
 
 /**
- * Manifest constants for the <code>org.apache.catalina.groups</code>
+ * Manifest constants for the <code>org.apache.catalina.tribes</code>
  * package.
  *
  * @author Bip Thelin
@@ -26,5 +26,5 @@ package org.apache.catalina.tribes;
  */
 
 public final class Constants {
-    public static final String Package = "org.apache.catalina.groups";
+    public static final String Package = "org.apache.catalina.tribes";
 }

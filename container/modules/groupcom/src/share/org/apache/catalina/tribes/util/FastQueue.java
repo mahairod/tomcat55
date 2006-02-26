@@ -194,7 +194,7 @@ public class FastQueue implements IQueue {
     /**
      * get Max Queue length
      * 
-     * @see org.apache.catalina.groups.util.IQueue#getMaxQueueLength()
+     * @see org.apache.catalina.tribes.util.IQueue#getMaxQueueLength()
      */
     public int getMaxQueueLength() {
         return maxQueueLength;
@@ -413,7 +413,7 @@ public class FastQueue implements IQueue {
 
     /**
      * Add new data to the queue
-     * @see org.apache.catalina.groups.util.IQueue#add(java.lang.String, java.lang.Object)
+     * @see org.apache.catalina.tribes.util.IQueue#add(java.lang.String, java.lang.Object)
      * FIXME extract some method
      */
     public boolean add(String key, Object data) {
@@ -529,7 +529,7 @@ public class FastQueue implements IQueue {
 
     /**
      * remove the complete queued object list
-     * @see org.apache.catalina.groups.util.IQueue#remove()
+     * @see org.apache.catalina.tribes.util.IQueue#remove()
      * FIXME extract some method
      */
     public LinkObject remove() {

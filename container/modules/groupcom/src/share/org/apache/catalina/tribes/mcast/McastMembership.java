@@ -41,7 +41,7 @@ public class McastMembership
      * The name of this membership, has to be the same as the name for the local
      * member
      */
-    protected String name;
+    protected McastMember local;
     
     /**
      * A map of all the members in the cluster.
@@ -62,8 +62,8 @@ public class McastMembership
      * Constructs a new membership
      * @param name - has to be the name of the local member. Used to filter the local member from the cluster membership
      */
-    public McastMembership(String name) {
-        this.name = name;
+    public McastMembership(McastMember local) {
+        this.local = local;
     }
 
     /**
@@ -85,7 +85,7 @@ public class McastMembership
     public synchronized boolean memberAlive(McastMember member) {
         boolean result = false;
         //ignore ourselves
-        if ( member.getName().equals(name) ) return result;
+        if (  member.equals(local) ) return result;
 
         //return true if the membership has changed
         MbrEntry entry = (MbrEntry)map.get(member.getName());

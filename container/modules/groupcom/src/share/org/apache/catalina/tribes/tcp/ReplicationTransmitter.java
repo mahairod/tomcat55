@@ -403,7 +403,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     
     /**
      * Send data to one member
-     * @see org.apache.catalina.groups.ClusterSender#sendMessage(org.apache.catalina.groups.ClusterMessage, org.apache.catalina.groups.Member)
+     * @see org.apache.catalina.tribes.ClusterSender#sendMessage(org.apache.catalina.tribes.ClusterMessage, org.apache.catalina.tribes.Member)
      */
     public void sendMessage(ChannelMessage message, Member member) throws IOException {       
         long time = 0 ;
@@ -427,7 +427,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
 
     /**
      * send message to all senders (broadcast)
-     * @see org.apache.catalina.groups.ClusterSender#sendMessage(org.apache.catalina.groups.ClusterMessage)
+     * @see org.apache.catalina.tribes.ClusterSender#sendMessage(org.apache.catalina.tribes.ClusterMessage)
      */
     public void sendMessage(ChannelMessage message, boolean domainOnly) throws IOException {
         long time = 0;
@@ -455,7 +455,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     /**
      * start the sender and register transmitter mbean
      * 
-     * @see org.apache.catalina.groups.ClusterSender#start()
+     * @see org.apache.catalina.tribes.ClusterSender#start()
      */
     public void start() throws java.io.IOException {
     }
@@ -463,7 +463,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     /*
      * stop the sender and deregister mbeans (transmitter, senders)
      * 
-     * @see org.apache.catalina.groups.ClusterSender#stop()
+     * @see org.apache.catalina.tribes.ClusterSender#stop()
      */
     public synchronized void stop() {
         Iterator i = map.entrySet().iterator();
@@ -541,7 +541,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      * add new cluster member and create sender ( s. replicationMode) transfer
      * current properties to sender
      * 
-     * @see org.apache.catalina.groups.ClusterSender#add(org.apache.catalina.groups.Member)
+     * @see org.apache.catalina.tribes.ClusterSender#add(org.apache.catalina.tribes.Member)
      */
     public synchronized void add(Member member) {
         try {
@@ -560,7 +560,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     /**
      * remove sender from transmitter. ( deregister mbean and disconnect sender )
      * 
-     * @see org.apache.catalina.groups.ClusterSender#remove(org.apache.catalina.groups.Member)
+     * @see org.apache.catalina.tribes.ClusterSender#remove(org.apache.catalina.tribes.Member)
      */
     public synchronized void remove(Member member) {
         String key = getKey(member);

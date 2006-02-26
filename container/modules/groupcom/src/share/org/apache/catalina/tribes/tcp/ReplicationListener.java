@@ -115,7 +115,7 @@ public class ReplicationListener
     /**
      * start cluster receiver
      * @throws Exception
-     * @see org.apache.catalina.groups.ClusterReceiver#start()
+     * @see org.apache.catalina.tribes.ClusterReceiver#start()
      */
     public void start() {
         try {
@@ -222,7 +222,7 @@ public class ReplicationListener
     /**
      * Close Selector.
      *
-     * @see org.apache.catalina.groups.tcp.ClusterReceiverBase#stopListening()
+     * @see org.apache.catalina.tribes.tcp.ClusterReceiverBase#stopListening()
      */
     protected void stopListening() {
         // Bugzilla 37529: http://issues.apache.org/bugzilla/show_bug.cgi?id=37529
@@ -395,7 +395,7 @@ public class ReplicationListener
     }
 
     /* (non-Javadoc)
-     * @see org.apache.catalina.groups.io.ListenCallback#sendAck()
+     * @see org.apache.catalina.tribes.io.ListenCallback#sendAck()
      */
     public void sendAck() throws IOException {
         // do nothing

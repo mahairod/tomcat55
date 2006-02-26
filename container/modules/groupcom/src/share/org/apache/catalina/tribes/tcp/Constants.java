@@ -18,7 +18,7 @@
 package org.apache.catalina.tribes.tcp;
 
 /**
- * Manifest constants for the <code>org.apache.catalina.groups.tcp</code>
+ * Manifest constants for the <code>org.apache.catalina.tribes.tcp</code>
  * package.
  *
  * @author Peter Rossbach
@@ -27,6 +27,6 @@ package org.apache.catalina.tribes.tcp;
 
 public class Constants {
 
-    public static final String Package = "org.apache.catalina.groups.tcp";
+    public static final String Package = "org.apache.catalina.tribes.tcp";
 
 }

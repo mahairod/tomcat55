@@ -561,7 +561,7 @@ public class DataSender implements IDataSender {
 
     /**
      * Connect other cluster member receiver 
-     * @see org.apache.catalina.groups.tcp.IDataSender#connect()
+     * @see org.apache.catalina.tribes.tcp.IDataSender#connect()
      */
     public synchronized void connect() throws java.io.IOException {
         if(!isMessageTransferStarted) {
@@ -626,7 +626,7 @@ public class DataSender implements IDataSender {
     /**
      * Send message
      * 
-     * @see org.apache.catalina.groups.tcp.IDataSender#sendMessage(,
+     * @see org.apache.catalina.tribes.tcp.IDataSender#sendMessage(,
      *      ChannelMessage)
      */
     public synchronized void sendMessage(ChannelMessage data)
