@@ -88,10 +88,10 @@ public class McastMembership
         if (  member.equals(local) ) return result;
 
         //return true if the membership has changed
-        MbrEntry entry = (MbrEntry)map.get(member.getName());
+        MbrEntry entry = (MbrEntry)map.get(member);
         if ( entry == null ) {
             entry = new MbrEntry(member);
-            map.put(member.getName(),entry);
+            map.put(member,entry);
             addMcastMember(member);
             result = true;
        } else {
@@ -176,7 +176,7 @@ public class McastMembership
             McastMember[] result = new McastMember[list.size()];
             list.toArray(result);
             for( int j=0; j<result.length; j++) {
-                map.remove(result[j].getName());
+                map.remove(result[j]);
                 removeMcastMember(result[j]);
             }
             return result;
