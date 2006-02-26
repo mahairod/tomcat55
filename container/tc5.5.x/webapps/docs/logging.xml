@@ -61,8 +61,7 @@
     <p>
       <ol>
         <li>Create a file called log4j.properties with the following content 
-            and save it into common/classes. </li>
-        <li>
+            and save it into common/classes.
           <source>
             log4j.rootLogger=debug, R <br />
             log4j.appender.R=org.apache.log4j.RollingFileAppender <br />
@@ -78,7 +77,7 @@
 	<li><a href="http://logging.apache.org/log4j">Download Log4J</a> 
             (v1.2 or later) and place the log4j jar in $CATALINA_HOME/common/lib.</li>
 
-        <li><a href="http://jakarta.apache.org/site/binindex.cgi#commons-logging">
+        <li><a href="http://jakarta.apache.org/site/downloads/downloads_commons-logging.cgi">
             Download Commons Logging</a> and place the commons-logging.jar 
             (not commons-logging-api.jar) in $CATALINA_HOME/common/lib with 
             the log4j jar.</li>
