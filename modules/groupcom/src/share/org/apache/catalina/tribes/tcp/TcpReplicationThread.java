@@ -131,7 +131,6 @@ public class TcpReplicationThread extends WorkerThread {
     protected void drainChannel (SelectionKey key)
         throws Exception
     {
-        boolean packetReceived=false;
         SocketChannel channel = (SocketChannel) key.channel();
         int count;
         buffer.clear();			// make buffer empty
