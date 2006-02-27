@@ -109,6 +109,7 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
             data.setMessage(b);
             getFirstInterceptor().sendMessage(destination, data, null);
         }catch ( Exception x ) {
+            if ( x instanceof ChannelException ) throw (ChannelException)x;
             throw new ChannelException(x);
         }
     }
