@@ -80,9 +80,10 @@ public class ObjectReader {
      * @return number of messages that sended to callback
      * @throws java.io.IOException
      */
-     public int append(byte[] data,int off,int len) throws java.io.IOException {
+     public int append(byte[] data,int off,int len, boolean count) throws java.io.IOException {
         buffer.append(data,off,len);
-        int pkgCnt = buffer.countPackages();
+        int pkgCnt = -1;
+        if ( count ) pkgCnt = buffer.countPackages();
         return pkgCnt;
     }
 

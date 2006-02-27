@@ -25,6 +25,7 @@ import org.apache.catalina.tribes.mcast.McastMember;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.util.UUID;
+import java.util.Arrays;
 
 /**
  * The cluster data class is used to transport around the byte array from
@@ -202,6 +203,25 @@ public class ClusterData implements ChannelMessage {
         System.arraycopy(b,offset,data.message,0,data.message.length);
         offset += data.message.length; //message data
         return data;
+    }
+    
+    public static void main(String[] args) throws Exception {
+        ClusterData data1 = new ClusterData();
+        data1.setAddress(new McastMember("domain","127.0.0.1",1000,System.currentTimeMillis()));
+        data1.setMessage(new byte[1024]);
+        
+        byte[] b = data1.getDataPackage();
+        
+        ClusterData data2 = ClusterData.getDataFromPackage(b);
+        
+        if ( !(data1.getAddress().equals(data2.getAddress())) ||
+             !(Arrays.equals(data1.getMessage(),data2.getMessage())) ||
+             !(Arrays.equals(data1.getUniqueId(),data2.getUniqueId())) ||
+             !(data1.getTimestamp() == data2.timestamp) ||
+             !(data1.getOptions() == data2.getOptions() ) ) {
+            throw new Exception("Not Equal");
+        }
+                         
     }
     
 }
