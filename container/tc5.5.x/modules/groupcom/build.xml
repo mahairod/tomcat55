@@ -84,18 +84,18 @@
     	>
         <classpath refid="groupcom.classpath" />
     </javac>
-    <copy file="${basedir}/src/share/org/apache/catalina/groups/LocalStrings.properties"
-    	  tofile="${catalina.build}/classes/org/apache/catalina/groups/LocalStrings.properties"/>
-    <copy file="${basedir}/src/share/org/apache/catalina/groups/tcp/LocalStrings.properties"
-    	  tofile="${catalina.build}/classes/org/apache/catalina/groups/tcp/LocalStrings.properties"/>
-    <copy file="${basedir}/src/share/org/apache/catalina/groups/tcp/DataSenders.properties"
-    	  tofile="${catalina.build}/classes/org/apache/catalina/groups/tcp/DataSenders.properties"/>
-    <copy file="${basedir}/src/share/org/apache/catalina/groups/tcp/mbeans-descriptors.xml"
-    	  tofile="${catalina.build}/classes/org/apache/catalina/groups/tcp/mbeans-descriptors.xml"/>
-    <copy file="${basedir}/src/share/org/apache/catalina/groups/mcast/LocalStrings.properties"
-    	  tofile="${catalina.build}/classes/org/apache/catalina/groups/mcast/LocalStrings.properties"/>
-    <copy file="${basedir}/src/share/org/apache/catalina/groups/mcast/mbeans-descriptors.xml"
-     	  tofile="${catalina.build}/classes/org/apache/catalina/groups/mcast/mbeans-descriptors.xml"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/tribes/LocalStrings.properties"
+    	  tofile="${catalina.build}/classes/org/apache/catalina/tribes/LocalStrings.properties"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/tribes/tcp/LocalStrings.properties"
+    	  tofile="${catalina.build}/classes/org/apache/catalina/tribes/tcp/LocalStrings.properties"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/tribes/tcp/DataSenders.properties"
+    	  tofile="${catalina.build}/classes/org/apache/catalina/tribes/tcp/DataSenders.properties"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/tribes/tcp/mbeans-descriptors.xml"
+    	  tofile="${catalina.build}/classes/org/apache/catalina/tribes/tcp/mbeans-descriptors.xml"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/tribes/mcast/LocalStrings.properties"
+    	  tofile="${catalina.build}/classes/org/apache/catalina/tribes/mcast/LocalStrings.properties"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/tribes/mcast/mbeans-descriptors.xml"
+     	  tofile="${catalina.build}/classes/org/apache/catalina/tribes/mcast/mbeans-descriptors.xml"/>
    </target>
 
 
@@ -130,16 +130,16 @@
   <!-- ================ DIST: Create Distribution ========================= -->
   <target name="dist" depends="build-catalina-groupcom">
     
-    <jar destfile="${groupcom.dist}/catalina-groups.jar"
+    <jar destfile="${groupcom.dist}/catalina-tribes.jar"
          basedir="${catalina.build}/classes">
-       <include name="org/apache/catalina/groups/**" />
+       <include name="org/apache/catalina/tribes/**" />
        <exclude name="**/package.html" />
        <exclude name="**/LocalStrings_*" />
     </jar>
   </target>
 
   <target name="copy" depends="dist" >
-     <copy file="${groupcom.dist}/catalina-groups.jar" todir="${catalina.build}/server/lib" />
+     <copy file="${groupcom.dist}/catalina-tribes.jar" todir="${catalina.build}/server/lib" />
   </target>
   
   <!-- ======================== DIST: Clean Directory ===================== -->
