@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.Arrays;
+import org.apache.catalina.tribes.ChannelException;
 
 
 
@@ -38,13 +39,13 @@ import java.util.Arrays;
 public class GzipInterceptor extends ChannelInterceptorBase {
     public static final int DEFAULT_BUFFER_SIZE = 2048;
     
-    public void sendMessage(Member[] destination, ChannelMessage msg, InterceptorPayload payload) throws IOException {
+    public void sendMessage(Member[] destination, ChannelMessage msg, InterceptorPayload payload) throws ChannelException {
         try {
             msg.setMessage(compress(msg.getMessage()));
             getNext().sendMessage(destination, msg, payload);
         } catch ( IOException x ) {
             log.error("Unable to compress byte contents");
-            throw x;
+            throw new ChannelException(x);
         }
     }
 

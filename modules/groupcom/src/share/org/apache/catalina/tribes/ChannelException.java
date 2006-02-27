@@ -15,6 +15,9 @@
  */
 package org.apache.catalina.tribes;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Channel Exception 
  * @author Filip Hanik
@@ -23,6 +26,7 @@ package org.apache.catalina.tribes;
 
 public class ChannelException
     extends Exception {
+    private ArrayList faultyMembers=null;
     public ChannelException() {
         super();
     }
@@ -37,6 +41,25 @@ public class ChannelException
 
     public ChannelException(Throwable cause) {
         super(cause);
+    }
+    
+    public void addFaultyMember(Member mbr) {
+        if ( this.faultyMembers==null ) this.faultyMembers = new ArrayList();
+        faultyMembers.add(mbr);
+    }
+
+    public void setFaultyMembers(ArrayList faultyMembers) {
+        this.faultyMembers = faultyMembers;
+    }
+
+    public void setFaultyMembers(Member[] faultyMembers) {
+        if ( this.faultyMembers==null ) this.faultyMembers = new ArrayList();
+        this.faultyMembers.addAll(Arrays.asList(faultyMembers));
+    }
+
+    public Member[] getFaultyMembers() {
+        if ( this.faultyMembers==null ) return new Member[0];
+        return (Member[])faultyMembers.toArray(new Member[faultyMembers.size()]);
     }
 
 }

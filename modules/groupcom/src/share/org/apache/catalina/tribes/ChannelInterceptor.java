@@ -38,7 +38,7 @@ public interface ChannelInterceptor extends MembershipListener {
 
     public ChannelInterceptor getPrevious();
 
-    public void sendMessage(Member[] destination, ChannelMessage msg, InterceptorPayload payload) throws IOException;
+    public void sendMessage(Member[] destination, ChannelMessage msg, InterceptorPayload payload) throws ChannelException;
     
     public void messageReceived(ChannelMessage data);
     

@@ -386,34 +386,30 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
         }
     }
     
-    public void sendMessage(ChannelMessage message) throws IOException {
-        sendMessage(message,false);
-    }
-
     /**
      * send message to all senders (broadcast)
      * @see org.apache.catalina.tribes.ClusterSender#sendMessage(org.apache.catalina.tribes.ClusterMessage)
      */
-    public void sendMessage(ChannelMessage message, boolean domainOnly) throws IOException {
-        long time = 0;
-        if (doTransmitterProcessingStats) {
-            time = System.currentTimeMillis();
-        }
-        try {
-            IDataSender[] senders = getSenders();
-            for (int i = 0; i < senders.length; i++) {
-                IDataSender sender = senders[i];
-                //domain filter
-                String domain = message.getAddress().getDomain();
-                if ( domainOnly && !(domain.equals(sender.getDomain())) ) continue;
-                sendMessageData(message, sender);
-            }
-        } finally {
-            if (doTransmitterProcessingStats) {
-                addProcessingStats(time);
-            }
-        }
-    }
+//    public void sendMessage(ChannelMessage message, boolean domainOnly) throws IOException {
+//        long time = 0;
+//        if (doTransmitterProcessingStats) {
+//            time = System.currentTimeMillis();
+//        }
+//        try {
+//            IDataSender[] senders = getSenders();
+//            for (int i = 0; i < senders.length; i++) {
+//                IDataSender sender = senders[i];
+//                //domain filter
+//                String domain = message.getAddress().getDomain();
+//                if ( domainOnly && !(domain.equals(sender.getDomain())) ) continue;
+//                sendMessageData(message, sender);
+//            }
+//        } finally {
+//            if (doTransmitterProcessingStats) {
+//                addProcessingStats(time);
+//            }
+//        }
+//    }
         
     
 
@@ -592,8 +588,8 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      * @return true if the message got sent, false otherwise
      * @throws java.io.IOException If an error occurs
      */
-    protected boolean sendMessageData(ChannelMessage data,
-                                      IDataSender sender) {
+    protected void sendMessageData(ChannelMessage data,
+                                   IDataSender sender) throws IOException {
         if (sender == null)
             throw new RuntimeException("Sender not available. Make sure sender information is available to the ReplicationTransmitter.");
         try {
@@ -607,8 +603,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
             sender.sendMessage(data);
             sender.setSuspect(false);
             addStats(data.getMessage().length);
-            return true;
-        } catch (Exception x) {
+        } catch (IOException x) {
             if (!sender.getSuspect()) {
                 if (log.isErrorEnabled() ) log.error("Unable to send replicated message, is member ["+sender.toString()+"] down?",x);
             } else if (log.isDebugEnabled() ) {
@@ -616,7 +611,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
             }
             sender.setSuspect(true);
             failureCounter++;
-            return false;
+            throw x;
         }
 
     }
