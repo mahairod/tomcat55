@@ -122,7 +122,8 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
             } else {
                 fwd = XByteBuffer.deserialize(msg.getMessage());
             }
-            if ( channelListener != null ) channelListener.messageReceived(fwd,msg.getAddress());
+            if ( channelListener != null && channelListener.accept(fwd,msg.getAddress())) 
+                channelListener.messageReceived(fwd,msg.getAddress());
         }catch ( Exception x ) {
             log.error("Unable to deserialize channel message.",x);
         }
