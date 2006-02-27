@@ -810,6 +810,7 @@ public class DataSender implements IDataSender {
              writeData(data);
              messageTransfered = true ;
         } catch (java.io.IOException x) {
+            exception = x;
             if( true ) { //allow resend
                 // second try with fresh connection
                 dataResendCounter++;
@@ -823,19 +824,16 @@ public class DataSender implements IDataSender {
                 try {
                     writeData(data);
                     messageTransfered = true;
+                    exception = null;
                 } catch (IOException xx) {
                     xx.fillInStackTrace();
                     exception = xx;
-                    throw xx ;
                 }
             } else 
             {
-                
                 synchronized(this) {
                     closeSocket();
                 }
-                exception = x;
-                throw x ;
             }
         } finally {
             this.keepAliveCount++;

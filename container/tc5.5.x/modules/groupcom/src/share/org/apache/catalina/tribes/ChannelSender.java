@@ -38,8 +38,6 @@ public interface ChannelSender
 
     public void sendMessage(ChannelMessage message, Member member) throws java.io.IOException;
 
-    public void sendMessage(ChannelMessage message) throws java.io.IOException;
-    
     public boolean getWaitForAck();
     public void setWaitForAck(boolean isWaitForAck);
 }
