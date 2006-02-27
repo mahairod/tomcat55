@@ -777,11 +777,11 @@ public class SimpleTcpCluster
             msg.setAddress(getLocalMember());
             if (dest != null) {
                 if (!getLocalMember().equals(dest)) {
-                    channel.send(new Member[] {dest}, msg, 0);
+                    channel.send(new Member[] {dest}, msg);
                 } else
                     log.error("Unable to send message to local member " + msg);
             } else {
-                channel.send(null,msg, 0);
+                channel.send(null,msg);
             }
         } catch (Exception x) {
             log.error("Unable to send message through cluster sender.", x);
