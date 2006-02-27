@@ -57,9 +57,9 @@ public interface ChannelMessage extends Serializable {
      * Each message must have a unique ID, in case of using async replication,
      * and a smart queue, this id is used to replace messages not yet sent.
      *
-     * @return String
+     * @return byte
      */
-    public String getUniqueId();
+    public byte[] getUniqueId();
     
     public void setMessage(byte[] data);
     

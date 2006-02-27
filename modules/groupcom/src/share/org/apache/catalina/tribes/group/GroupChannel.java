@@ -18,14 +18,12 @@ package org.apache.catalina.tribes.group;
 
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelInterceptor;
-import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.ChannelReceiver;
 import org.apache.catalina.tribes.ChannelSender;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
 import org.apache.catalina.tribes.MembershipService;
-import org.apache.catalina.tribes.MessageListener;
 import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import java.io.Serializable;
@@ -82,6 +80,16 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
         super.heartbeat();
     }
     
+    
+    public byte[] getUUID() {
+        UUID id = UUID.randomUUID();
+        long msb = id.getMostSignificantBits();
+        long lsb = id.getLeastSignificantBits();
+        byte[] data = new byte[16];
+        System.arraycopy(XByteBuffer.toBytes(msb),0,data,0,8);
+        System.arraycopy(XByteBuffer.toBytes(lsb),0,data,8,8);
+        return data;
+    }
     /**
      * Send a message to one or more members in the cluster
      * @param destination Member[] - the destinations, null or zero length means all
@@ -95,7 +103,7 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
             int options = 0;
             ClusterData data = new ClusterData();
             data.setAddress(getLocalMember());
-            data.setUniqueId(UUID.randomUUID().toString());
+            data.setUniqueId(getUUID());
             data.setTimestamp(System.currentTimeMillis());
             byte[] b = null;
             if ( msg instanceof ByteMessage ){
