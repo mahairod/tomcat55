@@ -31,6 +31,7 @@ import org.apache.catalina.tribes.ChannelReceiver;
 import org.apache.catalina.tribes.MessageListener;
 import org.apache.catalina.tribes.io.ListenCallback;
 import org.apache.catalina.tribes.io.ObjectReader;
+import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.util.StringManager;
 
 /**
@@ -38,10 +39,17 @@ import org.apache.catalina.util.StringManager;
  * @author Peter Rossbach
  * @version $Revision: 379904 $ $Date: 2006-02-22 15:16:25 -0600 (Wed, 22 Feb 2006) $
  */
-public class ReplicationListener
-    implements Runnable, ChannelReceiver, ListenCallback {
-    protected static org.apache.commons.logging.Log log =
-        org.apache.commons.logging.LogFactory.getLog(ReplicationListener.class);
+public class ReplicationListener implements Runnable, ChannelReceiver, ListenCallback {
+    /**
+     * @todo make this configurable
+     */
+    public static int BUFFER_RECEIVE_SIZE = XByteBuffer.DEF_SIZE;
+    /**
+     * We are only sending acks
+     */
+    public static int BUFFER_SEND_SIZE = 128;
+
+    protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(ReplicationListener.class);
 
     /**
      * The string manager for this package.
@@ -63,15 +71,13 @@ public class ReplicationListener
     private int tcpListenPort;
     private boolean sendAck;
     protected boolean doListen = false;
-    /**
-     * Compress message data bytes
-     */
-    private boolean compress = true;
+    
 
 
     private Object interestOpsMutex = new Object();
     private MessageListener listener = null;
     private boolean sync;
+    private boolean direct;
     public ReplicationListener() {
     }
 
@@ -185,8 +191,9 @@ public class ReplicationListener
                         ServerSocketChannel server =
                             (ServerSocketChannel) key.channel();
                         SocketChannel channel = server.accept();
-                        Object attach = new ObjectReader(channel, selector,
-                            this);
+                        channel.socket().setReceiveBufferSize(BUFFER_RECEIVE_SIZE);
+                        channel.socket().setSendBufferSize(BUFFER_SEND_SIZE);
+                        Object attach = new ObjectReader(channel, selector,this);
                         registerChannel(selector,
                                         channel,
                                         SelectionKey.OP_READ,
@@ -328,20 +335,6 @@ public class ReplicationListener
     }
 
     /**
-     * @return Returns the compress.
-     */
-    public boolean isCompress() {
-        return compress;
-    }
-
-    /**
-     * @param compressMessageData The compress to set.
-     */
-    public void setCompress(boolean compressMessageData) {
-        this.compress = compressMessageData;
-    }
-
-    /**
      * Send ACK to sender
      *
      * @return True if sending ACK
@@ -375,6 +368,10 @@ public class ReplicationListener
         return sync;
     }
 
+    public boolean getDirect() {
+        return direct;
+    }
+
     public MessageListener getMessageListener() {
         return listener;
     }
@@ -383,6 +380,9 @@ public class ReplicationListener
         this.tcpListenPort = tcpListenPort;
     }
 
+    public void setDirect(boolean direct) {
+        this.direct = direct;
+    }
 
     public void setSynchronized(boolean sync) {
         this.sync = sync;
@@ -396,6 +396,7 @@ public class ReplicationListener
         int options = 0;
         if ( getSynchronized() ) options = options |TcpReplicationThread.OPTION_SYNCHRONIZED;
         if ( getSendAck() ) options = options |TcpReplicationThread.OPTION_SEND_ACK;
+        if ( getDirect() ) options = options | TcpReplicationThread.OPTION_DIRECT_BUFFER;
         return options;
     }
 

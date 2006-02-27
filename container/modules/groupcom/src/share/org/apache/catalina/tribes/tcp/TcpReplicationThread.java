@@ -39,11 +39,12 @@ import org.apache.catalina.tribes.io.ObjectReader;
 public class TcpReplicationThread extends WorkerThread {
     public static final int OPTION_SEND_ACK = 0x0001;
     public static final int OPTION_SYNCHRONIZED = 0x0002;
+    public static final int OPTION_DIRECT_BUFFER = 0x0004;
 
     public static final byte[] ACK_COMMAND = new byte[] {6, 2, 3};
     private static org.apache.commons.logging.Log log =
         org.apache.commons.logging.LogFactory.getLog( TcpReplicationThread.class );
-    private ByteBuffer buffer = ByteBuffer.allocate (1024);
+    private ByteBuffer buffer = null;
     private SelectionKey key;
     TcpReplicationThread ()
     {
@@ -52,6 +53,13 @@ public class TcpReplicationThread extends WorkerThread {
     // loop forever waiting for work to do
     public synchronized void run()
     {
+        if ( (getOptions() & OPTION_DIRECT_BUFFER) == OPTION_DIRECT_BUFFER ) {
+            System.out.println("Creating a direct buffer");
+            buffer = ByteBuffer.allocateDirect(ReplicationListener.BUFFER_RECEIVE_SIZE);
+        }else {
+            System.out.println("Creating a regular buffer");
+            buffer = ByteBuffer.allocate (ReplicationListener.BUFFER_RECEIVE_SIZE);
+        }
         while (doRun) {
             try {
                 // sleep and release object lock
@@ -131,7 +139,12 @@ public class TcpReplicationThread extends WorkerThread {
         // loop while data available, channel is non-blocking
         while ((count = channel.read (buffer)) > 0) {
             buffer.flip();		// make buffer readable
-            reader.append(buffer.array(),0,count,false);
+            if ( buffer.hasArray() ) 
+                reader.append(buffer.array(),0,count,false);
+            else 
+                reader.append(buffer,count,false);
+            
+            
             buffer.clear();		// make buffer empty
         }
         
