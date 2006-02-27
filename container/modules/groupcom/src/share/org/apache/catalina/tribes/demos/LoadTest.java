@@ -50,12 +50,13 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
     
     static int messageSize = 0;
     
-    public static int messagesSent = 0;
+    public static long messagesSent = 0;
     public static long messageSendTime = 0;
     
-    public static synchronized void addSendStats(int count, long time) {
+    public static synchronized long addSendStats(long count, long time) {
         messagesSent+=count;
         messageSendTime+=time;
+        return 0l;
     }    
     
     
@@ -79,7 +80,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
     
     public void run() {
         
-        int counter = 0;
+        long counter = 0;
         LoadMessage msg = new LoadMessage();
         int messageSize = LoadTest.messageSize;
         long sendTime = 0;
@@ -95,7 +96,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
                     }
                 } else {
                     try {
-                        msg.setMsgNr(++counter);
+                        msg.setMsgNr((int)++counter);
                         long start = System.currentTimeMillis();
                         if (debug) {
                             printArray(msg.getMessage());
@@ -116,9 +117,11 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
                 }
                 if ( (counter % statsInterval) == 0 && (counter > 0)) {
                     //add to the global counter
-                    addSendStats(counter,sendTime);
+                    //counter = sendTime = addSendStats(counter,sendTime);
                     //print from the global counter
-                    printSendStats(LoadTest.messagesSent, LoadTest.messageSize, LoadTest.messageSendTime);
+                    //printSendStats(LoadTest.messagesSent, LoadTest.messageSize, LoadTest.messageSendTime);
+                    printSendStats(counter, LoadTest.messageSize, sendTime);
+                    
                 }
 
             }
@@ -128,7 +131,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
         }
     }
 
-    private void printSendStats(int counter, int messageSize, long sendTime) {
+    private void printSendStats(long counter, int messageSize, long sendTime) {
         float cnt = (float)counter;
         float size = (float)messageSize;
         float time = (float)sendTime / 1000;

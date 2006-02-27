@@ -131,7 +131,7 @@ public class TcpReplicationThread extends WorkerThread {
         // loop while data available, channel is non-blocking
         while ((count = channel.read (buffer)) > 0) {
             buffer.flip();		// make buffer readable
-            reader.append(buffer.array(),0,count);
+            reader.append(buffer.array(),0,count,false);
             buffer.clear();		// make buffer empty
         }
         
