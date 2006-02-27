@@ -93,7 +93,7 @@ public class JDTCompiler extends org.apache.jasper.compiler.Compiler {
             }
 
             public char[] getFileName() {
-                return className.toCharArray();
+                return sourceFile.toCharArray();
             }
             
             public char[] getContents() {
