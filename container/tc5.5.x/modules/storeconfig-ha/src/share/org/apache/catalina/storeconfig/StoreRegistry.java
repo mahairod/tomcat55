@@ -27,10 +27,10 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.Valve;
 import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.ClusterDeployer;
-import org.apache.catalina.groups.ChannelReceiver;
-import org.apache.catalina.groups.ChannelSender;
-import org.apache.catalina.groups.MembershipService;
-import org.apache.catalina.groups.MessageListener;
+import org.apache.catalina.tribes.ChannelReceiver;
+import org.apache.catalina.tribes.ChannelSender;
+import org.apache.catalina.tribes.MembershipService;
+import org.apache.catalina.tribes.MessageListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
