@@ -1,13 +1,10 @@
 To Do:
 
 Tasks:
-2. Unique id, send it in byte array instead of string
-3. DataSender or ReplicationTransmitter swallows IOException, this should be
-reflected up the channel and the sending app should be notified that the
-message did not send successfully
 4. ChannelMessage.getMessage should return streamable, that way we can wrap,
 pass it around and all those good things without having to copy byte arrays
 left and right
+5. NIO and IO DataSender, since the IO is blocking
 
 Interceptors to create
 1. OrderInterceptor - guarantees the order of messages
@@ -31,3 +28,8 @@ Status: Complete
 Notes: 
 
 
+2. Unique id, send it in byte array instead of string
+
+3. DataSender or ReplicationTransmitter swallows IOException, this should be
+Notes: This has only been fixed for the pooled synchronized. the fastasynch
+aint working that well
