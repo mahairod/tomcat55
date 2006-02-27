@@ -50,6 +50,13 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
     
     static int messageSize = 0;
     
+    public static int messagesSent = 0;
+    public static long messageSendTime = 0;
+    
+    public static synchronized void addSendStats(int count, long time) {
+        messagesSent+=count;
+        messageSendTime+=time;
+    }    
     
     
     public LoadTest(ManagedChannel channel, 
@@ -108,7 +115,10 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
                     }
                 }
                 if ( (counter % statsInterval) == 0 && (counter > 0)) {
-                    printSendStats(counter, messageSize, sendTime);
+                    //add to the global counter
+                    addSendStats(counter,sendTime);
+                    //print from the global counter
+                    printSendStats(LoadTest.messagesSent, LoadTest.messageSize, LoadTest.messageSendTime);
                 }
 
             }
@@ -122,7 +132,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
         float cnt = (float)counter;
         float size = (float)messageSize;
         float time = (float)sendTime / 1000;
-        log.info("****SEND STATS*****"+
+        log.info("****SEND STATS-"+Thread.currentThread().getName()+"*****"+
                  "\n\tMessage count:"+counter+
                  "\n\tTotal bytes  :"+(long)(size*cnt)+
                  "\n\tTotal seconds:"+(time)+
@@ -179,9 +189,9 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
         if ( (messagesReceived%statsInterval)==0 || (messagesReceived==msgCount)) {
             float bytes = (float)(((LoadMessage)msg).getMessage().length*messagesReceived);
             float seconds = ((float)(System.currentTimeMillis()-receiveStart)) / 1000f;
-            log.info("****RECEIVE STATS*****"+
+            log.info("****RECEIVE STATS-"+Thread.currentThread().getName()+"*****"+
                      "\n\tMessage count :"+(long)messagesReceived+
-                     "\n\tTotal bytes   :"+bytes+
+                     "\n\tTotal bytes   :"+(long)bytes+
                      "\n\tTime since 1st:"+seconds+" seconds"+
                      "\n\tBytes/second  :"+(bytes/seconds)+
                      "\n\tMBytes/second :"+(bytes/seconds/1024f/1024f));
@@ -237,7 +247,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
         
         public byte[] getMessage() {
             byte[] data = new byte[size+4];
-            System.arraycopy(XByteBuffer.toBytes(msgNr),0,data,0,4);
+            XByteBuffer.toBytes(msgNr,data,0);
             if ( message != null ) {
                 System.arraycopy(message, 0, data, 4, message.length);
             }else {
@@ -271,6 +281,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
                            "[-gzip]  \n\t\t"+
                            "[-pause nrofsecondstopausebetweensends]  \n\t\t"+
                            "[-sender pooled|fastasyncqueue]  \n\t\t"+
+                           "[-threads numberofsenderthreads]  \n\t\t"+
                            "[-break (halts execution on exception)]\n"+
                            "Example:\n\t"+
                            "java LoadTest -port 4004\n\t"+
@@ -291,6 +302,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
         int count = 1000000;
         int stats = 10000;
         boolean breakOnEx = false;
+        int threads = 1;
         String sender = "pooled";
         if ( args.length == 0 ) {
             args = new String[] {"-help"};
@@ -302,6 +314,8 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
                 sender = args[++i];
             } else if ("-port".equals(args[i])) {
                 port = Integer.parseInt(args[++i]);
+            } else if ("-threads".equals(args[i])) {
+                threads = Integer.parseInt(args[++i]);
             } else if ("-count".equals(args[i])) {
                 count = Integer.parseInt(args[++i]);
             } else if ("-pause".equals(args[i])) {
@@ -366,7 +380,15 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
         channel.setChannelListener(test);
         channel.setMembershipListener(test);
         channel.start(channel.DEFAULT);
+        while ( threads > 1 ) {
+            Thread t = new Thread(test);
+            t.setDaemon(true);
+            t.start();
+            threads--;
+            test = new LoadTest(channel,send,count,debug,pause,stats,breakOnEx);
+        }
         test.run();
+        
         System.out.println("System test complete, sleeping to let threads finish.");
         Thread.sleep(60*1000*60);
     }    

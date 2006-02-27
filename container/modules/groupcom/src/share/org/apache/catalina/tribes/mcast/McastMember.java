@@ -64,7 +64,8 @@ public class McastMember implements Member, java.io.Externalizable {
     /**
      * The name of the cluster domain from this node
      */
-    private String domain;
+    protected byte[] domain;
+    protected transient String domainname;
     
     /**
      * Counter for how many messages have been sent from this member
@@ -101,7 +102,7 @@ public class McastMember implements Member, java.io.Externalizable {
                        long aliveTime) throws IOException {
         setHostname(host);
         this.port = port;
-        this.domain = domain;
+        this.domain = domain.getBytes();
         this.memberAliveTime=aliveTime;
     }
 
@@ -141,7 +142,7 @@ public class McastMember implements Member, java.io.Externalizable {
         //host - 4 bytes
         //dlen - 4 bytes
         //domain - dlen bytes
-        byte[] domaind = getDomain().getBytes();
+        byte[] domaind = this.domain;
         byte[] addr = host;
         byte[] data = new byte[8+4+addr.length+4+domaind.length];
         long alive=System.currentTimeMillis()-getServiceStartTime();
@@ -201,7 +202,8 @@ public class McastMember implements Member, java.io.Externalizable {
      * @return a cluster domain to the cluster
      */
     public String getDomain() {
-        return domain;
+        if ( this.domainname == null ) this.domainname = new String(domain);
+        return this.domainname;
     }
     
     /**
@@ -256,7 +258,7 @@ public class McastMember implements Member, java.io.Externalizable {
      * String representation of this object
      */
     public String toString()  {
-        return "org.apache.catalina.tribes.mcast.McastMember["+getName()+","+domain+","+getHostname()+","+port+", alive="+memberAliveTime+"]";
+        return "org.apache.catalina.tribes.mcast.McastMember["+getName()+","+getDomain()+","+getHostname()+","+port+", alive="+memberAliveTime+"]";
     }
 
     /**
@@ -355,7 +357,7 @@ public class McastMember implements Member, java.io.Externalizable {
     }
 
     public void setDomain(String domain) {
-        this.domain = domain;
+        this.domain = domain.getBytes();
     }
     public void setPort(int port) {
         this.port = port;

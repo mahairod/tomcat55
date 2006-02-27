@@ -16,22 +16,22 @@
 package org.apache.catalina.tribes.group;
 
 
+import java.io.Serializable;
+import java.util.Iterator;
+
+import org.apache.catalina.tribes.ByteMessage;
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelInterceptor;
+import org.apache.catalina.tribes.ChannelListener;
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.ChannelReceiver;
 import org.apache.catalina.tribes.ChannelSender;
+import org.apache.catalina.tribes.ManagedChannel;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
 import org.apache.catalina.tribes.MembershipService;
 import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
-import java.io.Serializable;
-import org.apache.catalina.tribes.ChannelListener;
-import org.apache.catalina.tribes.ManagedChannel;
-import java.util.Iterator;
-import java.util.UUID;
-import org.apache.catalina.tribes.ByteMessage;
 
 /**
  * The GroupChannel manages the replication channel. It coordinates
@@ -81,15 +81,6 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
     }
     
     
-    public byte[] getUUID() {
-        UUID id = UUID.randomUUID();
-        long msb = id.getMostSignificantBits();
-        long lsb = id.getLeastSignificantBits();
-        byte[] data = new byte[16];
-        System.arraycopy(XByteBuffer.toBytes(msb),0,data,0,8);
-        System.arraycopy(XByteBuffer.toBytes(lsb),0,data,8,8);
-        return data;
-    }
     /**
      * Send a message to one or more members in the cluster
      * @param destination Member[] - the destinations, null or zero length means all
@@ -101,9 +92,8 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
         if ( msg == null ) return;
         try {
             int options = 0;
-            ClusterData data = new ClusterData();
+            ClusterData data = new ClusterData();//generates a unique Id
             data.setAddress(getLocalMember());
-            data.setUniqueId(getUUID());
             data.setTimestamp(System.currentTimeMillis());
             byte[] b = null;
             if ( msg instanceof ByteMessage ){

@@ -24,6 +24,7 @@ import java.io.ObjectOutputStream;
 import org.apache.catalina.tribes.mcast.McastMember;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
+import java.util.UUID;
 
 /**
  * The cluster data class is used to transport around the byte array from
@@ -42,7 +43,15 @@ public class ClusterData implements ChannelMessage {
     private byte[] uniqueId ;
     private Member address;
 
-    public ClusterData() {}
+    public ClusterData() {
+        this(true);
+    }
+    
+    public ClusterData(boolean generateUUID) {
+        if ( generateUUID ) generateUUID();
+    }
+    
+    
     
     /**
      * @param type message type (class)
@@ -118,6 +127,17 @@ public class ClusterData implements ChannelMessage {
         this.address = address;
     }
     
+    public void generateUUID() {
+        UUID id = UUID.randomUUID();
+        long msb = id.getMostSignificantBits();
+        long lsb = id.getLeastSignificantBits();
+        byte[] data = new byte[16];
+        System.arraycopy(XByteBuffer.toBytes(msb),0,data,0,8);
+        System.arraycopy(XByteBuffer.toBytes(lsb),0,data,8,8);
+        setUniqueId(data);
+    }
+
+    
     
     /**
      * 
@@ -130,36 +150,57 @@ public class ClusterData implements ChannelMessage {
      * @return byte[]
      */
     public byte[] getDataPackage() throws IOException {
-        ByteArrayOutputStream bout = new ByteArrayOutputStream(getMessage().length*2);
-        ObjectOutputStream out = new ObjectOutputStream(bout);
-        out.writeInt(options);
-        out.writeLong(timestamp);
-        out.writeInt(uniqueId.length);
-        out.write(uniqueId);
         byte[] addr = ((McastMember)address).getData();
-        out.writeInt(addr.length);
-        out.write(addr);
-        out.writeInt(message.length);
-        out.write(message);
-        out.flush();
-        return bout.toByteArray();
+        int length = 
+            4 + //options
+            8 + //timestamp  off=4
+            4 + //unique id length off=12
+            uniqueId.length+ //id data off=12+uniqueId.length
+            4 + //addr length off=12+uniqueId.length+4
+            addr.length+ //member data off=12+uniqueId.length+4+add.length
+            4 + //message length off=12+uniqueId.length+4+add.length+4
+            message.length;
+        byte[] data = new byte[length];
+        int offset = 0;
+        XByteBuffer.toBytes(options,data,offset);
+        offset = 4; //options
+        XByteBuffer.toBytes(timestamp,data,offset);
+        offset += 8; //timestamp
+        XByteBuffer.toBytes(uniqueId.length,data,offset);
+        offset += 4; //uniqueId.length
+        System.arraycopy(uniqueId,0,data,offset,uniqueId.length);
+        offset += uniqueId.length; //uniqueId data
+        XByteBuffer.toBytes(addr.length,data,offset);
+        offset += 4; //addr.length
+        System.arraycopy(addr,0,data,offset,addr.length);
+        offset += addr.length; //addr data
+        XByteBuffer.toBytes(message.length,data,offset);
+        offset += 4; //message.length
+        System.arraycopy(message,0,data,offset,message.length);
+        offset += message.length; //message data
+        return data;
     }
     
-    public static ClusterData getDataFromPackage(byte[] dataPackage) throws IOException {
-        ByteArrayInputStream bin = new ByteArrayInputStream(dataPackage);
-        ObjectInputStream in = new ObjectInputStream(bin);
-        ClusterData data = new ClusterData();
-        data.setOptions(in.readInt());
-        data.setTimestamp(in.readLong());
-        byte[] uniqueId = new byte[in.readInt()];
-        in.read(uniqueId);
-        data.setUniqueId(uniqueId);
-        byte[] addr = new byte[in.readInt()];
-        in.read(addr);
+    public static ClusterData getDataFromPackage(byte[] b) throws IOException {
+        ClusterData data = new ClusterData(false);
+        int offset = 0;
+        data.setOptions(XByteBuffer.toInt(b,offset));
+        offset += 4; //options
+        data.setTimestamp(XByteBuffer.toLong(b,offset));
+        offset += 8; //timestamp
+        data.uniqueId = new byte[XByteBuffer.toInt(b,offset)];
+        offset += 4; //uniqueId length
+        System.arraycopy(b,offset,data.uniqueId,0,data.uniqueId.length);
+        offset += data.uniqueId.length; //uniqueId data
+        byte[] addr = new byte[XByteBuffer.toInt(b,offset)];
+        offset += 4; //addr length
+        System.arraycopy(b,offset,addr,0,addr.length);
         data.setAddress(McastMember.getMember(addr));
-        byte[] message = new byte[in.readInt()];
-        in.read(message);
-        data.setMessage(message);
+        offset += addr.length; //addr data
+        data.message = new byte[XByteBuffer.toInt(b,offset)];
+        offset += 4; //message length
+        System.arraycopy(b,offset,data.message,0,data.message.length);
+        offset += data.message.length; //message data
         return data;
     }
     
