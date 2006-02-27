@@ -72,6 +72,7 @@ public class DataSender implements IDataSender {
      * current sender socket
      */
     private Socket socket = null;
+    private OutputStream socketout = null;
 
     /**
      * is Socket really connected
@@ -698,6 +699,7 @@ public class DataSender implements IDataSender {
      */
     protected void createSocket() throws IOException, SocketException {
         socket = new Socket(getAddress(), getPort());
+        this.socketout = socket.getOutputStream();
     }
 
     /**
@@ -846,9 +848,8 @@ public class DataSender implements IDataSender {
             isMessageTransferStarted = true ;
         }
         try {
-            OutputStream out = socket.getOutputStream();
-            out.write(XByteBuffer.createDataPackage((ClusterData)data));
-            out.flush();
+            socketout.write(XByteBuffer.createDataPackage((ClusterData)data));
+            socketout.flush();
             if (isWaitForAck()) waitForAck(ackTimeout);
         } finally {
             synchronized(this) {

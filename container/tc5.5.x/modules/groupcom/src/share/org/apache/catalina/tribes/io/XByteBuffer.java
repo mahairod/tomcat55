@@ -276,14 +276,17 @@ public class XByteBuffer
      * @return - four bytes in an array
      */
     public static byte[] toBytes(int n) {
-        byte[] b = new byte[4];
-        b[3] = (byte) (n);
+        return toBytes(n,new byte[4],0);
+    }
+
+    public static byte[] toBytes(int n,byte[] b, int offset) {
+        b[offset+3] = (byte) (n);
         n >>>= 8;
-        b[2] = (byte) (n);
+        b[offset+2] = (byte) (n);
         n >>>= 8;
-        b[1] = (byte) (n);
+        b[offset+1] = (byte) (n);
         n >>>= 8;
-        b[0] = (byte) (n);
+        b[offset+0] = (byte) (n);
         return b;
     }
 
@@ -293,22 +296,24 @@ public class XByteBuffer
      * @return - eight bytes in an array
      */
     public static byte[] toBytes(long n) {
-        byte[] b = new byte[8];
-        b[7] = (byte) (n);
+        return toBytes(n,new byte[8],0);
+    }
+    public static byte[] toBytes(long n, byte[] b, int offset) {
+        b[offset+7] = (byte) (n);
         n >>>= 8;
-        b[6] = (byte) (n);
+        b[offset+6] = (byte) (n);
         n >>>= 8;
-        b[5] = (byte) (n);
+        b[offset+5] = (byte) (n);
         n >>>= 8;
-        b[4] = (byte) (n);
+        b[offset+4] = (byte) (n);
         n >>>= 8;
-        b[3] = (byte) (n);
+        b[offset+3] = (byte) (n);
         n >>>= 8;
-        b[2] = (byte) (n);
+        b[offset+2] = (byte) (n);
         n >>>= 8;
-        b[1] = (byte) (n);
+        b[offset+1] = (byte) (n);
         n >>>= 8;
-        b[0] = (byte) (n);
+        b[offset+0] = (byte) (n);
         return b;
     }
 

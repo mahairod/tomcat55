@@ -376,7 +376,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
             time = System.currentTimeMillis();
         }
         try {
-            String key = getKey(member);
+            Object key = getKey(member);
             IDataSender sender = (IDataSender) map.get(key);
             sendMessageData(message, sender);
         } finally {
@@ -506,7 +506,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      */
     public synchronized void add(Member member) {
         try {
-            String key = getKey(member);
+            Object key = getKey(member);
             if (!map.containsKey(key)) {
                 IDataSender sender = IDataSenderFactory.getIDataSender(
                         replicationMode, member);
@@ -524,7 +524,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      * @see org.apache.catalina.tribes.ClusterSender#remove(org.apache.catalina.tribes.Member)
      */
     public synchronized void remove(Member member) {
-        String key = getKey(member);
+        Object key = getKey(member);
         IDataSender toberemoved = (IDataSender) map.get(key);
         if (toberemoved == null)
             return;
@@ -570,8 +570,8 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      * @param member
      * @return concat member.host:member.port
      */
-    protected String getKey(Member member) {
-        return member.getHost() + ":" + member.getPort();
+    protected Object getKey(Member member) {
+        return member;
     }
 
     /**
