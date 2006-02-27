@@ -54,10 +54,8 @@ public class TcpReplicationThread extends WorkerThread {
     public synchronized void run()
     {
         if ( (getOptions() & OPTION_DIRECT_BUFFER) == OPTION_DIRECT_BUFFER ) {
-            System.out.println("Creating a direct buffer");
             buffer = ByteBuffer.allocateDirect(ReplicationListener.BUFFER_RECEIVE_SIZE);
         }else {
-            System.out.println("Creating a regular buffer");
             buffer = ByteBuffer.allocate (ReplicationListener.BUFFER_RECEIVE_SIZE);
         }
         while (doRun) {
