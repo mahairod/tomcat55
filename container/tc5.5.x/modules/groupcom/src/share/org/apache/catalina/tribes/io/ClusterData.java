@@ -39,7 +39,7 @@ public class ClusterData implements ChannelMessage {
     private int options = 0 ;
     private byte[] message ;
     private long timestamp ;
-    private String uniqueId ;
+    private byte[] uniqueId ;
     private Member address;
 
     public ClusterData() {}
@@ -50,7 +50,7 @@ public class ClusterData implements ChannelMessage {
      * @param message message data
      * @param timestamp message creation date
      */
-    public ClusterData(String uniqueId, byte[] message, long timestamp) {
+    public ClusterData(byte[] uniqueId, byte[] message, long timestamp) {
         this.uniqueId = uniqueId;
         this.message = message;
         this.timestamp = timestamp;
@@ -83,13 +83,13 @@ public class ClusterData implements ChannelMessage {
     /**
      * @return Returns the uniqueId.
      */
-    public String getUniqueId() {
+    public byte[] getUniqueId() {
         return uniqueId;
     }
     /**
      * @param uniqueId The uniqueId to set.
      */
-    public void setUniqueId(String uniqueId) {
+    public void setUniqueId(byte[] uniqueId) {
         this.uniqueId = uniqueId;
     }
     /**
@@ -134,7 +134,8 @@ public class ClusterData implements ChannelMessage {
         ObjectOutputStream out = new ObjectOutputStream(bout);
         out.writeInt(options);
         out.writeLong(timestamp);
-        out.writeUTF(uniqueId);
+        out.writeInt(uniqueId.length);
+        out.write(uniqueId);
         byte[] addr = ((McastMember)address).getData();
         out.writeInt(addr.length);
         out.write(addr);
@@ -150,7 +151,9 @@ public class ClusterData implements ChannelMessage {
         ClusterData data = new ClusterData();
         data.setOptions(in.readInt());
         data.setTimestamp(in.readLong());
-        data.setUniqueId(in.readUTF());
+        byte[] uniqueId = new byte[in.readInt()];
+        in.read(uniqueId);
+        data.setUniqueId(uniqueId);
         byte[] addr = new byte[in.readInt()];
         in.read(addr);
         data.setAddress(McastMember.getMember(addr));
