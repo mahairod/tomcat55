@@ -29,12 +29,9 @@ import java.util.Iterator;
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.ChannelReceiver;
 import org.apache.catalina.tribes.MessageListener;
-
 import org.apache.catalina.tribes.io.ListenCallback;
 import org.apache.catalina.tribes.io.ObjectReader;
-import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.util.StringManager;
-import java.io.Serializable;
 
 /**
  * @author Filip Hanik
@@ -74,6 +71,7 @@ public class ReplicationListener
 
     private Object interestOpsMutex = new Object();
     private MessageListener listener = null;
+    private boolean sync;
     public ReplicationListener() {
     }
 
@@ -119,7 +117,7 @@ public class ReplicationListener
      */
     public void start() {
         try {
-            pool = new ThreadPool(tcpThreadCount, TcpReplicationThread.class, interestOpsMutex);
+            pool = new ThreadPool(tcpThreadCount, TcpReplicationThread.class, interestOpsMutex, getWorkerThreadOptions());
         } catch (Exception e) {
             log.error("ThreadPool can initilzed. Listener not started", e);
             return;
@@ -290,7 +288,7 @@ public class ReplicationListener
                 log.debug("No TcpReplicationThread available");
         } else {
             // invoking this wakes up the worker thread then returns
-            worker.serviceChannel(key, isSendAck());
+            worker.serviceChannel(key);
         }
     }
 
@@ -348,7 +346,7 @@ public class ReplicationListener
      *
      * @return True if sending ACK
      */
-    public boolean isSendAck() {
+    public boolean getSendAck() {
         return sendAck;
     }
 
@@ -373,12 +371,32 @@ public class ReplicationListener
         return tcpListenPort;
     }
 
+    public boolean isSync() {
+        return sync;
+    }
+
     public MessageListener getMessageListener() {
         return listener;
     }
 
     public void setTcpListenPort(int tcpListenPort) {
         this.tcpListenPort = tcpListenPort;
+    }
+
+
+    public void setSynchronized(boolean sync) {
+        this.sync = sync;
+    }
+
+    public boolean getSynchronized() {
+        return this.sync;
+    }
+    
+    public int getWorkerThreadOptions() {
+        int options = 0;
+        if ( getSynchronized() ) options = options |TcpReplicationThread.OPTION_SYNCHRONIZED;
+        if ( getSendAck() ) options = options |TcpReplicationThread.OPTION_SEND_ACK;
+        return options;
     }
 
     public void setMessageListener(MessageListener listener) {

@@ -83,13 +83,10 @@ public class ChannelCoordinator extends ChannelInterceptorBase implements Messag
         try {
             //synchronize, big time FIXME
             membershipService.setLocalMemberProperties(getClusterReceiver().getHost(), getClusterReceiver().getPort());
-            clusterReceiver.setSendAck(clusterSender.isWaitForAck());
-            clusterReceiver.setCompress(clusterSender.isCompress());
             //end FIXME
-            
-            if ( (svc & Channel.MBR_RX_SEQ) == Channel.MBR_RX_SEQ) membershipService.start(MembershipService.MBR_RX);
             if ( (svc & Channel.SND_RX_SEQ) == Channel.SND_RX_SEQ) clusterReceiver.start();
             if ( (svc & Channel.SND_TX_SEQ) == Channel.SND_TX_SEQ) clusterSender.start();
+            if ( (svc & Channel.MBR_RX_SEQ) == Channel.MBR_RX_SEQ) membershipService.start(MembershipService.MBR_RX);
             if ( (svc & Channel.MBR_TX_SEQ) == Channel.MBR_TX_SEQ) membershipService.start(MembershipService.MBR_TX);
         }catch ( ChannelException cx ) {
             throw cx;

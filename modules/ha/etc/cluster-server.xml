@@ -298,14 +298,15 @@
                     tcpListenAddress="auto"
                     tcpListenPort="4002"
                     tcpSelectorTimeout="100"
-                    tcpThreadCount="6"/>
+                    tcpThreadCount="6"
+                    sendAck="true"
+                    synchronized="true"/>
 
                 <Sender
                     className="org.apache.catalina.tribes.tcp.ReplicationTransmitter"
                     replicationMode="pooled"
-                    ackTimeout="150000"
-                    waitForAck="true"
-                    compress="true"/>
+                    ackTimeout="15000"
+                    waitForAck="true"/>
                     
                 <Interceptor className="org.apache.catalina.tribes.group.interceptors.GzipInterceptor"/>
             </Channel>
