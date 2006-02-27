@@ -39,16 +39,12 @@ import java.util.UUID;
  * Transfer package:
  * <ul>
  * <li><b>START_DATA/b> - 7 bytes - <i>FLT2002</i></li>
- * <li><b>COMPRESS</b>  - 4 bytes - is message compressed flag</li>
+ * <li><b>OPTIONS</b>  - 4 bytes - message options, implementation specific</li>
  * <li><b>SIZE</b>      - 4 bytes - size of the data package</li>
  * <li><b>DATA</b>      - should be as many bytes as the prev SIZE</li>
  * <li><b>END_DATA</b>  - 7 bytes - <i>TLF2003</i></lI>
  * </ul>
- * FIXME: Why we not use a list of byte buffers?
- * FIXME: Used a pool of buffers instead, every time new generation
- *
  * @author Filip Hanik
- * @author Peter Rossbach
  * @version $Revision: 377484 $, $Date: 2006-02-13 15:00:05 -0600 (Mon, 13 Feb 2006) $
  */
 public class XByteBuffer

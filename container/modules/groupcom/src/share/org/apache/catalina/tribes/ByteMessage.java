@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,33 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.catalina.tribes;
 
+import java.io.Serializable;
 
 /**
- * 
+ * A byte message is not serialized and deserialized by the channel
  * @author Filip Hanik
- * @version $Revision: 303950 $, $Date: 2005-06-09 15:38:30 -0500 (Thu, 09 Jun 2005) $
- *
+ * @version $Revision: 304032 $, $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
  */
-public interface ChannelSender
-{
 
-    public void add(Member member);
-
-    public void remove(Member member);
-
-    public void start() throws java.io.IOException;
-
-    public void stop();
-
-    public void heartbeat() ;
-
-    public void sendMessage(ChannelMessage message, Member member) throws java.io.IOException;
-
-    public void sendMessage(ChannelMessage message) throws java.io.IOException;
+public class ByteMessage implements Serializable {
+    private byte[] message;
     
-    public boolean getWaitForAck();
-    public void setWaitForAck(boolean isWaitForAck);
+    public ByteMessage() {
+        
+    }
+    public ByteMessage(byte[] data) {
+        message = data;
+    }
+    
+    public byte[] getMessage() {
+        return message;
+    }
+
+    public void setMessage(byte[] message) {
+        this.message = message;
+    }
+
 }

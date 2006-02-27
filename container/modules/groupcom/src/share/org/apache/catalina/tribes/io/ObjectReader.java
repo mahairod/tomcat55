@@ -110,6 +110,14 @@ public class ObjectReader {
     }
     
     /**
+     * Returns the number of packages that the reader has read
+     * @return int
+     */
+    public int count() {
+        return buffer.countPackages();
+    }
+    
+    /**
      * Write Ack to sender
      * @param buf
      * @return The bytes written count

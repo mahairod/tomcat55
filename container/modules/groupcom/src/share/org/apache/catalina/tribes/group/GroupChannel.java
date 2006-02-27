@@ -33,6 +33,7 @@ import org.apache.catalina.tribes.ChannelListener;
 import org.apache.catalina.tribes.ManagedChannel;
 import java.util.Iterator;
 import java.util.UUID;
+import org.apache.catalina.tribes.ByteMessage;
 
 /**
  * The GroupChannel manages the replication channel. It coordinates
@@ -43,6 +44,8 @@ import java.util.UUID;
  * @version $Revision: 304032 $, $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
  */
 public class GroupChannel extends ChannelInterceptorBase implements ManagedChannel {
+    public static final int BYTE_MESSAGE = 0x0001;
+    
     private ChannelCoordinator coordinator = new ChannelCoordinator();
     private ChannelInterceptor interceptors = null;
     private MembershipListener membershipListener;
@@ -86,15 +89,23 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
      * @param options int - sender options, see class documentation
      * @return ClusterMessage[] - the replies from the members, if any.
      */
-    public void send(Member[] destination, Serializable msg, int options) throws ChannelException {
+    public void send(Member[] destination, Serializable msg) throws ChannelException {
         if ( msg == null ) return;
         try {
+            int options = 0;
             ClusterData data = new ClusterData();
             data.setAddress(getLocalMember());
             data.setUniqueId(UUID.randomUUID().toString());
             data.setTimestamp(System.currentTimeMillis());
+            byte[] b = null;
+            if ( msg instanceof ByteMessage ){
+                b = ((ByteMessage)msg).getMessage();
+                options = options | BYTE_MESSAGE;
+            } else {
+                b = XByteBuffer.serialize(msg);
+            }
             data.setOptions(options);
-            byte[] b = XByteBuffer.serialize(msg);
+            
             data.setMessage(b);
             getFirstInterceptor().sendMessage(destination, data, null);
         }catch ( Exception x ) {
@@ -105,7 +116,13 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
     public void messageReceived(ChannelMessage msg) {
         if ( msg == null ) return;
         try {
-            Serializable fwd = XByteBuffer.deserialize(msg.getMessage());
+            
+            Serializable fwd = null;
+            if ( (msg.getOptions() & BYTE_MESSAGE) == BYTE_MESSAGE ) {
+                fwd = new ByteMessage(msg.getMessage());
+            } else {
+                fwd = XByteBuffer.deserialize(msg.getMessage());
+            }
             if ( channelListener != null ) channelListener.messageReceived(fwd,msg.getAddress());
         }catch ( Exception x ) {
             log.error("Unable to deserialize channel message.",x);

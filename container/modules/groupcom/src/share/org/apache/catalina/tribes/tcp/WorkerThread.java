@@ -25,14 +25,22 @@ public class WorkerThread extends Thread
 {
     protected ThreadPool pool;
     protected boolean doRun = true;
-
+    private int options;
 
     public void setPool(ThreadPool pool) {
         this.pool = pool;
     }
-    
+
+    public void setOptions(int options) {
+        this.options = options;
+    }
+
     public ThreadPool getPool() {
         return pool;
+    }
+
+    public int getOptions() {
+        return options;
     }
 
     public void close()
