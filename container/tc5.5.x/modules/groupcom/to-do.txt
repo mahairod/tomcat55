@@ -1,9 +1,30 @@
-waitForAck - should only mean, we received the message, not for the message to get processesed.
-This should improve throughput, and an interceptor can do waitForCompletion
+To Do:
+
+Tasks:
+2. Unique id, send it in byte array instead of string
+3. DataSender or ReplicationTransmitter swallows IOException, this should be
+reflected up the channel and the sending app should be notified that the
+message did not send successfully
 
 Interceptors to create
-OrderInterceptor - guarantees the order of messages
-WaitForCompletionInterceptor - waits for the message to get processed by all receivers before returning
-FragmentationInterceptor - splits up messages that are larger than X bytes.
-CoordinatorInterceptor - manages the selection of a cluster coordinator
+1. OrderInterceptor - guarantees the order of messages
+2. WaitForCompletionInterceptor - waits for the message to get processed by all receivers before returning
+  (This is useful when synchronized=false and waitForAck=false, to improve
+parallel processing, but you want to have all messages sent in parallel and
+don't return until all have been processed on the remote end.)
+3. FragmentationInterceptor - splits up messages that are larger than X bytes.
+4. CoordinatorInterceptor - manages the selection of a cluster coordinator
+5. VirtualSynchronyInterceptor - not sure we want to build this one, it would be
+pretty slow, but it would guarantee that all messages were received, to the
+members in that group in that time.
+
+Tasks Completed
+1. True synchronized/asynchronized replication enabled using flags
+Sender.sendAck/Receiver.waitForAck/Receiver.synchronized 
+Task Desc: waitForAck - should only mean, we received the message, not for the
+message to get processesed. This should improve throughput, and an interceptor
+can do waitForCompletion
+Status: Complete
+Notes: 
+
 
