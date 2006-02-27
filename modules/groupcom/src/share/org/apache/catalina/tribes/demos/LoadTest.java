@@ -102,11 +102,11 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
                             printArray(msg.getMessage());
                         }
                         channel.send(null, msg);
+                        sendTime += (System.currentTimeMillis() - start);
                         if ( pause > 0 ) {
                             if ( debug) System.out.println("Pausing sender for "+pause+" ms.");
                             Thread.sleep(pause);
                         }
-                        sendTime += (System.currentTimeMillis() - start);
                     } catch (ChannelException x) {
                         log.error("Unable to send message.");
                         Member[] faulty = x.getFaultyMembers();
