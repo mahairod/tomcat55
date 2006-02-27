@@ -16,38 +16,26 @@
 
 package org.apache.catalina.tribes.tcp;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.zip.GZIPOutputStream;
-
-import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.catalina.Container;
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.ChannelSender;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.util.IDynamicProperty;
-import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
 import org.apache.tomcat.util.IntrospectionUtils;
-import org.apache.catalina.tribes.io.XByteBuffer;
-import org.apache.catalina.tribes.io.*;
 
 /**
  * Transmit message to other cluster members
  * Actual senders are created based on the replicationMode
  * type 
- * FIXME i18n log messages
- * FIXME compress data depends on message type and size 
- * TODO pause and resume senders
  * 
- * @author Peter Rossbach
  * @author Filip Hanik
+ * @author Peter Rossbach
  * @version $Revision: 379956 $ $Date: 2006-02-22 16:57:35 -0600 (Wed, 22 Feb 2006) $
  */
 public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
@@ -112,14 +100,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     /**
      * autoConnect sender when next message send
      */
-    private boolean autoConnect = false;
-
-    /**
-     * Compress message data bytes
-     */
-    private boolean compress = false;
-
-    /**
+    private boolean autoConnect = false; /**
      * doTransmitterProcessingStats
      */
     protected boolean doTransmitterProcessingStats = false;
@@ -263,22 +244,6 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     public ObjectName getObjectName() {
         return objectName;
     }
-
-    /**
-     * @return Returns the compress.
-     */
-    public boolean isCompress() {
-        return compress;
-    }
-
-    /**
-     * @param compressMessageData
-     *            The compress to set.
-     */
-    public void setCompress(boolean compressMessageData) {
-        this.compress = compressMessageData;
-    }
-
     /**
      * @return Returns the autoConnect.
      */
@@ -314,7 +279,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     /**
      * @return Returns the waitForAck.
      */
-    public boolean isWaitForAck() {
+    public boolean getWaitForAck() {
         return waitForAck;
     }
 

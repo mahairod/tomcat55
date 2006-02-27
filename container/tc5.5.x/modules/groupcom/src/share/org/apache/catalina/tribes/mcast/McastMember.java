@@ -256,7 +256,7 @@ public class McastMember implements Member, java.io.Externalizable {
      * String representation of this object
      */
     public String toString()  {
-        return "org.apache.catalina.tribes.mcast.McastMember["+getName()+","+domain+","+host+","+port+", alive="+memberAliveTime+"]";
+        return "org.apache.catalina.tribes.mcast.McastMember["+getName()+","+domain+","+getHostname()+","+port+", alive="+memberAliveTime+"]";
     }
 
     /**

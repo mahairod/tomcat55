@@ -25,7 +25,6 @@ import org.apache.catalina.tribes.ChannelMessage;
  * when data has been received. The interface does not care about
  * objects and marshalling and just passes the bytes straight through.
  * @author Filip Hanik
- * @author Peter Rossbach
  * @version $Revision: 303987 $, $Date: 2005-07-08 15:50:30 -0500 (Fri, 08 Jul 2005) $
  */
 public interface ListenCallback
@@ -37,13 +36,4 @@ public interface ListenCallback
      */
      public void messageDataReceived(ChannelMessage data);
      
-    /** receiver must be send ack
-      */
-     public boolean isSendAck() ;
-     
-     /** send ack
-      *
-      */
-     public void sendAck() throws java.io.IOException ;
-
 }

@@ -37,14 +37,14 @@ import org.apache.catalina.tribes.io.ObjectReader;
  * @version $Revision: 378050 $, $Date: 2006-02-15 12:30:02 -0600 (Wed, 15 Feb 2006) $
  */
 public class TcpReplicationThread extends WorkerThread {
+    public static final int OPTION_SEND_ACK = 0x0001;
+    public static final int OPTION_SYNCHRONIZED = 0x0002;
+
     public static final byte[] ACK_COMMAND = new byte[] {6, 2, 3};
     private static org.apache.commons.logging.Log log =
         org.apache.commons.logging.LogFactory.getLog( TcpReplicationThread.class );
     private ByteBuffer buffer = ByteBuffer.allocate (1024);
     private SelectionKey key;
-    private boolean sendAck=true;
-
-    
     TcpReplicationThread ()
     {
     }
@@ -104,10 +104,9 @@ public class TcpReplicationThread extends WorkerThread {
      * to ignore read-readiness for this channel while the
      * worker thread is servicing it.
      */
-    synchronized void serviceChannel (SelectionKey key, boolean sendAck)
+    synchronized void serviceChannel (SelectionKey key)
     {
         this.key = key;
-        this.sendAck=sendAck;
         key.interestOps (key.interestOps() & (~SelectionKey.OP_READ));
         key.interestOps (key.interestOps() & (~SelectionKey.OP_WRITE));
         this.notify();		// awaken the thread
@@ -135,19 +134,42 @@ public class TcpReplicationThread extends WorkerThread {
             reader.append(buffer.array(),0,count);
             buffer.clear();		// make buffer empty
         }
-        //check to see if any data is available
-        int pkgcnt = reader.execute();
-        if (log.isTraceEnabled()) {
-            log.trace("sending " + pkgcnt + " ack packages to " + channel.socket().getLocalPort() );
-        }
+        
+        int pkgcnt = reader.count();
 
         
-        if (sendAck) {
+
+        /**
+         * Use send ack here if you want to ack the request to the remote 
+         * server before completing the request
+         * This is considered an asynchronized request
+         */
+        if (sendAckAsync()) {
             while ( pkgcnt > 0 ) {
                 sendAck(key,channel);
                 pkgcnt--;
             }
         }
+
+        //check to see if any data is available
+        pkgcnt = reader.execute();
+
+        if (log.isTraceEnabled()) {
+            log.trace("sending " + pkgcnt + " ack packages to " + channel.socket().getLocalPort() );
+        }
+
+        /**
+         * Use send ack here if you want the request to complete on this 
+         * server before sending the ack to the remote server
+         * This is considered a synchronized request
+         */
+        if (sendAckSync()) {
+            while ( pkgcnt > 0 ) {
+                sendAck(key,channel);
+                pkgcnt--;
+            }
+        }        
+
         
         if (count < 0) {
             // close channel on EOF, invalidates the key
@@ -166,6 +188,20 @@ public class TcpReplicationThread extends WorkerThread {
         }
         
     }
+    
+    
+    public boolean sendAckSync() {
+        int options = getOptions();
+        return ((OPTION_SEND_ACK & options) == OPTION_SEND_ACK) &&
+               ((OPTION_SYNCHRONIZED & options) == OPTION_SYNCHRONIZED);
+    }
+    
+    public boolean sendAckAsync() {
+        int options = getOptions();
+        return ((OPTION_SEND_ACK & options) == OPTION_SEND_ACK) &&
+               ((OPTION_SYNCHRONIZED & options) != OPTION_SYNCHRONIZED);
+    }
+
 
     /**
      * send a reply-acknowledgement (6,2,3)

@@ -20,7 +20,6 @@ package org.apache.catalina.tribes;
 /**
  * Cluster Receiver Interface
  * @author Filip Hanik
- * @author Peter Rossbach
  * @version $Revision: 379904 $, $Date: 2006-02-22 15:16:25 -0600 (Wed, 22 Feb 2006) $
  */
 public interface ChannelReceiver {
@@ -35,8 +34,11 @@ public interface ChannelReceiver {
      */
     public void stop();
 
-    
-    public boolean isSendAck();
+    /**
+     * returns true of the receiver is sending acks when it receives messages
+     * @return boolean
+     */
+    public boolean getSendAck();
     
     /**
      * set ack mode
@@ -44,9 +46,6 @@ public interface ChannelReceiver {
      */
     public void setSendAck(boolean isSendAck);
     
-    public boolean isCompress() ;
-    public void setCompress(boolean compress);
-
     /**
      * get the listing ip interface
      * @return The host
