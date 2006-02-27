@@ -22,6 +22,7 @@ import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.util.FastQueue;
 import org.apache.catalina.tribes.util.IQueue;
 import org.apache.catalina.tribes.util.LinkObject;
+import org.apache.catalina.tribes.io.XByteBuffer;
 
 /**
  * Send cluster messages from a Message queue with only one socket. Ack and keep
@@ -300,6 +301,12 @@ public class FastAsyncSocketSender extends DataSender {
         // close socket
         super.disconnect();
     }
+    
+    public String getUniqueIdAsString(byte[] data) {
+        long msb = XByteBuffer.toLong(data,0);
+        long lsb = XByteBuffer.toLong(data,8);
+        return Long.toHexString(msb)+Long.toHexString(lsb);
+    }
 
     /**
      * Send message to queue for later sending.
@@ -308,7 +315,7 @@ public class FastAsyncSocketSender extends DataSender {
      */
     public void sendMessage(ChannelMessage data)
             throws java.io.IOException {
-        queue.add(data.getUniqueId(), data);
+        queue.add(getUniqueIdAsString(data.getUniqueId()), data);
         synchronized (this) {
             inQueueCounter++;
             if(queueThread != null)
