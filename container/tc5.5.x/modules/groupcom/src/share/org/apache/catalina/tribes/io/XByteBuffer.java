@@ -29,6 +29,7 @@ import org.apache.catalina.tribes.io.ReplicationStream;
 import java.io.Serializable;
 import org.apache.catalina.tribes.Member;
 import java.util.UUID;
+import java.nio.ByteBuffer;
 
 /**
  * The XByteBuffer provides a dual functionality.
@@ -66,12 +67,12 @@ public class XByteBuffer
     /**
      * Default size on the initial byte buffer
      */
-    static final int DEF_SIZE = 1024;
+    public static final int DEF_SIZE = 2048;
  
     /**
      * Default size to extend the buffer with
      */
-    static final int DEF_EXT  = 1024;
+    public static final int DEF_EXT  = 1024;
     
     /**
      * Variable to hold the data
@@ -122,6 +123,27 @@ public class XByteBuffer
      * @param len - the number of bytes to append.
      * @return true if the data was appended correctly. Returns false if the package is incorrect, ie missing header or something, or the length of data is 0
      */
+    public boolean append(ByteBuffer b, int len) {
+        int newcount = bufSize + len;
+        if (newcount > buf.length) {
+            //don't change the allocation strategy
+            byte newbuf[] = new byte[Math.max(buf.length << 1, newcount)];
+            System.arraycopy(buf, 0, newbuf, 0, bufSize);
+            buf = newbuf;
+        }
+        b.get(buf,bufSize,len);
+        
+        bufSize = newcount;
+
+        if (bufSize > START_DATA.length && (firstIndexOf(buf,0,START_DATA)==-1)){
+            bufSize = 0;
+            log.error("Discarded the package, invalid header");
+            return false;
+        }
+        return true;
+
+    }
+
     public boolean append(byte[] b, int off, int len) {
         if ((off < 0) || (off > b.length) || (len < 0) ||
             ((off + len) > b.length) || ((off + len) < 0))  {
@@ -132,6 +154,7 @@ public class XByteBuffer
 
         int newcount = bufSize + len;
         if (newcount > buf.length) {
+            //don't change the allocation strategy
             byte newbuf[] = new byte[Math.max(buf.length << 1, newcount)];
             System.arraycopy(buf, 0, newbuf, 0, bufSize);
             buf = newbuf;

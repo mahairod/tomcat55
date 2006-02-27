@@ -383,6 +383,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
         channel.setChannelListener(test);
         channel.setMembershipListener(test);
         channel.start(channel.DEFAULT);
+        Runtime.getRuntime().addShutdownHook(new Shutdown(channel));
         while ( threads > 1 ) {
             Thread t = new Thread(test);
             t.setDaemon(true);
@@ -394,6 +395,24 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
         
         System.out.println("System test complete, sleeping to let threads finish.");
         Thread.sleep(60*1000*60);
-    }    
+    } 
+    
+    public static class Shutdown extends Thread {
+        ManagedChannel channel = null;
+        public Shutdown(ManagedChannel channel) {
+            this.channel = channel;
+        }
+        
+        public void run() {
+            System.out.println("Shutting down...");
+            try {
+                channel.stop(channel.DEFAULT);
+                
+            }catch ( Exception x ) {
+                x.printStackTrace();
+            }
+            System.out.println("Channel stopped.");
+        }
+    }
     
 }
