@@ -92,16 +92,16 @@
     	>
         <classpath refid="ha.classpath" />
     </javac>
-    <copy file="${basedir}/src/share/org/apache/catalina/cluster/LocalStrings.properties"
-    	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/LocalStrings.properties"/>
-    <copy file="${basedir}/src/share/org/apache/catalina/cluster/session/LocalStrings.properties"
-    	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/session/LocalStrings.properties"/>
-    <copy file="${basedir}/src/share/org/apache/catalina/cluster/tcp/LocalStrings.properties"
-    	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/tcp/LocalStrings.properties"/>
-    <copy file="${basedir}/src/share/org/apache/catalina/cluster/session/mbeans-descriptors.xml"
-    	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/session/mbeans-descriptors.xml"/>
-    <copy file="${basedir}/src/share/org/apache/catalina/cluster/tcp/mbeans-descriptors.xml"
-    	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/tcp/mbeans-descriptors.xml"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/ha/LocalStrings.properties"
+    	  tofile="${catalina.build}/classes/org/apache/catalina/ha/LocalStrings.properties"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/ha/session/LocalStrings.properties"
+    	  tofile="${catalina.build}/classes/org/apache/catalina/ha/session/LocalStrings.properties"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/ha/tcp/LocalStrings.properties"
+    	  tofile="${catalina.build}/classes/org/apache/catalina/ha/tcp/LocalStrings.properties"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/ha/session/mbeans-descriptors.xml"
+    	  tofile="${catalina.build}/classes/org/apache/catalina/ha/session/mbeans-descriptors.xml"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/ha/tcp/mbeans-descriptors.xml"
+    	  tofile="${catalina.build}/classes/org/apache/catalina/ha/tcp/mbeans-descriptors.xml"/>
    </target>
 
 
@@ -138,7 +138,7 @@
     
     <jar destfile="${ha.dist}/catalina-cluster.jar"
          basedir="${catalina.build}/classes">
-       <include name="org/apache/catalina/cluster/**" />
+       <include name="org/apache/catalina/ha/**" />
        <exclude name="**/package.html" />
        <exclude name="**/LocalStrings_*" />
     </jar>
