@@ -331,6 +331,22 @@ public class XByteBuffer
             ( ( ( (long) b[off+0]) & 0xFF) << 56);
     }
 
+    
+    /**
+     * Converts an integer to four bytes
+     * @param n - the integer
+     * @return - four bytes in an array
+     */
+    public static byte[] toBytes(boolean bool) {
+        byte[] b = new byte[] {(byte)(bool?1:0)};
+        return b;
+    }
+    
+    public static boolean toBoolean(byte[] b, int offset) {
+        return b[offset] != 0;
+    }
+
+    
     /**
      * Converts an integer to four bytes
      * @param n - the integer
