@@ -24,6 +24,9 @@ import org.apache.catalina.tribes.InterceptorPayload;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.group.ChannelInterceptorBase;
 import org.apache.catalina.tribes.io.XByteBuffer;
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Set;
 
 /**
  *
@@ -39,6 +42,8 @@ import org.apache.catalina.tribes.io.XByteBuffer;
  * @version 1.0
  */
 public class FragmentationInterceptor extends ChannelInterceptorBase {
+    private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog( FragmentationInterceptor.class );
+    
     protected HashMap fragpieces = new HashMap();
     private int maxSize = 1024*100;
     private long expire = 1000 * 60; //one minute expiration
@@ -68,16 +73,21 @@ public class FragmentationInterceptor extends ChannelInterceptorBase {
     }
 
     
-    public synchronized FragCollection getFragCollection(FragKey key, ChannelMessage msg) {
+    public FragCollection getFragCollection(FragKey key, ChannelMessage msg) {
         FragCollection coll = (FragCollection)fragpieces.get(key);
         if ( coll == null ) {
-            coll = new FragCollection(msg);
-            fragpieces.put(key,coll);
+            synchronized (fragpieces) {
+                coll = (FragCollection)fragpieces.get(key);
+                if ( coll == null ) {
+                    coll = new FragCollection(msg);
+                    fragpieces.put(key, coll);
+                }
+            }
         } 
         return coll;
     }
     
-    public synchronized void removeFragCollection(FragKey key) {
+    public void removeFragCollection(FragKey key) {
         fragpieces.remove(key);
     }
     
@@ -120,6 +130,23 @@ public class FragmentationInterceptor extends ChannelInterceptorBase {
         for ( int i=0; i<messages.length; i++ ) {
             super.sendMessage(destination,messages[i],payload);
         }
+    }
+    
+    public void heartbeat() {
+        try {
+            Set set = fragpieces.keySet(); 
+            Object[] keys = set.toArray();
+            for ( int i=0; i<keys.length; i++ ) {
+                FragKey key = (FragKey)keys[i];
+                if ( key != null && key.expired(getExpire()) ) 
+                    removeFragCollection(key);
+            }
+        }catch ( Exception x ) {
+            if ( log.isErrorEnabled() ) {
+                log.error("Unable to perform heartbeat clean up in the frag interceptor",x);
+            }
+        }
+        super.heartbeat();
     }
 
     
