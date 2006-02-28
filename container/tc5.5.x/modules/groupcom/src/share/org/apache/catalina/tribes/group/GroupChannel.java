@@ -103,8 +103,9 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
                 b = XByteBuffer.serialize(msg);
             }
             data.setOptions(options);
-            
-            data.setMessage(b);
+            XByteBuffer buffer = new XByteBuffer(b.length+128);
+            buffer.append(b,0,b.length);
+            data.setMessage(buffer);
             getFirstInterceptor().sendMessage(destination, data, null);
         }catch ( Exception x ) {
             if ( x instanceof ChannelException ) throw (ChannelException)x;
@@ -118,9 +119,9 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
             
             Serializable fwd = null;
             if ( (msg.getOptions() & BYTE_MESSAGE) == BYTE_MESSAGE ) {
-                fwd = new ByteMessage(msg.getMessage());
+                fwd = new ByteMessage(msg.getMessage().getBytes());
             } else {
-                fwd = XByteBuffer.deserialize(msg.getMessage());
+                fwd = XByteBuffer.deserialize(msg.getMessage().getBytes());
             }
             if ( channelListener != null && channelListener.accept(fwd,msg.getAddress())) 
                 channelListener.messageReceived(fwd,msg.getAddress());

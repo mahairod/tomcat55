@@ -602,7 +602,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
             }
             sender.sendMessage(data);
             sender.setSuspect(false);
-            addStats(data.getMessage().length);
+            addStats(data.getMessage().getLength());
         } catch (IOException x) {
             if (!sender.getSuspect()) {
                 if (log.isErrorEnabled() ) log.error("Unable to send replicated message, is member ["+sender.toString()+"] down?",x);

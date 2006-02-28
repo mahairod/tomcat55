@@ -41,7 +41,9 @@ public class GzipInterceptor extends ChannelInterceptorBase {
     
     public void sendMessage(Member[] destination, ChannelMessage msg, InterceptorPayload payload) throws ChannelException {
         try {
-            msg.setMessage(compress(msg.getMessage()));
+            byte[] data = compress(msg.getMessage().getBytes());
+            msg.getMessage().trim(msg.getMessage().getLength());
+            msg.getMessage().append(data,0,data.length);
             getNext().sendMessage(destination, msg, payload);
         } catch ( IOException x ) {
             log.error("Unable to compress byte contents");
@@ -51,7 +53,9 @@ public class GzipInterceptor extends ChannelInterceptorBase {
 
     public void messageReceived(ChannelMessage msg) {
         try {
-            msg.setMessage(decompress(msg.getMessage()));
+            byte[] data = decompress(msg.getMessage().getBytes());
+            msg.getMessage().trim(msg.getMessage().getLength());
+            msg.getMessage().append(data,0,data.length);
             getPrevious().messageReceived(msg);
         } catch ( IOException x ) {
             log.error("Unable to decompress byte contents",x);

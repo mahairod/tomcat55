@@ -16,6 +16,7 @@
 package org.apache.catalina.tribes;
 
 import java.io.Serializable;
+import org.apache.catalina.tribes.io.XByteBuffer;
 
 /**
  * @author Filip Hanik
@@ -61,11 +62,13 @@ public interface ChannelMessage extends Serializable {
      */
     public byte[] getUniqueId();
     
-    public void setMessage(byte[] data);
+    public void setMessage(XByteBuffer buf);
     
-    public byte[] getMessage();
+    public XByteBuffer getMessage();
     
     public int getOptions();
     public void setOptions(int options);
+    
+    public ChannelMessage clone();
 
 }
