@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import org.apache.catalina.tribes.Member;
 
 /**
  * A <b>membership</b> implementation using simple multicast.
@@ -190,6 +191,19 @@ public class McastMembership
      */
     public synchronized boolean hasMembers() {
         return members.length > 0 ;
+    }
+    
+    
+    public synchronized McastMember getMember(Member mbr) {
+        if(hasMembers()) {
+            McastMember result = null;
+            for ( int i=0; i<this.members.length && result==null; i++ ) {
+                if ( members[i].equals(mbr) ) result = members[i];
+            }//for
+            return result;
+        } else {
+            return null;
+        }
     }
  
     /**

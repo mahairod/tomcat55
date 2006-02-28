@@ -91,12 +91,38 @@ public class XByteBuffer
     public XByteBuffer(int size) {
         buf = new byte[size];
     }
+    
+    public XByteBuffer(byte[] data) {
+        this(data,data.length+128);
+    }
+    
+    public XByteBuffer(byte[] data, int size) {
+        int length = Math.max(data.length,size);
+        buf = new byte[length];
+        System.arraycopy(data,0,buf,0,data.length);
+        bufSize = data.length;
+    }
+
 
     /**
      * Constructs a new XByteBuffer with an initial size of 1024 bytes
      */
     public XByteBuffer()  {
         this(DEF_SIZE);
+    }
+    
+    public int getLength() {
+        return bufSize;
+    }
+    
+    public void trim(int length) {
+        if ( (bufSize - length) < 0 ) 
+            throw new ArrayIndexOutOfBoundsException("Can't trim more bytes than are available. length:"+bufSize+" trim:"+length);
+        bufSize -= length;
+    }
+            
+    public byte[] getBytesDirect() {
+        return this.buf;
     }
 
     /**
@@ -415,11 +441,6 @@ public class XByteBuffer
         ByteArrayOutputStream outs = new ByteArrayOutputStream();
         ObjectOutputStream out = new ObjectOutputStream(outs);
         out.writeObject(msg);
-        // flush out the gzip stream to byte buffer
-//        if(out != null) {
-//            out.flush();
-//            out.close();
-//        }
         byte[] data = outs.toByteArray();
         return data;
     }

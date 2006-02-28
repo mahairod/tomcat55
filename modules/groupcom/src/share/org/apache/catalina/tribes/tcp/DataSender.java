@@ -827,8 +827,8 @@ public class DataSender implements IDataSender {
             checkKeepAlive();
             if(doProcessingStats) addProcessingStats(time);
             if(messageTransfered) {
-                addStats(data.getMessage().length);
-                if (log.isTraceEnabled()) log.trace(sm.getString("IDataSender.send.message", address.getHostAddress(),new Integer(port), data.getUniqueId(), new Long(data.getMessage().length)));
+                addStats(data.getMessage().getLength());
+                if (log.isTraceEnabled()) log.trace(sm.getString("IDataSender.send.message", address.getHostAddress(),new Integer(port), data.getUniqueId(), new Long(data.getMessage().getLength())));
             } else {
                 dataFailureCounter++;
                 if ( exception != null ) throw exception;

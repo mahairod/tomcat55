@@ -69,6 +69,8 @@ public interface MembershipService {
      */
     public boolean hasMembers();
     
+    
+    public Member getMember(Member mbr);
     /**
      * Returns a list of all the members in the cluster.
      */

@@ -1,3 +1,18 @@
+/*
+ * Copyright 1999,2004-2006 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.catalina.tribes.demos;
 
 import org.apache.catalina.tribes.Member;
@@ -288,20 +303,15 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
         System.out.println("Usage:\n\t"+
                            "java LoadTest [options]\n\t"+
                            "Options:\n\t\t"+
-                           "[-bind tcpbindaddress] \n\t\t"+
-                           "[-port tcplistenport]  \n\t\t"+
-                           "[-mbind multicastbindaddr]  \n\t\t"+
                            "[-mode receive|send|both]  \n\t\t"+
                            "[-debug]  \n\t\t"+
                            "[-count messagecount]  \n\t\t"+
                            "[-stats statinterval]  \n\t\t"+
-                           "[-ack true|false]  \n\t\t"+
-                           "[-sync true|false]  \n\t\t"+
-                           "[-gzip]  \n\t\t"+
                            "[-pause nrofsecondstopausebetweensends]  \n\t\t"+
-                           "[-sender pooled|fastasyncqueue]  \n\t\t"+
                            "[-threads numberofsenderthreads]  \n\t\t"+
                            "[-break (halts execution on exception)]\n"+
+                           "\tChannel options:"+
+                           ChannelCreator.usage()+"\n\n"+
                            "Example:\n\t"+
                            "java LoadTest -port 4004\n\t"+
                            "java LoadTest -bind 192.168.0.45 -port 4005\n\t"+
@@ -309,49 +319,28 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
     }
     
     public static void main(String[] args) throws Exception {
-        String bind  = "auto";
-        int port = 4001;
         boolean send = true;
-        String mbind = null;
         boolean debug = false;
-        boolean ack = true;
-        boolean sync = true;
-        boolean gzip = false;
         long pause = 0;
         int count = 1000000;
         int stats = 10000;
         boolean breakOnEx = false;
         int threads = 1;
-        String sender = "pooled";
         if ( args.length == 0 ) {
             args = new String[] {"-help"};
         }
         for (int i = 0; i < args.length; i++) {
-            if ("-bind".equals(args[i])) {
-                bind = args[++i];
-            } else if ("-sender".equals(args[i])) {
-                sender = args[++i];
-            } else if ("-port".equals(args[i])) {
-                port = Integer.parseInt(args[++i]);
-            } else if ("-threads".equals(args[i])) {
+            if ("-threads".equals(args[i])) {
                 threads = Integer.parseInt(args[++i]);
             } else if ("-count".equals(args[i])) {
                 count = Integer.parseInt(args[++i]);
             } else if ("-pause".equals(args[i])) {
                 pause = Long.parseLong(args[++i])*1000;
-            } else if ("-gzip".equals(args[i])) {
-                gzip = true;
             } else if ("-break".equals(args[i])) {
                 breakOnEx = true;
-            } else if ("-ack".equals(args[i])) {
-                ack = Boolean.parseBoolean(args[++i]);
-            } else if ("-sync".equals(args[i])) {
-                sync = Boolean.parseBoolean(args[++i]);
             } else if ("-stats".equals(args[i])) {
                 stats = Integer.parseInt(args[++i]);
                 System.out.println("Stats every "+stats+" message");
-            } else if ("-mbind".equals(args[i])) {
-                mbind = args[++i];
             } else if ("-mode".equals(args[i])) {
                 if ( "receive".equals(args[++i]) ) send = false;
             } else if ("-debug".equals(args[i])) {
@@ -364,34 +353,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
         }
         
         
-        ReplicationListener rl = new ReplicationListener();
-        rl.setTcpListenAddress(bind);
-        rl.setTcpListenPort(port);
-        rl.setTcpSelectorTimeout(100);
-        rl.setTcpThreadCount(4);
-        rl.getBind();
-        rl.setSendAck(ack);
-        rl.setSynchronized(sync);
-
-        ReplicationTransmitter ps = new ReplicationTransmitter();
-        ps.setReplicationMode(sender);
-        ps.setAckTimeout(15000);
-        ps.setAutoConnect(true);
-        ps.setWaitForAck(ack);
-
-        McastService service = new McastService();
-        service.setMcastAddr("228.0.0.5");
-        if ( mbind != null ) service.setMcastBindAddress(mbind);
-        service.setMcastFrequency(500);
-        service.setMcastDropTime(2000);
-        service.setMcastPort(45565);
-
-        ManagedChannel channel = new GroupChannel();
-        channel.setChannelReceiver(rl);
-        channel.setChannelSender(ps);
-        channel.setMembershipService(service);
-        
-        if ( gzip ) channel.addInterceptor(new GzipInterceptor());
+        ManagedChannel channel = (ManagedChannel)ChannelCreator.createChannel(args);
         
         LoadTest test = new LoadTest(channel,send,count,debug,pause,stats,breakOnEx);
         LoadMessage msg = new LoadMessage();

@@ -352,6 +352,11 @@ public class McastService implements MembershipService,MembershipListener {
        if ( impl == null || impl.membership == null ) return false;
        return impl.membership.hasMembers();
     }
+    
+    public Member getMember(Member mbr) {
+        if ( impl == null || impl.membership == null ) return null;
+        return impl.membership.getMember(mbr);
+    }
 
     /**
      * Return all the members
