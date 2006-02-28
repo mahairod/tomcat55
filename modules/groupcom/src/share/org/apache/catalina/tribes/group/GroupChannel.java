@@ -91,6 +91,7 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
     public void send(Member[] destination, Serializable msg) throws ChannelException {
         if ( msg == null ) return;
         try {
+            if ( destination == null ) destination = getMembers();
             int options = 0;
             ClusterData data = new ClusterData();//generates a unique Id
             data.setAddress(getLocalMember());
@@ -103,7 +104,7 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
                 b = XByteBuffer.serialize(msg);
             }
             data.setOptions(options);
-            XByteBuffer buffer = new XByteBuffer(b.length+128);
+            XByteBuffer buffer = new XByteBuffer(b.length+128,false);
             buffer.append(b,0,b.length);
             data.setMessage(buffer);
             getFirstInterceptor().sendMessage(destination, data, null);

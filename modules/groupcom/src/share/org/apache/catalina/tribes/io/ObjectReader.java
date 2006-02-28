@@ -52,7 +52,7 @@ public class ObjectReader {
     public ObjectReader(SocketChannel channel, Selector selector, ListenCallback callback) {
         this.channel = channel;
         this.callback = callback;
-        this.buffer = new XByteBuffer();
+        this.buffer = new XByteBuffer(true);
     }
 
     /**

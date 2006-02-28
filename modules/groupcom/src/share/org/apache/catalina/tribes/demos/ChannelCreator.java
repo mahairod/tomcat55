@@ -22,6 +22,7 @@ import org.apache.catalina.tribes.ManagedChannel;
 import org.apache.catalina.tribes.group.GroupChannel;
 import org.apache.catalina.tribes.mcast.McastService;
 import org.apache.catalina.tribes.group.interceptors.GzipInterceptor;
+import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
 
 /**
  * <p>Title: </p>
@@ -53,6 +54,7 @@ public class ChannelCreator {
            .append("\n\t\t[-mfreq multicastfrequency]")
            .append("\n\t\t[-mdrop multicastdroptime]")
            .append("\n\t\t[-gzip]")
+           .append("\n\t\t[-order]")
            ;
        return buf;
 
@@ -74,6 +76,7 @@ public class ChannelCreator {
         int mcastport = 45565;
         long mcastfreq = 500;
         long mcastdrop = 2000;
+        boolean order = false;
         
         for (int i = 0; i < args.length; i++) {
             if ("-bind".equals(args[i])) {
@@ -88,6 +91,8 @@ public class ChannelCreator {
                 tcpthreadcount = Integer.parseInt(args[++i]);
             } else if ("-gzip".equals(args[i])) {
                 gzip = true;
+            } else if ("-order".equals(args[i])) {
+                order = true;
             } else if ("-ack".equals(args[i])) {
                 ack = Boolean.parseBoolean(args[++i]);
             } else if ("-ackto".equals(args[i])) {
@@ -137,6 +142,7 @@ public class ChannelCreator {
         channel.setMembershipService(service);
 
         if (gzip) channel.addInterceptor(new GzipInterceptor());
+        if (order) channel.addInterceptor(new OrderInterceptor());
         return channel;
         
     }
