@@ -28,6 +28,24 @@ import org.apache.catalina.tribes.io.XByteBuffer;
 
 /**
  *
+ * The order interceptor guarantees that messages are received in the same order they were 
+ * sent.
+ * This interceptor works best with the ack=true setting. <br>
+ * There is no point in 
+ * using this with the replicationMode="fastasynchqueue" as this mode guarantees ordering.<BR>
+ * If you are using the mode ack=false replicationMode=pooled, and have a lot of concurrent threads,
+ * this interceptor can really slow you down, as many messages will be completely out of order
+ * and the queue might become rather large. If this is the case, then you might want to set 
+ * the value OrderInterceptor.maxQueue = 25 (meaning that we will never keep more than 25 messages in our queue)
+ * <br><b>Configuration Options</b><br>
+ * OrderInteceptor.expire=<milliseconds> - if a message arrives out of order, how long before we act on it <b>default=3000ms</b><br>
+ * OrderInteceptor.maxQueue=<max queue size> - how much can the queue grow to ensure ordering. 
+ *   This setting is useful to avoid OutOfMemoryErrors<b>default=Integer.MAX_VALUE</b><br>
+ * OrderInterceptor.forwardExpired=<boolean> - this flag tells the interceptor what to 
+ * do when a message has expired or the queue has grown larger than the maxQueue value.
+ * true means that the message is sent up the stack to the receiver that will receive and out of order message
+ * false means, forget the message and reset the message counter. <b>default=true</b>
+ * 
  * 
  * @author Filip Hanik
  * @version 1.0
@@ -38,6 +56,7 @@ public class OrderInterceptor extends ChannelInterceptorBase {
     private HashMap incoming = new HashMap();
     private long expire = 3000;
     private boolean forwardExpired = true;
+    private int maxQueue = Integer.MAX_VALUE;
 
     public void sendMessage(Member[] destination, ChannelMessage msg, InterceptorPayload payload) throws ChannelException {
         for ( int i=0; i<destination.length; i++ ) {
@@ -53,7 +72,6 @@ public class OrderInterceptor extends ChannelInterceptorBase {
         msg.getMessage().trim(4);
         MessageOrder order = new MessageOrder(msgnr,msg);
         if ( processIncoming(order) ) processLeftOvers(msg.getAddress(),false);
-        //getPrevious().messageReceived(msg);
     }
     
     public synchronized void processLeftOvers(Member member, boolean force) {
@@ -79,13 +97,11 @@ public class OrderInterceptor extends ChannelInterceptorBase {
             order = MessageOrder.add(tmp,order);
         }
         
-//        if ( order.getMsgNr() != cnt.getCounter() ) {
-//            System.out.println("Found out of order message.");
-//        }
         
-        while ( (order!=null) && (order.getMsgNr() <= cnt.getCounter()) ) {
+        while ( (order!=null) && (order.getMsgNr() <= cnt.getCounter())  ) {
             //we are right on target. process orders
             if ( order.getMsgNr() == cnt.getCounter() ) cnt.inc();
+            else if ( order.getMsgNr() > cnt.getCounter() ) cnt.setCounter(order.getMsgNr());
             super.messageReceived(order.getMessage());
             order.setMessage(null);
             order = order.next;
@@ -93,11 +109,11 @@ public class OrderInterceptor extends ChannelInterceptorBase {
         MessageOrder head = order;
         MessageOrder prev = null;
         tmp = order;
+        //flag to empty out the queue when it larger than maxQueue
+        boolean empty = order!=null?order.getCount()>=maxQueue:false;
         while ( tmp != null ) {
-            //process expired messages
-            //TODO, when a message expires, what do we do?
-            //just send one?
-            if ( tmp.isExpired(expire) ) {
+            //process expired messages or empty out the queue
+            if ( tmp.isExpired(expire) || empty ) {
                 //reset the head
                 if ( tmp == head ) head = tmp.next;
                 cnt.setCounter(tmp.getMsgNr()+1);
@@ -201,7 +217,7 @@ public class OrderInterceptor extends ChannelInterceptorBase {
             return next;
         }
         
-        public int count() {
+        public int getCount() {
             int counter = 1;
             MessageOrder tmp = next;
             while ( tmp != null ) {
@@ -259,12 +275,20 @@ public class OrderInterceptor extends ChannelInterceptorBase {
         this.forwardExpired = forwardExpired;
     }
 
+    public void setMaxQueue(int maxQueue) {
+        this.maxQueue = maxQueue;
+    }
+
     public long getExpire() {
         return expire;
     }
 
     public boolean getForwardExpired() {
         return forwardExpired;
+    }
+
+    public int getMaxQueue() {
+        return maxQueue;
     }
 
 }

@@ -55,7 +55,7 @@ public class ChannelCreator {
            .append("\n\t\t[-mdrop multicastdroptime]")
            .append("\n\t\t[-gzip]")
            .append("\n\t\t[-order]")
-           ;
+           .append("\n\t\t[-ordersize maxorderqueuesize]");
        return buf;
 
     }
@@ -77,6 +77,7 @@ public class ChannelCreator {
         long mcastfreq = 500;
         long mcastdrop = 2000;
         boolean order = false;
+        int ordersize = Integer.MAX_VALUE;
         
         for (int i = 0; i < args.length; i++) {
             if ("-bind".equals(args[i])) {
@@ -93,6 +94,9 @@ public class ChannelCreator {
                 gzip = true;
             } else if ("-order".equals(args[i])) {
                 order = true;
+            } else if ("-ordersize".equals(args[i])) {
+                ordersize = Integer.parseInt(args[++i]);
+                System.out.println("Setting OrderInterceptor.maxQueue="+ordersize);
             } else if ("-ack".equals(args[i])) {
                 ack = Boolean.parseBoolean(args[++i]);
             } else if ("-ackto".equals(args[i])) {
@@ -142,7 +146,11 @@ public class ChannelCreator {
         channel.setMembershipService(service);
 
         if (gzip) channel.addInterceptor(new GzipInterceptor());
-        if (order) channel.addInterceptor(new OrderInterceptor());
+        if (order) {
+            OrderInterceptor oi = new OrderInterceptor();
+            oi.setMaxQueue(ordersize);
+            channel.addInterceptor(oi);
+        }
         return channel;
         
     }
