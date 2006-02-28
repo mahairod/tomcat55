@@ -23,6 +23,9 @@
       <update>
         Required tcnative library version upgraded to 1.1.2 (remm)
       </update>
+      <update>
+        Update to Eclipse JDT 3.1.2 (remm)
+      </update>
     </changelog>
   </subsection>
   <subsection name="Catalina">
@@ -80,6 +83,9 @@
         Slightly modify the timing of the manager start, so that it is not started by a
         listener (remm)
       </fix>
+      <fix>
+        Refresh loggers used by the digester (remm)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -115,6 +121,10 @@
         <bug>38726</bug>: Remove duplicate request group field causing blank statistics for the
         HTTP connector (remm) 
       </fix>
+      <fix>
+        Fix invalid length used by some AJP packets for the AJP APR connector, which could cause 
+        corruption, submitted by Rudiger Plum (jim)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
@@ -126,6 +136,9 @@
       <update>
         Add some useful hints to jasper-howto. (pero).
       </update>
+      <fix>
+        <bug>38776</bug>: Fix source file attribute, submitted by Olivier Thomann (remm)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Cluster">
