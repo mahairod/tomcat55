@@ -23,6 +23,7 @@ import org.apache.catalina.tribes.group.GroupChannel;
 import org.apache.catalina.tribes.mcast.McastService;
 import org.apache.catalina.tribes.group.interceptors.GzipInterceptor;
 import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
+import org.apache.catalina.tribes.group.interceptors.FragmentationInterceptor;
 
 /**
  * <p>Title: </p>
@@ -55,7 +56,9 @@ public class ChannelCreator {
            .append("\n\t\t[-mdrop multicastdroptime]")
            .append("\n\t\t[-gzip]")
            .append("\n\t\t[-order]")
-           .append("\n\t\t[-ordersize maxorderqueuesize]");
+           .append("\n\t\t[-ordersize maxorderqueuesize]")
+           .append("\n\t\t[-frag]")
+           .append("\n\t\t[-fragsize maxmsgsize]");
        return buf;
 
     }
@@ -78,6 +81,8 @@ public class ChannelCreator {
         long mcastdrop = 2000;
         boolean order = false;
         int ordersize = Integer.MAX_VALUE;
+        boolean frag = false;
+        int fragsize = 1024;
         
         for (int i = 0; i < args.length; i++) {
             if ("-bind".equals(args[i])) {
@@ -97,6 +102,11 @@ public class ChannelCreator {
             } else if ("-ordersize".equals(args[i])) {
                 ordersize = Integer.parseInt(args[++i]);
                 System.out.println("Setting OrderInterceptor.maxQueue="+ordersize);
+            } else if ("-frag".equals(args[i])) {
+                frag = true;
+            } else if ("-fragsize".equals(args[i])) {
+                fragsize = Integer.parseInt(args[++i]);
+                System.out.println("Setting FragmentationInterceptor.maxSize="+fragsize);
             } else if ("-ack".equals(args[i])) {
                 ack = Boolean.parseBoolean(args[++i]);
             } else if ("-ackto".equals(args[i])) {
@@ -146,6 +156,11 @@ public class ChannelCreator {
         channel.setMembershipService(service);
 
         if (gzip) channel.addInterceptor(new GzipInterceptor());
+        if ( frag ) {
+            FragmentationInterceptor fi = new FragmentationInterceptor();
+            fi.setMaxSize(fragsize);
+            channel.addInterceptor(fi);
+        }
         if (order) {
             OrderInterceptor oi = new OrderInterceptor();
             oi.setMaxQueue(ordersize);

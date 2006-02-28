@@ -22,7 +22,7 @@ package org.apache.catalina.tribes;
  * @author Filip Hanik
  * @version $Revision: 303950 $, $Date: 2005-06-09 15:38:30 -0500 (Thu, 09 Jun 2005) $
  *
- */
+ */    
 public interface ChannelSender
 {
 
