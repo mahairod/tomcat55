@@ -198,7 +198,7 @@ public class ClusterData implements ChannelMessage {
         System.arraycopy(b,offset,addr,0,addr.length);
         data.setAddress(McastMember.getMember(addr));
         offset += addr.length; //addr data
-        data.message = new XByteBuffer(new byte[XByteBuffer.toInt(b,offset)]);
+        data.message = new XByteBuffer(new byte[XByteBuffer.toInt(b,offset)],false);
         offset += 4; //message length
         System.arraycopy(b,offset,data.message.getBytesDirect(),0,data.message.getLength());
         offset += data.message.getLength(); //message data

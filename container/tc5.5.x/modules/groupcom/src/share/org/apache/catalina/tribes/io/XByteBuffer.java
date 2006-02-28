@@ -85,30 +85,38 @@ public class XByteBuffer
     protected int bufSize = 0;
     
     /**
+     * 
+     * 
+     */
+    protected boolean discard = true;
+    
+    /**
      * Constructs a new XByteBuffer
      * @param size - the initial size of the byte buffer
      */
-    public XByteBuffer(int size) {
+    public XByteBuffer(int size, boolean discard) {
         buf = new byte[size];
+        this.discard = discard;
     }
     
-    public XByteBuffer(byte[] data) {
-        this(data,data.length+128);
+    public XByteBuffer(byte[] data,boolean discard) {
+        this(data,data.length+128,discard);
     }
     
-    public XByteBuffer(byte[] data, int size) {
+    public XByteBuffer(byte[] data, int size,boolean discard) {
         int length = Math.max(data.length,size);
         buf = new byte[length];
         System.arraycopy(data,0,buf,0,data.length);
         bufSize = data.length;
+        this.discard = discard;
     }
 
 
     /**
      * Constructs a new XByteBuffer with an initial size of 1024 bytes
      */
-    public XByteBuffer()  {
-        this(DEF_SIZE);
+    public XByteBuffer(boolean discard)  {
+        this(DEF_SIZE,discard);
     }
     
     public int getLength() {
@@ -160,11 +168,13 @@ public class XByteBuffer
         b.get(buf,bufSize,len);
         
         bufSize = newcount;
-
-        if (bufSize > START_DATA.length && (firstIndexOf(buf,0,START_DATA)==-1)){
-            bufSize = 0;
-            log.error("Discarded the package, invalid header");
-            return false;
+        
+        if ( discard ) {
+            if (bufSize > START_DATA.length && (firstIndexOf(buf, 0, START_DATA) == -1)) {
+                bufSize = 0;
+                log.error("Discarded the package, invalid header");
+                return false;
+            }
         }
         return true;
 
@@ -188,10 +198,12 @@ public class XByteBuffer
         System.arraycopy(b, off, buf, bufSize, len);
         bufSize = newcount;
 
-        if (bufSize > START_DATA.length && (firstIndexOf(buf,0,START_DATA)==-1)){
-            bufSize = 0;
-            log.error("Discarded the package, invalid header");
-            return false;
+        if ( discard ) {
+            if (bufSize > START_DATA.length && (firstIndexOf(buf, 0, START_DATA) == -1)) {
+                bufSize = 0;
+                log.error("Discarded the package, invalid header");
+                return false;
+            }
         }
         return true;
     }
