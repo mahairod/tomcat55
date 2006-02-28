@@ -37,7 +37,7 @@ public class OrderInterceptor extends ChannelInterceptorBase {
     private HashMap incounter = new HashMap();
     private HashMap incoming = new HashMap();
     private long expire = 3000;
-    private boolean forwardExpired;
+    private boolean forwardExpired = true;
 
     public void sendMessage(Member[] destination, ChannelMessage msg, InterceptorPayload payload) throws ChannelException {
         for ( int i=0; i<destination.length; i++ ) {
@@ -77,6 +77,7 @@ public class OrderInterceptor extends ChannelInterceptorBase {
         while ( tmp != null ) {
             //process expired messages
             if ( tmp.isExpired(expire) ) {
+                System.out.println("Found expired message");
                 //reset the head
                 if ( tmp == head ) head = tmp.next;
                 if ( getForwardExpired() ) super.messageReceived(tmp.getMessage());

@@ -121,12 +121,13 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
     public void run() {
         
         long counter = 0;
+        long total = 0;
         LoadMessage msg = new LoadMessage();
         int messageSize = LoadTest.messageSize;
         
         try {
             startTest();
-            while (counter < msgCount) {
+            while (total < msgCount) {
                 if (channel.getMembers().length == 0 || (!send)) {
                     synchronized (mutex) {
                         try {
@@ -137,7 +138,8 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
                     }
                 } else {
                     try {
-                        msg.setMsgNr((int)++counter);
+                        msg.setMsgNr((int)++total);
+                        counter++;
                         if (debug) {
                             printArray(msg.getMessage());
                         }
@@ -334,6 +336,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
                 threads = Integer.parseInt(args[++i]);
             } else if ("-count".equals(args[i])) {
                 count = Integer.parseInt(args[++i]);
+                System.out.println("Sending "+count+" messages.");
             } else if ("-pause".equals(args[i])) {
                 pause = Long.parseLong(args[++i])*1000;
             } else if ("-break".equals(args[i])) {
@@ -345,7 +348,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
                 if ( "receive".equals(args[++i]) ) send = false;
             } else if ("-debug".equals(args[i])) {
                 debug = true;
-            } else //("-help".equals(args[i])) 
+            } else if ("-help".equals(args[i])) 
             {
                 usage();
                 System.exit(1);
@@ -357,6 +360,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
         
         LoadTest test = new LoadTest(channel,send,count,debug,pause,stats,breakOnEx);
         LoadMessage msg = new LoadMessage();
+        
         messageSize = LoadMessage.getMessageSize(msg);
         channel.setChannelListener(test);
         channel.setMembershipListener(test);
@@ -383,6 +387,9 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
         
         public void run() {
             System.out.println("Shutting down...");
+            SystemExit exit = new SystemExit(5000);
+            exit.setDaemon(true);
+            exit.start();
             try {
                 channel.stop(channel.DEFAULT);
                 
@@ -390,6 +397,21 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
                 x.printStackTrace();
             }
             System.out.println("Channel stopped.");
+        }
+    }
+    public static class SystemExit extends Thread {
+        private long delay;
+        public SystemExit(long delay) {
+            this.delay = delay;
+        }
+        public void run () {
+            try {
+                Thread.sleep(delay);
+            }catch ( Exception x ) {
+                x.printStackTrace();
+            }
+            System.exit(0);
+
         }
     }
     
