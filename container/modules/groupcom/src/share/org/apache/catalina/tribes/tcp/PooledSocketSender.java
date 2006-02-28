@@ -132,7 +132,7 @@ public class PooledSocketSender extends DataSender {
             //return the connection to the pool
             senderQueue.returnSender(sender);
         }
-        addStats(data.getMessage().length);
+        addStats(data.getMessage().getLength());
     }
 
     public String toString() {

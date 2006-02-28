@@ -39,7 +39,7 @@ import java.util.Arrays;
 public class ClusterData implements ChannelMessage {
 
     private int options = 0 ;
-    private byte[] message ;
+    private XByteBuffer message ;
     private long timestamp ;
     private byte[] uniqueId ;
     private Member address;
@@ -60,7 +60,7 @@ public class ClusterData implements ChannelMessage {
      * @param message message data
      * @param timestamp message creation date
      */
-    public ClusterData(byte[] uniqueId, byte[] message, long timestamp) {
+    public ClusterData(byte[] uniqueId, XByteBuffer message, long timestamp) {
         this.uniqueId = uniqueId;
         this.message = message;
         this.timestamp = timestamp;
@@ -69,13 +69,13 @@ public class ClusterData implements ChannelMessage {
     /**
      * @return Returns the message.
      */
-    public byte[] getMessage() {
+    public XByteBuffer getMessage() {
         return message;
     }
     /**
      * @param message The message to set.
      */
-    public void setMessage(byte[] message) {
+    public void setMessage(XByteBuffer message) {
         this.message = message;
     }
     /**
@@ -150,7 +150,7 @@ public class ClusterData implements ChannelMessage {
 
      * @return byte[]
      */
-    public byte[] getDataPackage() throws IOException {
+    public byte[] getDataPackage()  {
         byte[] addr = ((McastMember)address).getData();
         int length = 
             4 + //options
@@ -160,7 +160,7 @@ public class ClusterData implements ChannelMessage {
             4 + //addr length off=12+uniqueId.length+4
             addr.length+ //member data off=12+uniqueId.length+4+add.length
             4 + //message length off=12+uniqueId.length+4+add.length+4
-            message.length;
+            message.getLength();
         byte[] data = new byte[length];
         int offset = 0;
         XByteBuffer.toBytes(options,data,offset);
@@ -175,14 +175,14 @@ public class ClusterData implements ChannelMessage {
         offset += 4; //addr.length
         System.arraycopy(addr,0,data,offset,addr.length);
         offset += addr.length; //addr data
-        XByteBuffer.toBytes(message.length,data,offset);
+        XByteBuffer.toBytes(message.getLength(),data,offset);
         offset += 4; //message.length
-        System.arraycopy(message,0,data,offset,message.length);
-        offset += message.length; //message data
+        System.arraycopy(message.getBytesDirect(),0,data,offset,message.getLength());
+        offset += message.getLength(); //message data
         return data;
     }
     
-    public static ClusterData getDataFromPackage(byte[] b) throws IOException {
+    public static ClusterData getDataFromPackage(byte[] b)  {
         ClusterData data = new ClusterData(false);
         int offset = 0;
         data.setOptions(XByteBuffer.toInt(b,offset));
@@ -198,30 +198,26 @@ public class ClusterData implements ChannelMessage {
         System.arraycopy(b,offset,addr,0,addr.length);
         data.setAddress(McastMember.getMember(addr));
         offset += addr.length; //addr data
-        data.message = new byte[XByteBuffer.toInt(b,offset)];
+        data.message = new XByteBuffer(new byte[XByteBuffer.toInt(b,offset)]);
         offset += 4; //message length
-        System.arraycopy(b,offset,data.message,0,data.message.length);
-        offset += data.message.length; //message data
+        System.arraycopy(b,offset,data.message.getBytesDirect(),0,data.message.getLength());
+        offset += data.message.getLength(); //message data
         return data;
     }
     
-    public static void main(String[] args) throws Exception {
-        ClusterData data1 = new ClusterData();
-        data1.setAddress(new McastMember("domain","127.0.0.1",1000,System.currentTimeMillis()));
-        data1.setMessage(new byte[1024]);
-        
-        byte[] b = data1.getDataPackage();
-        
-        ClusterData data2 = ClusterData.getDataFromPackage(b);
-        
-        if ( !(data1.getAddress().equals(data2.getAddress())) ||
-             !(Arrays.equals(data1.getMessage(),data2.getMessage())) ||
-             !(Arrays.equals(data1.getUniqueId(),data2.getUniqueId())) ||
-             !(data1.getTimestamp() == data2.timestamp) ||
-             !(data1.getOptions() == data2.getOptions() ) ) {
-            throw new Exception("Not Equal");
-        }
-                         
+    public int hashCode() {
+        return XByteBuffer.toInt(getUniqueId(),0);
+    }
+    
+    public boolean equals(Object o) {
+        if ( o instanceof ClusterData ) {
+            return Arrays.equals(getUniqueId(),((ClusterData)o).getUniqueId());
+        } else return false;
+    }
+    
+    public ClusterData clone() {
+        byte[] d = this.getDataPackage();
+        return ClusterData.getDataFromPackage(d);
     }
     
 }

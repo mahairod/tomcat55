@@ -135,7 +135,7 @@ public class McastMember implements Member, java.io.Externalizable {
      * @return - the bytes for this member deserialized
      * @throws Exception
      */
-    public byte[] getData() throws IOException {
+    public byte[] getData()  {
         //package looks like
         //alive - 8 bytes
         //port - 4 bytes

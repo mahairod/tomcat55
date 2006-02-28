@@ -166,12 +166,12 @@ public class AsyncSocketSender extends DataSender {
         synchronized (this) {
             inQueueCounter++;
             if(queueThread != null)
-                queueThread.incQueuedNrOfBytes(data.getMessage().length);
+                queueThread.incQueuedNrOfBytes(data.getMessage().getLength());
        }
         if (log.isTraceEnabled())
             log.trace(sm.getString("AsyncSocketSender.queue.message",
                     getAddress().getHostAddress(), new Integer(getPort()), data.getUniqueId(), new Long(
-                            data.getMessage().length)));
+                            data.getMessage().getLength())));
     }
 
     /*
@@ -268,7 +268,7 @@ public class AsyncSocketSender extends DataSender {
                     int messagesize = 0;
                     try {
                         ChannelMessage data = (ChannelMessage) entry.getValue();
-                        messagesize = data.getMessage().length;
+                        messagesize = data.getMessage().getLength();
                         sender.pushMessage(data);
                     } catch (Exception x) {
                         log.warn(sm.getString("AsyncSocketSender.send.error",
