@@ -29,29 +29,49 @@ public class ClusterRuleSetFactory {
     public static Log log = LogFactory.getLog(ClusterRuleSetFactory.class);
     
     public static RuleSetBase getClusterRuleSet(String prefix) {
+        
+        //OLD CLUSTER 1
         //first try the same classloader as this class server/lib
         try {
-            return loadRuleSet(prefix,ClusterRuleSetFactory.class.getClassLoader());
+            return loadRuleSet(prefix,"org.apache.catalina.cluster.ClusterRuleSet",ClusterRuleSetFactory.class.getClassLoader());
         } catch ( Exception x ) {
             //display warning
             if ( log.isWarnEnabled() ) log.warn("Unable to load ClusterRuleSet, falling back on context classloader",x);
         }
         //try to load it from the context class loader
         try {
-            return loadRuleSet(prefix,Thread.currentThread().getContextClassLoader());
+            return loadRuleSet(prefix,"org.apache.catalina.cluster.ClusterRuleSet",Thread.currentThread().getContextClassLoader());
         } catch ( Exception x ) {
             //display warning
-            if ( log.isWarnEnabled() ) log.warn("Unable to load ClusterRuleSet, falling back on DefaultClusterRuleSet",x);
+            if ( log.isWarnEnabled() ) log.warn("Unable to load ClusterRuleSet, will try to load the HA cluster",x);
         }
+        
+        //NEW CLUSTER 2
+        //first try the same classloader as this class server/lib
+        try {
+            return loadRuleSet(prefix,"org.apache.catalina.ha.ClusterRuleSet",ClusterRuleSetFactory.class.getClassLoader());
+        } catch ( Exception x ) {
+            //display warning
+            if ( log.isWarnEnabled() ) log.warn("Unable to load HA ClusterRuleSet, falling back on context classloader",x);
+        }
+        //try to load it from the context class loader
+        try {
+            return loadRuleSet(prefix,"org.apache.catalina.ha.ClusterRuleSet",Thread.currentThread().getContextClassLoader());
+        } catch ( Exception x ) {
+            //display warning
+            if ( log.isWarnEnabled() ) log.warn("Unable to load HA ClusterRuleSet, falling back on DefaultClusterRuleSet",x);
+        }
+
+        
         return new DefaultClusterRuleSet(prefix);
     }
     
     
-    protected static RuleSetBase loadRuleSet(String prefix, ClassLoader cl) 
+    protected static RuleSetBase loadRuleSet(String prefix, String className, ClassLoader cl) 
         throws ClassNotFoundException, InstantiationException, 
                NoSuchMethodException,IllegalAccessException,
                InvocationTargetException {
-        Class clazz = Class.forName("org.apache.catalina.cluster.ClusterRuleSet",true,cl);
+        Class clazz = Class.forName(className,true,cl);
         Constructor cons = clazz.getConstructor(new Class[] {String.class});
         return (RuleSetBase)cons.newInstance(new String[] {prefix});
     }
