@@ -51,13 +51,38 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
     static int messageSize = 0;
     
     public static long messagesSent = 0;
-    public static long messageSendTime = 0;
+    public static long messageStartSendTime = 0;
+    public static long messageEndSendTime = 0;
+    public static int  threadCount = 0;
     
-    public static synchronized long addSendStats(long count, long time) {
+    public static synchronized void startTest() {
+        threadCount++;
+        if ( messageStartSendTime == 0 ) messageStartSendTime = System.currentTimeMillis();
+    }
+    
+    public static synchronized void endTest() {
+        threadCount--;
+        if ( messageEndSendTime == 0 && threadCount==0 ) messageEndSendTime = System.currentTimeMillis();
+    }
+
+    
+    public static synchronized long addSendStats(long count) {
         messagesSent+=count;
-        messageSendTime+=time;
         return 0l;
     }    
+    
+    private static void printSendStats(long counter, int messageSize) {
+        float cnt = (float)counter;
+        float size = (float)messageSize;
+        float time = (float)(System.currentTimeMillis()-messageStartSendTime) / 1000f;
+        log.info("****SEND STATS-"+Thread.currentThread().getName()+"*****"+
+                 "\n\tMessage count:"+counter+
+                 "\n\tTotal bytes  :"+(long)(size*cnt)+
+                 "\n\tTotal seconds:"+(time)+
+                 "\n\tBytes/second :"+(size*cnt/time)+
+                 "\n\tMBytes/second:"+(size*cnt/time/1024f/1024f));
+    }
+
     
     
     public LoadTest(ManagedChannel channel, 
@@ -83,8 +108,9 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
         long counter = 0;
         LoadMessage msg = new LoadMessage();
         int messageSize = LoadTest.messageSize;
-        long sendTime = 0;
+        
         try {
+            startTest();
             while (counter < msgCount) {
                 if (channel.getMembers().length == 0 || (!send)) {
                     synchronized (mutex) {
@@ -97,12 +123,10 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
                 } else {
                     try {
                         msg.setMsgNr((int)++counter);
-                        long start = System.currentTimeMillis();
                         if (debug) {
                             printArray(msg.getMessage());
                         }
                         channel.send(null, msg);
-                        sendTime += (System.currentTimeMillis() - start);
                         if ( pause > 0 ) {
                             if ( debug) System.out.println("Pausing sender for "+pause+" ms.");
                             Thread.sleep(pause);
@@ -117,31 +141,22 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
                 }
                 if ( (counter % statsInterval) == 0 && (counter > 0)) {
                     //add to the global counter
-                    //counter = sendTime = addSendStats(counter,sendTime);
+                    counter = addSendStats(counter);
                     //print from the global counter
                     //printSendStats(LoadTest.messagesSent, LoadTest.messageSize, LoadTest.messageSendTime);
-                    printSendStats(counter, LoadTest.messageSize, sendTime);
+                    printSendStats(LoadTest.messagesSent, LoadTest.messageSize);
                     
                 }
 
             }
         }catch ( Exception x ) {
             x.printStackTrace();
-            printSendStats(counter, messageSize, sendTime);
+            printSendStats(LoadTest.messagesSent, LoadTest.messageSize);
         }
+        endTest();
     }
 
-    private void printSendStats(long counter, int messageSize, long sendTime) {
-        float cnt = (float)counter;
-        float size = (float)messageSize;
-        float time = (float)sendTime / 1000;
-        log.info("****SEND STATS-"+Thread.currentThread().getName()+"*****"+
-                 "\n\tMessage count:"+counter+
-                 "\n\tTotal bytes  :"+(long)(size*cnt)+
-                 "\n\tTotal seconds:"+(time)+
-                 "\n\tBytes/second :"+(size*cnt/time)+
-                 "\n\tMBytes/second:"+(size*cnt/time/1024f/1024f));
-    }
+    
 
     /**
      * memberAdded
@@ -169,7 +184,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
     }
     
     public boolean accept(Serializable msg, Member mbr){ 
-       return (msg instanceof LoadMessage);
+       return (msg instanceof LoadMessage) || (msg instanceof ByteMessage);
     }
     
     public void messageReceived(Serializable msg, Member mbr){ 
@@ -180,12 +195,13 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
             }
         }
         
-        if ( msg instanceof ByteMessage ) {
+        if ( msg instanceof ByteMessage && !(msg instanceof LoadMessage)) {
             LoadMessage tmp = new LoadMessage();
             tmp.setMessage(((ByteMessage)msg).getMessage());
             msg = tmp;
             tmp = null;
         }
+        
         
         bytesReceived+=((LoadMessage)msg).getMessage().length;
         messagesReceived++;
