@@ -52,11 +52,25 @@ public class OrderInterceptor extends ChannelInterceptorBase {
         int msgnr = XByteBuffer.toInt(msg.getMessage().getBytesDirect(),msg.getMessage().getLength()-4);
         msg.getMessage().trim(4);
         MessageOrder order = new MessageOrder(msgnr,msg);
-        processIncoming(order);
+        if ( processIncoming(order) ) processLeftOvers(msg.getAddress(),false);
         //getPrevious().messageReceived(msg);
     }
-    public synchronized void processIncoming(MessageOrder order) {
-int val = order.getMsgNr();
+    
+    public synchronized void processLeftOvers(Member member, boolean force) {
+        MessageOrder tmp = (MessageOrder)incoming.get(member);
+        if ( force ) {
+            Counter cnt = getInCounter(member);
+            cnt.setCounter(Integer.MAX_VALUE);
+        }
+        if ( tmp!= null ) processIncoming(tmp);
+    }
+    /**
+     * 
+     * @param order MessageOrder
+     * @return boolean - true if a message expired and was processed
+     */
+    public synchronized boolean processIncoming(MessageOrder order) {
+        boolean result = false;
         Member member = order.getMessage().getAddress();
         Counter cnt = getInCounter(member);
         
@@ -86,10 +100,12 @@ int val = order.getMsgNr();
             if ( tmp.isExpired(expire) ) {
                 //reset the head
                 if ( tmp == head ) head = tmp.next;
+                cnt.setCounter(tmp.getMsgNr()+1);
                 if ( getForwardExpired() ) super.messageReceived(tmp.getMessage());
                 tmp.setMessage(null);
                 tmp = tmp.next;
-                if ( prev != null ) prev.next = tmp;                
+                if ( prev != null ) prev.next = tmp;  
+                result = true;
             } else {
                 prev = tmp;
                 tmp = tmp.next;
@@ -97,6 +113,7 @@ int val = order.getMsgNr();
         }
         if ( head == null ) incoming.remove(member);
         else incoming.put(member, head);
+        return result;
     }
     
     public void memberAdded(Member member) {
@@ -110,6 +127,8 @@ int val = order.getMsgNr();
         //notify upwards
         outcounter.remove(member);
         incounter.remove(member);
+        //clear the remaining queue
+        processLeftOvers(member,true);
         super.memberDisappeared(member);
     }
     
