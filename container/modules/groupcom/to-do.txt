@@ -1,24 +1,25 @@
 To Do:
+===========================================
 
-Tasks:
-4. ChannelMessage.getMessage should return streamable, that way we can wrap,
-pass it around and all those good things without having to copy byte arrays
-left and right
-5. NIO and IO DataSender, since the IO is blocking
+Documentation:
+===========================================
 
-Interceptors to create
-1. OrderInterceptor - guarantees the order of messages
-2. WaitForCompletionInterceptor - waits for the message to get processed by all receivers before returning
+
+Code Tasks:
+===========================================
+
+6. NIO and IO DataSender, since the IO is blocking
+
+8. WaitForCompletionInterceptor - waits for the message to get processed by all receivers before returning
   (This is useful when synchronized=false and waitForAck=false, to improve
 parallel processing, but you want to have all messages sent in parallel and
 don't return until all have been processed on the remote end.)
-3. FragmentationInterceptor - splits up messages that are larger than X bytes.
-4. CoordinatorInterceptor - manages the selection of a cluster coordinator
-5. VirtualSynchronyInterceptor - not sure we want to build this one, it would be
-pretty slow, but it would guarantee that all messages were received, to the
-members in that group in that time.
+
+9. CoordinatorInterceptor - manages the selection of a cluster coordinator
+10. Xa2PhaseCommitInterceptor - make sure the message doesn't reach the receiver unless all members got it
 
 Tasks Completed
+===========================================
 1. True synchronized/asynchronized replication enabled using flags
 Sender.sendAck/Receiver.waitForAck/Receiver.synchronized 
 Task Desc: waitForAck - should only mean, we received the message, not for the
@@ -27,9 +28,22 @@ can do waitForCompletion
 Status: Complete
 Notes: 
 
-
 2. Unique id, send it in byte array instead of string
 
 3. DataSender or ReplicationTransmitter swallows IOException, this should be
 Notes: This has only been fixed for the pooled synchronized. the fastasynch
 aint working that well
+
+4. ChannelMessage.getMessage should return streamable, that way we can wrap,
+pass it around and all those good things without having to copy byte arrays
+left and right
+Notes: Instead of using a streamable, this is implemented using the XByteBuffer, 
+       which is very easy to use. It also becomes a single spot for optimizations.
+       Ideally, there would be a pool of XByteBuffers, that all use direct ByteBuffers
+       for its data handling.
+
+5. OrderInterceptor - guarantees the order of messages
+Notes: completed
+
+7. FragmentationInterceptor - splits up messages that are larger than X bytes.
+Notes: complated
