@@ -19,6 +19,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import org.apache.catalina.tribes.ChannelMessage;
+import java.io.IOException;
 
 
 
@@ -32,10 +33,11 @@ import org.apache.catalina.tribes.ChannelMessage;
  * for message encoding and decoding.
  *
  * @author Filip Hanik
- * @author Peter Rossbach
  * @version $Revision: 377484 $, $Date: 2006-02-13 15:00:05 -0600 (Mon, 13 Feb 2006) $
  */
 public class ObjectReader {
+
+    protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(ObjectReader.class);
 
     private SocketChannel channel;
 
@@ -52,7 +54,13 @@ public class ObjectReader {
     public ObjectReader(SocketChannel channel, Selector selector, ListenCallback callback) {
         this.channel = channel;
         this.callback = callback;
-        this.buffer = new XByteBuffer(true);
+        try {
+            this.buffer = new XByteBuffer(channel.socket().getReceiveBufferSize(), true);
+        }catch ( IOException x ) {
+            //unable to get buffer size
+            log.warn("Unable to retrieve the socket channel receiver buffer size, setting to default 43800 bytes.");
+            this.buffer = new XByteBuffer(43800,true);
+        }
     }
 
     /**
