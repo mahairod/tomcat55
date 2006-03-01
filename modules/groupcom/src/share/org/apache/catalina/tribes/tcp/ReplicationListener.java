@@ -43,11 +43,11 @@ public class ReplicationListener implements Runnable, ChannelReceiver, ListenCal
     /**
      * @todo make this configurable
      */
-    public static int BUFFER_RECEIVE_SIZE = XByteBuffer.DEF_SIZE;
+    protected int rxBufSize = XByteBuffer.DEF_SIZE;
     /**
      * We are only sending acks
      */
-    public static int BUFFER_SEND_SIZE = 128;
+    protected int txBufSize = 128;
 
     protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(ReplicationListener.class);
 
@@ -123,7 +123,13 @@ public class ReplicationListener implements Runnable, ChannelReceiver, ListenCal
      */
     public void start() {
         try {
-            pool = new ThreadPool(tcpThreadCount, TcpReplicationThread.class, interestOpsMutex, getWorkerThreadOptions());
+            TcpReplicationThread[] receivers = new TcpReplicationThread[tcpThreadCount];
+            for ( int i=0; i<receivers.length; i++ ) {
+                receivers[i] = new TcpReplicationThread();
+                receivers[i].setRxBufSize(getRxBufSize());
+                receivers[i].setOptions(getWorkerThreadOptions());
+            }
+            pool = new ThreadPool(interestOpsMutex, receivers);
         } catch (Exception e) {
             log.error("ThreadPool can initilzed. Listener not started", e);
             return;
@@ -191,8 +197,8 @@ public class ReplicationListener implements Runnable, ChannelReceiver, ListenCal
                         ServerSocketChannel server =
                             (ServerSocketChannel) key.channel();
                         SocketChannel channel = server.accept();
-                        channel.socket().setReceiveBufferSize(BUFFER_RECEIVE_SIZE);
-                        channel.socket().setSendBufferSize(BUFFER_SEND_SIZE);
+                        channel.socket().setReceiveBufferSize(rxBufSize);
+                        channel.socket().setSendBufferSize(txBufSize);
                         Object attach = new ObjectReader(channel, selector,this);
                         registerChannel(selector,
                                         channel,
@@ -372,6 +378,14 @@ public class ReplicationListener implements Runnable, ChannelReceiver, ListenCal
         return direct;
     }
 
+    public int getRxBufSize() {
+        return rxBufSize;
+    }
+
+    public int getTxBufSize() {
+        return txBufSize;
+    }
+
     public MessageListener getMessageListener() {
         return listener;
     }
@@ -382,6 +396,14 @@ public class ReplicationListener implements Runnable, ChannelReceiver, ListenCal
 
     public void setDirect(boolean direct) {
         this.direct = direct;
+    }
+
+    public void setRxBufSize(int rxBufSize) {
+        this.rxBufSize = rxBufSize;
+    }
+
+    public void setTxBufSize(int txBufSize) {
+        this.txBufSize = txBufSize;
     }
 
     public void setSynchronized(boolean sync) {

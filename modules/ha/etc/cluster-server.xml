@@ -279,8 +279,8 @@
             and cluster wide
         -->
         
-        <Cluster className="org.apache.catalina.cluster.tcp.SimpleTcpCluster"
-                 managerClassName="org.apache.catalina.cluster.session.DeltaManager"
+        <Cluster className="org.apache.catalina.ha.tcp.SimpleTcpCluster"
+                 managerClassName="org.apache.catalina.ha.session.DeltaManager"
                  expireSessionsOnShutdown="false"
                  useDirtyFlag="true"
                  notifyListenersOnReplication="true">
@@ -296,31 +296,35 @@
                 <Receiver 
                     className="org.apache.catalina.tribes.tcp.ReplicationListener"
                     tcpListenAddress="auto"
-                    tcpListenPort="4002"
+                    tcpListenPort="4001"
                     tcpSelectorTimeout="100"
                     tcpThreadCount="6"
                     sendAck="true"
-                    synchronized="true"/>
+                    synchronized="true"
+                    rxBufSize="4096"
+                    txBufSize="128"/>
 
                 <Sender
                     className="org.apache.catalina.tribes.tcp.ReplicationTransmitter"
                     replicationMode="pooled"
                     ackTimeout="15000"
-                    waitForAck="true"/>
+                    waitForAck="true"
+                    rxBufSize="4096"
+                    txBufSize="128"/>
                     
                 <Interceptor className="org.apache.catalina.tribes.group.interceptors.GzipInterceptor"/>
             </Channel>
             
-            <Valve className="org.apache.catalina.cluster.tcp.ReplicationValve"
+            <Valve className="org.apache.catalina.ha.tcp.ReplicationValve"
                    filter=".*\.gif;.*\.js;.*\.jpg;.*\.png;.*\.htm;.*\.html;.*\.css;.*\.txt;"/>
                    
-            <Deployer className="org.apache.catalina.cluster.deploy.FarmWarDeployer"
+            <Deployer className="org.apache.catalina.ha.deploy.FarmWarDeployer"
                       tempDir="/tmp/war-temp/"
                       deployDir="/tmp/war-deploy/"
                       watchDir="/tmp/war-listen/"
                       watchEnabled="false"/>
                       
-            <ClusterListener className="org.apache.catalina.cluster.session.ClusterSessionListener"/>
+            <ClusterListener className="org.apache.catalina.ha.session.ClusterSessionListener"/>
         </Cluster>
     
 

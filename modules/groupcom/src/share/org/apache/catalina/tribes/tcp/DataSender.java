@@ -213,7 +213,9 @@ public class DataSender implements IDataSender {
      * After failure make a resend
      */
     private boolean resend = false ;
-    
+    private int rxBufSize = 1024;
+    private int txBufSize = 4096;
+
     // ------------------------------------------------------------- Constructor
     
     public DataSender(String domain,InetAddress host, int port) {
@@ -228,6 +230,12 @@ public class DataSender implements IDataSender {
         this(domain,host,port);
         if ( state != null ) this.senderState = state;
     }
+    public DataSender(String domain,InetAddress host, int port, SenderState state, int rxBufSize, int txBufSize) {
+        this(domain,host,port,state);
+        this.rxBufSize = rxBufSize;
+        this.txBufSize = txBufSize;
+    }
+
     // ------------------------------------------------------------- Properties
 
     /**
@@ -550,12 +558,29 @@ public class DataSender implements IDataSender {
         return senderState;
     }
 
+    public int getRxBufSize() {
+        return rxBufSize;
+    }
+
+    public int getTxBufSize() {
+        return txBufSize;
+    }
+
     /**
      * @param socket The socket to set.
      */
     public void setSocket(Socket socket) {
         this.socket = socket;
     }
+
+    public void setRxBufSize(int rxBufSize) {
+        this.rxBufSize = rxBufSize;
+    }
+
+    public void setTxBufSize(int txBufSize) {
+        this.txBufSize = txBufSize;
+    }
+
     // --------------------------------------------------------- Public Methods
 
     /**
@@ -685,10 +710,11 @@ public class DataSender implements IDataSender {
             if (log.isDebugEnabled())
                 log.debug(sm.getString("IDataSender.openSocket", address.getHostAddress(), new Integer(port),new Long(socketOpenCounter)));
       } catch (IOException ex1) {
-            socketOpenFailureCounter++ ;
-            if (log.isDebugEnabled())
-                log.debug(sm.getString("IDataSender.openSocket.failure",address.getHostAddress(), new Integer(port),new Long(socketOpenFailureCounter)), ex1);
-            throw ex1;
+          getSenderState().setSuspect();
+          socketOpenFailureCounter++ ;
+          if (log.isDebugEnabled())
+              log.debug(sm.getString("IDataSender.openSocket.failure",address.getHostAddress(), new Integer(port),new Long(socketOpenFailureCounter)), ex1);
+          throw ex1;
         }
         
      }
@@ -699,6 +725,8 @@ public class DataSender implements IDataSender {
      */
     protected void createSocket() throws IOException, SocketException {
         socket = new Socket(getAddress(), getPort());
+        socket.setSendBufferSize(getTxBufSize());
+        socket.setReceiveBufferSize(getRxBufSize());
         this.socketout = socket.getOutputStream();
     }
 
