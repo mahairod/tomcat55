@@ -15,24 +15,16 @@
  */
 package org.apache.catalina.tribes.demos;
 
+import java.io.Serializable;
+import java.util.Random;
+
+import org.apache.catalina.tribes.ByteMessage;
+import org.apache.catalina.tribes.ChannelException;
+import org.apache.catalina.tribes.ChannelListener;
+import org.apache.catalina.tribes.ManagedChannel;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
-import org.apache.catalina.tribes.ChannelListener;
-import java.io.Serializable;
-import org.apache.catalina.tribes.ManagedChannel;
-import java.io.Externalizable;
-import java.io.ObjectOutput;
-import java.io.IOException;
-import java.util.Random;
-import java.io.ObjectInput;
 import org.apache.catalina.tribes.io.XByteBuffer;
-import org.apache.catalina.tribes.tcp.ReplicationListener;
-import org.apache.catalina.tribes.group.GroupChannel;
-import org.apache.catalina.tribes.tcp.ReplicationTransmitter;
-import org.apache.catalina.tribes.mcast.McastService;
-import org.apache.catalina.tribes.ByteMessage;
-import org.apache.catalina.tribes.group.interceptors.GzipInterceptor;
-import org.apache.catalina.tribes.ChannelException;
 
 
 /**
@@ -264,11 +256,17 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
         }
         
         protected byte[] message = null;
-        private int msgNr;
-
+        protected int nr = -1;
         static {
             r.nextBytes(outdata);
+        }
+        
+        public LoadMessage() {
             
+        }
+        
+        public LoadMessage(int nr) {
+            this.nr = nr;
         }
         
         public int getMsgNr() {
@@ -276,26 +274,21 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
         }
         
         public void setMsgNr(int nr) {
-            byte[] data = XByteBuffer.toBytes(nr);
-            System.arraycopy(data,0,getMessage(),0,4);
-            setMessage(getMessage());
+            XByteBuffer.toBytes(nr,getMessage(),0);
         }
         
         public byte[] getMessage() {
-            byte[] data = new byte[size+4];
-            XByteBuffer.toBytes(msgNr,data,0);
-            if ( message != null ) {
-                System.arraycopy(message, 0, data, 4, message.length);
-            }else {
+            if ( message == null ) {
+                byte[] data = new byte[size+4];
+                XByteBuffer.toBytes(nr,data,0);
                 System.arraycopy(outdata, 0, data, 4, outdata.length);
+                this.message = data;
             }
-            return data;
+            return message;
         }
         
         public void setMessage(byte[] data) {
-            this.msgNr = XByteBuffer.toInt(data,0);
-            this.message = new byte[data.length-4];
-            System.arraycopy(data,4,message,0,message.length);
+            this.message = data;
         }
     }
     

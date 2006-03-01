@@ -62,7 +62,9 @@ public class OrderInterceptor extends ChannelInterceptorBase {
         for ( int i=0; i<destination.length; i++ ) {
             ChannelMessage tmp = msg.clone();
             int nr = incCounter(destination[i]);
-            tmp.getMessage().append(XByteBuffer.toBytes(nr),0,4);
+            //reduce byte copy
+            //tmp.getMessage().append(XByteBuffer.toBytes(nr),0,4);
+            tmp.getMessage().append(nr);
             getNext().sendMessage(new Member[] {destination[i]}, tmp, payload);
         }
     }
