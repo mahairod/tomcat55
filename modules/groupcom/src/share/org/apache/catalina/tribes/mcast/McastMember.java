@@ -146,10 +146,21 @@ public class McastMember implements Member, java.io.Externalizable {
         byte[] addr = host;
         byte[] data = new byte[8+4+addr.length+4+domaind.length];
         long alive=System.currentTimeMillis()-getServiceStartTime();
-        System.arraycopy(XByteBuffer.toBytes((long)alive),0,data,0,8);
-        System.arraycopy(XByteBuffer.toBytes(port),0,data,8,4);
+        
+        //reduce byte copying
+        //System.arraycopy(XByteBuffer.toBytes((long)alive),0,data,0,8);
+        XByteBuffer.toBytes((long)alive,data,0);
+
+        //reduce byte copying
+        //System.arraycopy(XByteBuffer.toBytes(port),0,data,8,4);
+        XByteBuffer.toBytes(port,data,8);
+        
         System.arraycopy(addr,0,data,12,addr.length);
-        System.arraycopy(XByteBuffer.toBytes(domaind.length),0,data,16,4);
+
+        //reduce byte copying
+        //System.arraycopy(XByteBuffer.toBytes(domaind.length),0,data,16,4);
+        XByteBuffer.toBytes(domaind.length,data,16);
+        
         System.arraycopy(domaind,0,data,20,domaind.length);
         return data;
     }
