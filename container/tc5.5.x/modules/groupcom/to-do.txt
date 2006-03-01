@@ -18,6 +18,8 @@ don't return until all have been processed on the remote end.)
 9. CoordinatorInterceptor - manages the selection of a cluster coordinator
 10. Xa2PhaseCommitInterceptor - make sure the message doesn't reach the receiver unless all members got it
 
+11. Code a ReplicatedFileSystem example, package org.apache.catalina.tipis
+
 Tasks Completed
 ===========================================
 1. True synchronized/asynchronized replication enabled using flags
