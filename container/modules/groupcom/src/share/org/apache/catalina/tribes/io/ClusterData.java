@@ -133,8 +133,11 @@ public class ClusterData implements ChannelMessage {
         long msb = id.getMostSignificantBits();
         long lsb = id.getLeastSignificantBits();
         byte[] data = new byte[16];
-        System.arraycopy(XByteBuffer.toBytes(msb),0,data,0,8);
-        System.arraycopy(XByteBuffer.toBytes(lsb),0,data,8,8);
+        //reduce byte copy
+        //System.arraycopy(XByteBuffer.toBytes(msb),0,data,0,8);
+        XByteBuffer.toBytes(msb,data,0);
+        //System.arraycopy(XByteBuffer.toBytes(lsb),0,data,8,8);
+        XByteBuffer.toBytes(lsb,data,8);
         setUniqueId(data);
     }
 

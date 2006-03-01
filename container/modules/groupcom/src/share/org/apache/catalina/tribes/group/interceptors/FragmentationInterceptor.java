@@ -56,8 +56,9 @@ public class FragmentationInterceptor extends ChannelInterceptorBase {
             frag(destination, msg, payload);
         }
         else {
-            byte[] flag = XByteBuffer.toBytes(frag);
-            msg.getMessage().append(flag,0,flag.length);
+            //byte[] flag = XByteBuffer.toBytes(frag);
+            //msg.getMessage().append(flag,0,flag.length);
+            msg.getMessage().append(frag);
             super.sendMessage(destination, msg, payload);
         }
     }
@@ -117,12 +118,15 @@ public class FragmentationInterceptor extends ChannelInterceptorBase {
             tmp.getMessage().clear();
             tmp.getMessage().append(msg.getMessage().getBytesDirect(),offset,length);
             //add the msg nr
-            tmp.getMessage().append(XByteBuffer.toBytes(i),0,4);
+            //tmp.getMessage().append(XByteBuffer.toBytes(i),0,4);
+            tmp.getMessage().append(i);
             //add the total nr of messages
-            tmp.getMessage().append(XByteBuffer.toBytes(count),0,4);
+            //tmp.getMessage().append(XByteBuffer.toBytes(count),0,4);
+            tmp.getMessage().append(count);
             //add true as the frag flag
-            byte[] flag = XByteBuffer.toBytes(true);
-            tmp.getMessage().append(flag,0,flag.length);
+            //byte[] flag = XByteBuffer.toBytes(true);
+            //tmp.getMessage().append(flag,0,flag.length);
+            tmp.getMessage().append(true);
             messages[i] = tmp;
             remaining -= length;
             

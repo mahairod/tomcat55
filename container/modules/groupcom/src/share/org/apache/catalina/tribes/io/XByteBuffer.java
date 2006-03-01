@@ -16,19 +16,12 @@
 
 package org.apache.catalina.tribes.io;
 
-import org.apache.catalina.tribes.ChannelMessage;
-
-import java.io.ObjectOutputStream;
-import java.util.zip.GZIPOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.zip.GZIPInputStream;
-import org.apache.catalina.tribes.io.ReplicationStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import org.apache.catalina.tribes.Member;
-import java.util.UUID;
 import java.nio.ByteBuffer;
 
 /**
@@ -36,6 +29,8 @@ import java.nio.ByteBuffer;
  * One, it stores message bytes and automatically extends the byte buffer if needed.<BR>
  * Two, it can encode and decode packages so that they can be defined and identified
  * as they come in on a socket.
+ * <br>
+ * <b>THIS CLASS IS NOT THREAD SAFE</B><BR>
  * <br/>
  * Transfer package:
  * <ul>
@@ -160,10 +155,7 @@ public class XByteBuffer
     public boolean append(ByteBuffer b, int len) {
         int newcount = bufSize + len;
         if (newcount > buf.length) {
-            //don't change the allocation strategy
-            byte newbuf[] = new byte[Math.max(buf.length << 1, newcount)];
-            System.arraycopy(buf, 0, newbuf, 0, bufSize);
-            buf = newbuf;
+            expand(newcount);
         }
         b.get(buf,bufSize,len);
         
@@ -179,6 +171,47 @@ public class XByteBuffer
         return true;
 
     }
+    
+    public boolean append(byte i) {
+        int newcount = bufSize + 1;
+        if (newcount > buf.length) {
+            expand(newcount);
+        }
+        buf[bufSize] = i;
+        bufSize = newcount;
+        return true;
+    }
+
+
+    public boolean append(boolean i) {
+        int newcount = bufSize + 1;
+        if (newcount > buf.length) {
+            expand(newcount);
+        }
+        XByteBuffer.toBytes(i,buf,bufSize);
+        bufSize = newcount;
+        return true;
+    }
+
+    public boolean append(long i) {
+        int newcount = bufSize + 8;
+        if (newcount > buf.length) {
+            expand(newcount);
+        }
+        XByteBuffer.toBytes(i,buf,bufSize);
+        bufSize = newcount;
+        return true;
+    }
+    
+    public boolean append(int i) {
+        int newcount = bufSize + 4;
+        if (newcount > buf.length) {
+            expand(newcount);
+        }
+        XByteBuffer.toBytes(i,buf,bufSize);
+        bufSize = newcount;
+        return true;
+    }
 
     public boolean append(byte[] b, int off, int len) {
         if ((off < 0) || (off > b.length) || (len < 0) ||
@@ -190,10 +223,7 @@ public class XByteBuffer
 
         int newcount = bufSize + len;
         if (newcount > buf.length) {
-            //don't change the allocation strategy
-            byte newbuf[] = new byte[Math.max(buf.length << 1, newcount)];
-            System.arraycopy(buf, 0, newbuf, 0, bufSize);
-            buf = newbuf;
+            expand(newcount);
         }
         System.arraycopy(b, off, buf, bufSize, len);
         bufSize = newcount;
@@ -206,6 +236,13 @@ public class XByteBuffer
             }
         }
         return true;
+    }
+
+    private void expand(int newcount) {
+        //don't change the allocation strategy
+        byte newbuf[] = new byte[Math.max(buf.length << 1, newcount)];
+        System.arraycopy(buf, 0, newbuf, 0, bufSize);
+        buf = newbuf;
     }
 
 
@@ -297,7 +334,7 @@ public class XByteBuffer
         System.arraycopy(END_DATA, 0, result, START_DATA.length + 4 + data.length, END_DATA.length);
         return result;
     }
-        
+
 
     /**
      * Convert four bytes to an int
@@ -336,12 +373,24 @@ public class XByteBuffer
      * Converts an integer to four bytes
      * @param n - the integer
      * @return - four bytes in an array
+     * @deprecated use toBytes(boolean,byte[],int)
      */
     public static byte[] toBytes(boolean bool) {
-        byte[] b = new byte[] {(byte)(bool?1:0)};
-        return b;
+        byte[] b = new byte[1] ;
+        return toBytes(bool,b,0);
+
     }
     
+    public static byte[] toBytes(boolean bool, byte[] data, int offset) {
+        data[offset] = (byte)(bool?1:0);
+        return data;
+    }
+    
+    /**
+     * 
+     * @param <any> long
+     * @return use
+     */
     public static boolean toBoolean(byte[] b, int offset) {
         return b[offset] != 0;
     }
@@ -351,6 +400,7 @@ public class XByteBuffer
      * Converts an integer to four bytes
      * @param n - the integer
      * @return - four bytes in an array
+     * @deprecated use toBytes(int,byte[],int)
      */
     public static byte[] toBytes(int n) {
         return toBytes(n,new byte[4],0);
@@ -371,6 +421,7 @@ public class XByteBuffer
      * Converts an long to eight bytes
      * @param n - the long
      * @return - eight bytes in an array
+     * @deprecated use toBytes(long,byte[],int)
      */
     public static byte[] toBytes(long n) {
         return toBytes(n,new byte[8],0);
