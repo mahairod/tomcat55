@@ -301,16 +301,16 @@
                     tcpThreadCount="6"
                     sendAck="true"
                     synchronized="true"
-                    rxBufSize="4096"
-                    txBufSize="128"/>
+                    rxBufSize="43800"
+                    txBufSize="25188"/>
 
                 <Sender
                     className="org.apache.catalina.tribes.tcp.ReplicationTransmitter"
                     replicationMode="pooled"
                     ackTimeout="15000"
                     waitForAck="true"
-                    rxBufSize="4096"
-                    txBufSize="128"/>
+                    rxBufSize="43800"
+                    txBufSize="25188"/>
                     
                 <!--
                 <Interceptor className="org.apache.catalina.tribes.group.interceptors.GzipInterceptor"/>
