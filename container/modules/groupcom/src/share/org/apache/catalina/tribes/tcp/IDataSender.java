@@ -44,5 +44,7 @@ public interface IDataSender
     public boolean checkKeepAlive();
     public String getDomain() ;
     public void setDomain(String domain) ;
+    public void setRxBufSize(int size);
+    public void setTxBufSize(int size);
 
 }
