@@ -67,8 +67,8 @@ public class ChannelCreator {
         String bind = "auto";
         int port = 4001;
         String mbind = null;
-        boolean ack = true;
-        boolean sync = true;
+        boolean ack = false;
+        boolean sync = false;
         boolean gzip = false;
         String sender = "pooled";
         int tcpseltimeout = 100;
