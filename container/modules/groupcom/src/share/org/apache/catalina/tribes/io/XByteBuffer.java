@@ -62,12 +62,12 @@ public class XByteBuffer
     /**
      * Default size on the initial byte buffer
      */
-    public static final int DEF_SIZE = 2048;
+    private static final int DEF_SIZE = 2048;
  
     /**
      * Default size to extend the buffer with
      */
-    public static final int DEF_EXT  = 1024;
+    private static final int DEF_EXT  = 1024;
     
     /**
      * Variable to hold the data

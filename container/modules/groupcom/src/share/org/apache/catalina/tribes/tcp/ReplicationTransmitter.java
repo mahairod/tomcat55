@@ -58,11 +58,11 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     /**
      * @todo make this configurable
      */
-    protected int rxBufSize = XByteBuffer.DEF_SIZE;
+    protected int rxBufSize = 43800;
     /**
      * We are only sending acks
      */
-    protected int txBufSize = 128;
+    protected int txBufSize = 25188;
 
     public ReplicationTransmitter() {
     }
