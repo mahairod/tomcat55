@@ -39,7 +39,7 @@ public interface IDataSender
     public boolean getSuspect();
     public void setAckTimeout(long timeout);
     public long getAckTimeout();
-    public boolean isWaitForAck();
+    public boolean getWaitForAck();
     public void setWaitForAck(boolean isWaitForAck);
     public boolean checkKeepAlive();
     public String getDomain() ;

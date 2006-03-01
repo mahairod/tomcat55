@@ -221,6 +221,8 @@ public class DataSender implements IDataSender {
      * We are only sending acks
      */
     protected int txBufSize = 25188;
+    
+    protected XByteBuffer ackbuf = new XByteBuffer(Constants.ACK_COMMAND.length,true);
 
 
     // ------------------------------------------------------------- Constructor
@@ -530,7 +532,7 @@ public class DataSender implements IDataSender {
     /**
      * @return Returns the waitForAck.
      */
-    public boolean isWaitForAck() {
+    public boolean getWaitForAck() {
         return waitForAck;
     }
 
@@ -709,7 +711,7 @@ public class DataSender implements IDataSender {
            return ;
        try {
             createSocket();
-            if (isWaitForAck()) socket.setSoTimeout((int) ackTimeout);
+            if (getWaitForAck()) socket.setSoTimeout((int) ackTimeout);
             isSocketConnected = true;
             socketOpenCounter++;
             this.keepAliveCount = 0;
@@ -888,7 +890,7 @@ public class DataSender implements IDataSender {
         try {
             socketout.write(XByteBuffer.createDataPackage((ClusterData)data));
             socketout.flush();
-            if (isWaitForAck()) waitForAck(ackTimeout);
+            if (getWaitForAck()) waitForAck(ackTimeout);
         } finally {
             synchronized(this) {
                 isMessageTransferStarted = false ;
@@ -903,24 +905,31 @@ public class DataSender implements IDataSender {
      * @throws java.io.IOException
      * @throws java.net.SocketTimeoutException
      */
-    protected void waitForAck(long timeout) throws java.io.IOException {
+    protected synchronized void waitForAck(long timeout) throws java.io.IOException {
         long time = 0 ;
+        
         if(doWaitAckStats) {
             time = System.currentTimeMillis();
         }
         try {
+            boolean ackReceived = false;
+            ackbuf.clear();
             int bytesRead = 0;
-            if ( log.isTraceEnabled() ) log.trace(sm.getString("IDataSender.ack.start",getAddress(), new Integer(socket.getLocalPort())));
             int i = socket.getInputStream().read();
-            while ((i != -1) && (i != 3) && bytesRead < 10) {
-                if ( log.isTraceEnabled() )  log.trace(sm.getString("IDataSender.ack.read",getAddress(), new Integer(socket.getLocalPort()),new Character((char) i)));
+            while ((i != -1) && (bytesRead < Constants.ACK_COMMAND.length)) {
                 bytesRead++;
+                byte d = (byte)i;
+                ackbuf.append(d);
+                if (ackbuf.doesPackageExist() ) {
+                    ackReceived = true;
+                    break;
+                }
                 i = socket.getInputStream().read();
             }
-            if (i != 3) {
+            if (!ackReceived) {
                 if (i == -1) throw new IOException(sm.getString("IDataSender.ack.eof",getAddress(), new Integer(socket.getLocalPort())));
                 else throw new IOException(sm.getString("IDataSender.ack.wrong",getAddress(), new Integer(socket.getLocalPort())));
-            } else if (log.isTraceEnabled()) log.trace(sm.getString("IDataSender.ack.receive", getAddress(),new Integer(socket.getLocalPort())));
+            }
         } catch (IOException x) {
             missingAckCounter++;
             String errmsg = sm.getString("IDataSender.ack.missing", getAddress(),new Integer(socket.getLocalPort()), new Long(this.ackTimeout));
@@ -932,6 +941,7 @@ public class DataSender implements IDataSender {
             }
             throw x;
         } finally {
+            ackbuf.clear();
             if(doWaitAckStats) addWaitAckStats(time);
         }
     }
