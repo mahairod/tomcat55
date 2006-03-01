@@ -213,8 +213,15 @@ public class DataSender implements IDataSender {
      * After failure make a resend
      */
     private boolean resend = false ;
-    private int rxBufSize = 1024;
-    private int txBufSize = 4096;
+    /**
+     * @todo make this configurable
+     */
+    protected int rxBufSize = 43800;
+    /**
+     * We are only sending acks
+     */
+    protected int txBufSize = 25188;
+
 
     // ------------------------------------------------------------- Constructor
     
@@ -725,6 +732,9 @@ public class DataSender implements IDataSender {
      */
     protected void createSocket() throws IOException, SocketException {
         socket = new Socket(getAddress(), getPort());
+//System.out.println("DEFAULT SOCKET RX="+socket.getReceiveBufferSize() +" our="+getRxBufSize());
+//System.out.println("DEFAULT CHANNEL TX="+socket.getSendBufferSize() +" our="+getTxBufSize());
+//
         socket.setSendBufferSize(getTxBufSize());
         socket.setReceiveBufferSize(getRxBufSize());
         this.socketout = socket.getOutputStream();

@@ -43,11 +43,11 @@ public class ReplicationListener implements Runnable, ChannelReceiver, ListenCal
     /**
      * @todo make this configurable
      */
-    protected int rxBufSize = XByteBuffer.DEF_SIZE;
+    protected int rxBufSize = 43800;
     /**
      * We are only sending acks
      */
-    protected int txBufSize = 128;
+    protected int txBufSize = 25188;
 
     protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(ReplicationListener.class);
 
@@ -197,6 +197,10 @@ public class ReplicationListener implements Runnable, ChannelReceiver, ListenCal
                         ServerSocketChannel server =
                             (ServerSocketChannel) key.channel();
                         SocketChannel channel = server.accept();
+
+//System.out.println("DEFAULT CHANNEL RX="+channel.socket().getReceiveBufferSize() +" our="+rxBufSize);
+//System.out.println("DEFAULT CHANNEL TX="+channel.socket().getSendBufferSize() +" our="+txBufSize);
+
                         channel.socket().setReceiveBufferSize(rxBufSize);
                         channel.socket().setSendBufferSize(txBufSize);
                         Object attach = new ObjectReader(channel, selector,this);
