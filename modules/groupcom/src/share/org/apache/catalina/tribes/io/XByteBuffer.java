@@ -321,7 +321,10 @@ public class XByteBuffer
      * 
      */
     public static byte[] createDataPackage(ClusterData cdata) throws java.io.IOException {
-        byte[] data = cdata.getDataPackage();
+        return createDataPackage(cdata.getDataPackage());
+    }
+    
+    public static byte[] createDataPackage(byte[] data) {
         int length = 
             START_DATA.length + //header length
             4 + //data length indicator

@@ -235,7 +235,7 @@ public class PooledSocketSender extends DataSender {
             sender.setKeepAliveMaxRequestCount(parent.getKeepAliveMaxRequestCount());
             sender.setKeepAliveTimeout(parent.getKeepAliveTimeout());
             sender.setAckTimeout(parent.getAckTimeout());
-            sender.setWaitForAck(parent.isWaitForAck());
+            sender.setWaitForAck(parent.getWaitForAck());
             sender.setResend(parent.isResend());
             sender.setRxBufSize(parent.getRxBufSize());
             sender.setTxBufSize(parent.getTxBufSize());

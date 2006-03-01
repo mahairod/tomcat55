@@ -41,7 +41,7 @@ public class TcpReplicationThread extends WorkerThread {
     public static final int OPTION_SYNCHRONIZED = 0x0002;
     public static final int OPTION_DIRECT_BUFFER = 0x0004;
 
-    public static final byte[] ACK_COMMAND = new byte[] {6, 2, 3};
+    
     private static org.apache.commons.logging.Log log =
         org.apache.commons.logging.LogFactory.getLog( TcpReplicationThread.class );
     private ByteBuffer buffer = null;
@@ -222,7 +222,7 @@ public class TcpReplicationThread extends WorkerThread {
     protected void sendAck(SelectionKey key, SocketChannel channel) {
         
         try {
-            channel.write(ByteBuffer.wrap(ACK_COMMAND));
+            channel.write(ByteBuffer.wrap(Constants.ACK_COMMAND));
             if (log.isTraceEnabled()) {
                 log.trace("ACK sent to " + channel.socket().getPort());
             }
