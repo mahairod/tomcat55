@@ -86,6 +86,12 @@
       <fix>
         Refresh loggers used by the digester (remm)
       </fix>
+      <fix>
+        Use sendError instead of setStatus to send the 401 code. (billbarker)
+      </fix>
+      <fix>
+        Don't append the port for an SSL redirect if it is the default port. (billbarker)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -124,6 +130,16 @@
       <fix>
         Fix invalid length used by some AJP packets for the AJP APR connector, which could cause 
         corruption, submitted by Rudiger Plum (jim)
+      </fix>
+      <fix>
+        Fix problems with request.getReader().readLine(). 
+        patch by Rainer Jung (billbarker)
+      </fix>
+      <fix>
+        Don't write out the shutdown secret file if shutdown is disabled (the default) (billbarker)
+      </fix>
+      <fix>
+        Fix NPE when no sink is supplied. (billbarker)
       </fix>
     </changelog>
   </subsection>
