@@ -41,6 +41,7 @@ import org.apache.catalina.tribes.io.XByteBuffer;
  */
 public class LoadTest implements MembershipListener,ChannelListener, Runnable {
     protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(LoadTest.class);
+    public static int size = 1020;
     public static Object mutex = new Object();
     public boolean doRun = true;
     
@@ -240,7 +241,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
     
     
     public static class LoadMessage extends ByteMessage implements Serializable  {
-        public static int size = 1020;
+        
         public static byte[] outdata = new byte[size];
         public static Random r = new Random(System.currentTimeMillis());
         public static int getMessageSize (LoadMessage msg) {
@@ -304,6 +305,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
                            "[-stats statinterval]  \n\t\t"+
                            "[-pause nrofsecondstopausebetweensends]  \n\t\t"+
                            "[-threads numberofsenderthreads]  \n\t\t"+
+                           "[-size messagesize]  \n\t\t"+
                            "[-break (halts execution on exception)]\n"+
                            "\tChannel options:"+
                            ChannelCreator.usage()+"\n\n"+
@@ -337,6 +339,9 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
             } else if ("-stats".equals(args[i])) {
                 stats = Integer.parseInt(args[++i]);
                 System.out.println("Stats every "+stats+" message");
+            } else if ("-size".equals(args[i])) {
+                size = Integer.parseInt(args[++i])-4;
+                System.out.println("Message size will be:"+(size+4)+" bytes");
             } else if ("-mode".equals(args[i])) {
                 if ( "receive".equals(args[++i]) ) send = false;
             } else if ("-debug".equals(args[i])) {
