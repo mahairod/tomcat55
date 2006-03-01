@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-
 package org.apache.catalina.tribes.tcp;
 
-import org.apache.catalina.tribes.io.XByteBuffer;
-
 /**
- * Manifest constants for the <code>org.apache.catalina.tribes.tcp</code>
- * package.
+ * <p>Title: </p>
  *
- * @author Peter Rossbach
- * @version $Revision: 303753 $ $Date: 2005-03-14 15:24:30 -0600 (Mon, 14 Mar 2005) $
+ * <p>Description: </p>
+ *
+ * <p>Copyright: Copyright (c) 2005</p>
+ *
+ * <p>Company: </p>
+ *
+ * @author Filip Hanik
+ * @version 1.0
  */
-
-public class Constants {
-
-    public static final String Package = "org.apache.catalina.tribes.tcp";
-    
-    public static final byte[] ACK_DATA = new byte[] {6, 2, 3};
-    public static final byte[] ACK_COMMAND = XByteBuffer.createDataPackage(ACK_DATA);
-
+public class ParallelNioSender {
+    public ParallelNioSender() {
+    }
 }
