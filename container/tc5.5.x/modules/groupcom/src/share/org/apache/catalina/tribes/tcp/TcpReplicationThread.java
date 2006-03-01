@@ -46,6 +46,7 @@ public class TcpReplicationThread extends WorkerThread {
         org.apache.commons.logging.LogFactory.getLog( TcpReplicationThread.class );
     private ByteBuffer buffer = null;
     private SelectionKey key;
+    private int rxBufSize;
     TcpReplicationThread ()
     {
     }
@@ -54,9 +55,9 @@ public class TcpReplicationThread extends WorkerThread {
     public synchronized void run()
     {
         if ( (getOptions() & OPTION_DIRECT_BUFFER) == OPTION_DIRECT_BUFFER ) {
-            buffer = ByteBuffer.allocateDirect(ReplicationListener.BUFFER_RECEIVE_SIZE);
+            buffer = ByteBuffer.allocateDirect(getRxBufSize());
         }else {
-            buffer = ByteBuffer.allocate (ReplicationListener.BUFFER_RECEIVE_SIZE);
+            buffer = ByteBuffer.allocate (getRxBufSize());
         }
         while (doRun) {
             try {
@@ -228,5 +229,13 @@ public class TcpReplicationThread extends WorkerThread {
         } catch ( java.io.IOException x ) {
             log.warn("Unable to send ACK back through channel, channel disconnected?: "+x.getMessage());
         }
+    }
+
+    public void setRxBufSize(int rxBufSize) {
+        this.rxBufSize = rxBufSize;
+    }
+
+    public int getRxBufSize() {
+        return rxBufSize;
     }
 }

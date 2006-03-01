@@ -19,7 +19,6 @@ package org.apache.catalina.tribes.tcp;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.LinkedList;
-import org.apache.catalina.tribes.io.*;
 import org.apache.catalina.tribes.ChannelMessage;
 
 /**
@@ -106,7 +105,7 @@ public class PooledSocketSender extends DataSender {
     }
 
     /**
-     * send message and use a pool of SocketSenders
+     * send message and use a pool of DataSenders
      * 
      * @param messageId Message unique identifier
      * @param data Message data
@@ -120,7 +119,7 @@ public class PooledSocketSender extends DataSender {
                     connect();
             }
         }
-        SocketSender sender = senderQueue.getSender(0);
+        DataSender sender = senderQueue.getSender(0);
         if (sender == null) {
             log.warn(sm.getString("PoolSocketSender.noMoreSender", this.getAddress(), new Integer(this.getPort())));
             return;
@@ -187,8 +186,8 @@ public class PooledSocketSender extends DataSender {
             return queue.size();
         }
 
-        public SocketSender getSender(long timeout) {
-            SocketSender sender = null;
+        public DataSender getSender(long timeout) {
+            DataSender sender = null;
             long start = System.currentTimeMillis();
             long delta = 0;
             do {
@@ -197,9 +196,9 @@ public class PooledSocketSender extends DataSender {
                         throw new IllegalStateException(
                                 "Socket pool is closed.");
                     if (queue.size() > 0) {
-                        sender = (SocketSender) queue.removeFirst();
+                        sender = (DataSender) queue.removeFirst();
                     } else if (inuse.size() < limit) {
-                        sender = getNewSocketSender();
+                        sender = getNewDataSender();
                     } else {
                         try {
                             mutex.wait(timeout);
@@ -218,7 +217,7 @@ public class PooledSocketSender extends DataSender {
             return sender;
         }
 
-        public void returnSender(SocketSender sender) {
+        public void returnSender(DataSender sender) {
             //to do
             synchronized (mutex) {
                 queue.add(sender);
@@ -227,18 +226,19 @@ public class PooledSocketSender extends DataSender {
             }
         }
 
-        private SocketSender getNewSocketSender() {
-            //new SocketSender(
-            SocketSender sender = new SocketSender(getDomain(),
-                                                   parent.getAddress(), 
-                                                   parent.getPort(),
-                                                   parent.getSenderState() );
-            sender.setKeepAliveMaxRequestCount(parent
-                    .getKeepAliveMaxRequestCount());
+        private DataSender getNewDataSender() {
+            //new DataSender(
+            DataSender sender = new DataSender(getDomain(),
+                                               parent.getAddress(),
+                                               parent.getPort(),
+                                               parent.getSenderState() );
+            sender.setKeepAliveMaxRequestCount(parent.getKeepAliveMaxRequestCount());
             sender.setKeepAliveTimeout(parent.getKeepAliveTimeout());
             sender.setAckTimeout(parent.getAckTimeout());
             sender.setWaitForAck(parent.isWaitForAck());
             sender.setResend(parent.isResend());
+            sender.setRxBufSize(parent.getRxBufSize());
+            sender.setTxBufSize(parent.getTxBufSize());
             return sender;
 
         }
@@ -246,11 +246,11 @@ public class PooledSocketSender extends DataSender {
         public void close() {
             synchronized (mutex) {
                 for (int i = 0; i < queue.size(); i++) {
-                    SocketSender sender = (SocketSender) queue.get(i);
+                    DataSender sender = (DataSender) queue.get(i);
                     sender.disconnect();
                 }//for
                 for (int i = 0; i < inuse.size(); i++) {
-                    SocketSender sender = (SocketSender) inuse.get(i);
+                    DataSender sender = (DataSender) inuse.get(i);
                     sender.disconnect();
                 }//for
                 queue.clear();

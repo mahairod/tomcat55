@@ -35,13 +35,27 @@ public class ThreadPool
     Object mutex = new Object();
     Object interestOpsMutex = null;
 
+    ThreadPool (Object interestOpsMutex, WorkerThread[] threads) throws Exception {
+        // fill up the pool with worker threads
+        this.interestOpsMutex = interestOpsMutex;
+        for (int i = 0; i < threads.length; i++) {
+            WorkerThread thread = threads[i];
+            thread.setPool(this);
+            thread.setName (thread.getClass().getName()+"[" + (i + 1)+"]");
+            thread.setDaemon(true);
+            thread.setPriority(Thread.MAX_PRIORITY);
+            thread.start();
+            idle.add (thread);
+        }
+    }
+
+
     ThreadPool (int poolSize, Class threadClass, Object interestOpsMutex, int threadOptions) throws Exception {
         // fill up the pool with worker threads
         this.interestOpsMutex = interestOpsMutex;
         for (int i = 0; i < poolSize; i++) {
             WorkerThread thread = (WorkerThread)threadClass.newInstance();
             thread.setPool(this);
-
             // set thread name for debugging, start it
             thread.setName (threadClass.getName()+"[" + (i + 1)+"]");
             thread.setDaemon(true);

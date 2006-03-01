@@ -25,6 +25,7 @@ import javax.management.ObjectName;
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.ChannelSender;
 import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.util.IDynamicProperty;
 import org.apache.catalina.util.StringManager;
 import org.apache.tomcat.util.IntrospectionUtils;
@@ -53,6 +54,15 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     protected StringManager sm = StringManager.getManager(Constants.Package);
 
     private Map map = new HashMap();
+
+    /**
+     * @todo make this configurable
+     */
+    protected int rxBufSize = XByteBuffer.DEF_SIZE;
+    /**
+     * We are only sending acks
+     */
+    protected int txBufSize = 128;
 
     public ReplicationTransmitter() {
     }
@@ -299,14 +309,29 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     public int getProcessSenderFrequency() {
         return processSenderFrequency;
     }
-    
+
+    public int getTxBufSize() {
+        return txBufSize;
+    }
+
+    public int getRxBufSize() {
+        return rxBufSize;
+    }
+
     /**
      * @param processSenderFrequency The processSenderFrequency to set.
      */
     public void setProcessSenderFrequency(int processSenderFrequency) {
         this.processSenderFrequency = processSenderFrequency;
     }
-    
+
+    public void setTxBufSize(int txBufSize) {
+        this.txBufSize = txBufSize;
+    }
+
+    public void setRxBufSize(int rxBufSize) {
+        this.rxBufSize = rxBufSize;
+    }
 
     /**
      * @return True if synchronized sender
@@ -511,6 +536,8 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
                 IDataSender sender = IDataSenderFactory.getIDataSender(
                         replicationMode, member);
                 transferSenderProperty(sender);
+                sender.setRxBufSize(getRxBufSize());
+                sender.setTxBufSize(getTxBufSize());
                 map.put(key, sender);
             }
         } catch (java.io.IOException x) {
