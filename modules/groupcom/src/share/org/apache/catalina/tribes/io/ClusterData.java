@@ -154,7 +154,7 @@ public class ClusterData implements ChannelMessage {
      * @return byte[]
      */
     public byte[] getDataPackage()  {
-        byte[] addr = ((McastMember)address).getData();
+        byte[] addr = ((McastMember)address).getData(false);
         int length = 
             4 + //options
             8 + //timestamp  off=4
