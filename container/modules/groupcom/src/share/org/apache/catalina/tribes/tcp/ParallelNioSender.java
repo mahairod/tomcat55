@@ -13,17 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.catalina.tribes.tcp;
 
+
+import org.apache.catalina.tribes.ChannelMessage;
+import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.ChannelException;
+import org.apache.catalina.tribes.io.XByteBuffer;
+import org.apache.catalina.tribes.io.ClusterData;
+
 /**
- * A class that uses NIO to send data in parallel to several remote nodes.
- * 
+ * <p>Title: </p>
  *
- * @author Filip Hanik
+ * <p>Description: </p>
+ *
+ * <p>Copyright: Copyright (c) 2005</p>
+ *
+ * <p>Company: </p>
+ *
+ * @author not attributable
  * @version 1.0
  */
 public class ParallelNioSender {
-    public ParallelNioSender() {
+    protected long timeout;
+    protected boolean waitForAck;
+    
+    public ParallelNioSender(long timeout, boolean waitForAck) {
+        this.timeout = timeout;
+        this.waitForAck = waitForAck;
     }
+    
+    
+    public synchronized void sendMessage(Member mbr, ChannelMessage msg) throws ChannelException {
+        long start = System.currentTimeMillis();
+        byte[] data = XByteBuffer.createDataPackage((ClusterData)msg);
+        
+        
+    }
+    
+    protected synchronized
+
 }
