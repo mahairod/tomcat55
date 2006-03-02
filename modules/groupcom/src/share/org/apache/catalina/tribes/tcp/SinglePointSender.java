@@ -25,7 +25,7 @@ import org.apache.catalina.tribes.ChannelMessage;
  * @since 5.5.7
  */
 
-public interface IDataSender
+public interface SinglePointSender
 {
     public void setAddress(java.net.InetAddress address);
     public java.net.InetAddress getAddress();

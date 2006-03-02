@@ -190,7 +190,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      * @param mode
      */
     public void setReplicationMode(String mode) {
-        String msg = IDataSenderFactory.validateMode(mode);
+        String msg = DataSenderFactory.validateMode(mode);
         if (msg == null) {
             if (log.isDebugEnabled())
                 log.debug("Setting replication mode to " + mode);
@@ -343,8 +343,8 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      * @deprecated since version 5.5.7
      */
     public boolean getIsSenderSynchronized() {
-        return IDataSenderFactory.SYNC_MODE.equals(replicationMode)
-                || IDataSenderFactory.POOLED_SYNC_MODE.equals(replicationMode);
+        return DataSenderFactory.SYNC_MODE.equals(replicationMode)
+                || DataSenderFactory.POOLED_SYNC_MODE.equals(replicationMode);
     }
 
     // ------------------------------------------------------------- dynamic
@@ -421,7 +421,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
         }
         try {
             Object key = getKey(destination);
-            IDataSender sender = (IDataSender) map.get(key);
+            SinglePointSender sender = (SinglePointSender) map.get(key);
             sendMessageData(message, sender);
         } finally {
             if (doTransmitterProcessingStats) {
@@ -473,7 +473,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     public synchronized void stop() {
         Iterator i = map.entrySet().iterator();
         while (i.hasNext()) {
-            IDataSender sender = (IDataSender) ((java.util.Map.Entry) i.next())
+            SinglePointSender sender = (SinglePointSender) ((java.util.Map.Entry) i.next())
                     .getValue();
             try {
                 sender.disconnect();
@@ -503,7 +503,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
         if (map.size() > 0) {
             java.util.Iterator iter = map.entrySet().iterator();
             while (iter.hasNext()) {
-                IDataSender sender = (IDataSender) ((java.util.Map.Entry) iter
+                SinglePointSender sender = (SinglePointSender) ((java.util.Map.Entry) iter
                         .next()).getValue();
                 if (sender != null)
                     sender.checkKeepAlive();
@@ -516,12 +516,12 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      * 
      * @return The senders
      */
-    public IDataSender[] getSenders() {
+    public SinglePointSender[] getSenders() {
         java.util.Iterator iter = map.entrySet().iterator();
-        IDataSender[] array = new IDataSender[map.size()];
+        SinglePointSender[] array = new SinglePointSender[map.size()];
         int i = 0;
         while (iter.hasNext()) {
-            IDataSender sender = (IDataSender) ((java.util.Map.Entry) iter
+            SinglePointSender sender = (SinglePointSender) ((java.util.Map.Entry) iter
                     .next()).getValue();
             if (sender != null)
                 array[i] = sender;
@@ -552,7 +552,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
         try {
             Object key = getKey(member);
             if (!map.containsKey(key)) {
-                IDataSender sender = IDataSenderFactory.getIDataSender(replicationMode, member);
+                SinglePointSender sender = DataSenderFactory.getIDataSender(replicationMode, member);
                 if ( sender!= null ) {
                     transferSenderProperty(sender);
                     sender.setRxBufSize(getRxBufSize());
@@ -572,7 +572,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      */
     public synchronized void remove(Member member) {
         Object key = getKey(member);
-        IDataSender toberemoved = (IDataSender) map.get(key);
+        SinglePointSender toberemoved = (SinglePointSender) map.get(key);
         if (toberemoved == null)
             return;
         toberemoved.disconnect();
@@ -603,7 +603,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      * 
      * @param sender
      */
-    protected void transferSenderProperty(IDataSender sender) {
+    protected void transferSenderProperty(SinglePointSender sender) {
         for (Iterator iter = getPropertyNames(); iter.hasNext();) {
             String pkey = (String) iter.next();
             Object value = getProperty(pkey);
@@ -636,7 +636,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      * @throws java.io.IOException If an error occurs
      */
     protected void sendMessageData(ChannelMessage data,
-                                   IDataSender sender) throws IOException {
+                                   SinglePointSender sender) throws IOException {
         if (sender == null)
             throw new RuntimeException("Sender not available. Make sure sender information is available to the ReplicationTransmitter.");
         try {

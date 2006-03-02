@@ -31,13 +31,14 @@ import org.apache.catalina.util.StringManager;
  * <code>org/apache/catalina/tribes/tcp/DataSenders.properties</code> resource.
  * 
  * @author Peter Rossbach
+ * @author Filip Hanik
  * @version $Revision: 304032 $ $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
  * @since 5.5.7
  */
-public class IDataSenderFactory {
+public class DataSenderFactory {
 
     private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
-            .getLog(IDataSenderFactory.class);
+            .getLog(DataSenderFactory.class);
     
     private static final String DATASENDERS_PROPERTIES = "org/apache/catalina/tribes/tcp/DataSenders.properties";
     public static final String SYNC_MODE = "synchronous";
@@ -58,15 +59,15 @@ public class IDataSenderFactory {
      */
     private static final String info = "IDataSenderFactory/2.0";
 
-    private IDataSenderFactory() {
+    private DataSenderFactory() {
     }
 
     private Properties senderModes;
 
-    private static IDataSenderFactory factory ;
+    private static DataSenderFactory factory ;
 
     static {
-        factory = new IDataSenderFactory();
+        factory = new DataSenderFactory();
         factory.loadSenderModes();
     }
 
@@ -90,10 +91,10 @@ public class IDataSenderFactory {
      * @return new sender object
      * @throws java.io.IOException
      */
-    public synchronized static IDataSender getIDataSender(String mode,
+    public synchronized static SinglePointSender getIDataSender(String mode,
             Member mbr) throws java.io.IOException {
        // Identify the class name of the DataSender we should configure
-       IDataSender sender = factory.getSender(mode,mbr);
+       SinglePointSender sender = factory.getSender(mode,mbr);
        if(sender == null)
            throw new java.io.IOException("Invalid replication mode=" + mode);          
        return sender ;    
@@ -125,8 +126,8 @@ public class IDataSenderFactory {
         return senderModes != null && senderModes.containsKey(mode) ;           
     }
 
-    private IDataSender getSender(String mode,Member mbr) {
-        IDataSender sender = null;
+    private SinglePointSender getSender(String mode,Member mbr) {
+        SinglePointSender sender = null;
         String senderName = null;
         senderName = senderModes.getProperty(mode);
         if (senderName != null) {
@@ -144,7 +145,7 @@ public class IDataSenderFactory {
                     paramValues[0] = mbr.getDomain();
                     paramValues[1] = InetAddress.getByAddress(mbr.getHost());
                     paramValues[2] = new Integer(mbr.getPort());
-                    sender = (IDataSender) constructor.newInstance(paramValues);
+                    sender = (SinglePointSender) constructor.newInstance(paramValues);
                 } else {
                     log.error(sm.getString("IDataSender.senderModes.Instantiate",
                             senderName));
@@ -163,7 +164,7 @@ public class IDataSenderFactory {
         // Load our mapping properties if necessary
         if (senderModes == null) {
             try {
-                InputStream is = IDataSender.class
+                InputStream is = SinglePointSender.class
                         .getClassLoader()
                         .getResourceAsStream(
                                 DATASENDERS_PROPERTIES);

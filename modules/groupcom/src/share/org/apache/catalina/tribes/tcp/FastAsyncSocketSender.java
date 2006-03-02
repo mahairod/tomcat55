@@ -46,7 +46,7 @@ import org.apache.catalina.tribes.io.XByteBuffer;
  * @version $Revision: 366253 $ $Date: 2006-01-05 13:30:42 -0600 (Thu, 05 Jan 2006) $
  * @since 5.5.9
  */
-public class FastAsyncSocketSender extends DataSender {
+public class FastAsyncSocketSender extends SinglePointDataSender {
 
     private static int threadCounter = 1;
 

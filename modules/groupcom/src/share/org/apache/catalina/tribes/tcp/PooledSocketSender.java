@@ -31,7 +31,7 @@ import org.apache.catalina.tribes.ChannelMessage;
  * @version 1.2
  */
 
-public class PooledSocketSender extends DataSender {
+public class PooledSocketSender extends SinglePointDataSender {
 
     private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
             .getLog(org.apache.catalina.tribes.tcp.PooledSocketSender.class);
@@ -119,7 +119,7 @@ public class PooledSocketSender extends DataSender {
                     connect();
             }
         }
-        DataSender sender = senderQueue.getSender(0);
+        SinglePointDataSender sender = senderQueue.getSender(0);
         if (sender == null) {
             log.warn(sm.getString("PoolSocketSender.noMoreSender", this.getAddress(), new Integer(this.getPort())));
             return;
@@ -186,8 +186,8 @@ public class PooledSocketSender extends DataSender {
             return queue.size();
         }
 
-        public DataSender getSender(long timeout) {
-            DataSender sender = null;
+        public SinglePointDataSender getSender(long timeout) {
+            SinglePointDataSender sender = null;
             long start = System.currentTimeMillis();
             long delta = 0;
             do {
@@ -196,7 +196,7 @@ public class PooledSocketSender extends DataSender {
                         throw new IllegalStateException(
                                 "Socket pool is closed.");
                     if (queue.size() > 0) {
-                        sender = (DataSender) queue.removeFirst();
+                        sender = (SinglePointDataSender) queue.removeFirst();
                     } else if (inuse.size() < limit) {
                         sender = getNewDataSender();
                     } else {
@@ -217,7 +217,7 @@ public class PooledSocketSender extends DataSender {
             return sender;
         }
 
-        public void returnSender(DataSender sender) {
+        public void returnSender(SinglePointDataSender sender) {
             //to do
             synchronized (mutex) {
                 queue.add(sender);
@@ -226,9 +226,9 @@ public class PooledSocketSender extends DataSender {
             }
         }
 
-        private DataSender getNewDataSender() {
+        private SinglePointDataSender getNewDataSender() {
             //new DataSender(
-            DataSender sender = new DataSender(getDomain(),
+            SinglePointDataSender sender = new SinglePointDataSender(getDomain(),
                                                parent.getAddress(),
                                                parent.getPort(),
                                                parent.getSenderState() );
@@ -246,11 +246,11 @@ public class PooledSocketSender extends DataSender {
         public void close() {
             synchronized (mutex) {
                 for (int i = 0; i < queue.size(); i++) {
-                    DataSender sender = (DataSender) queue.get(i);
+                    SinglePointDataSender sender = (SinglePointDataSender) queue.get(i);
                     sender.disconnect();
                 }//for
                 for (int i = 0; i < inuse.size(); i++) {
-                    DataSender sender = (DataSender) inuse.get(i);
+                    SinglePointDataSender sender = (SinglePointDataSender) inuse.get(i);
                     sender.disconnect();
                 }//for
                 queue.clear();
