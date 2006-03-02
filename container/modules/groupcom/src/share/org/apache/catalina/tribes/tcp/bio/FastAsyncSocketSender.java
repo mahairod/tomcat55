@@ -14,7 +14,7 @@
  * the License.
  */
 
-package org.apache.catalina.tribes.tcp;
+package org.apache.catalina.tribes.tcp.bio;
 
 import java.net.InetAddress;
 
@@ -23,6 +23,7 @@ import org.apache.catalina.tribes.util.FastQueue;
 import org.apache.catalina.tribes.util.IQueue;
 import org.apache.catalina.tribes.util.LinkObject;
 import org.apache.catalina.tribes.io.XByteBuffer;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  * Send cluster messages from a Message queue with only one socket. Ack and keep

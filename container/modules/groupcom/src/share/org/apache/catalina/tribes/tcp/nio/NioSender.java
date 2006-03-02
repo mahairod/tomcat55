@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.catalina.tribes.tcp;
+package org.apache.catalina.tribes.tcp.nio;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -137,7 +137,7 @@ public class NioSender  {
         ackbuf.append(readbuf,read);
         readbuf.clear();
         if (ackbuf.doesPackageExist() ) {
-            return Arrays.equals(ackbuf.extractDataPackage(true),Constants.ACK_DATA);
+            return Arrays.equals(ackbuf.extractDataPackage(true),org.apache.catalina.tribes.tcp.Constants.ACK_DATA);
         } else {
             return false;
         }
