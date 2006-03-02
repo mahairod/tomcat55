@@ -22,10 +22,10 @@ import java.util.Iterator;
 import java.util.Map;
 import javax.management.ObjectName;
 
+import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.ChannelSender;
 import org.apache.catalina.tribes.Member;
-import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.util.IDynamicProperty;
 import org.apache.catalina.util.StringManager;
 import org.apache.tomcat.util.IntrospectionUtils;
@@ -53,6 +53,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      */
     protected StringManager sm = StringManager.getManager(Constants.Package);
 
+    
     private Map map = new HashMap();
 
     /**
@@ -318,6 +319,10 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
         return rxBufSize;
     }
 
+    public boolean isParallel() {
+        return "parallel".equals(replicationMode);
+    }
+
     /**
      * @param processSenderFrequency The processSenderFrequency to set.
      */
@@ -395,13 +400,27 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      * Send data to one member
      * @see org.apache.catalina.tribes.ClusterSender#sendMessage(org.apache.catalina.tribes.ClusterMessage, org.apache.catalina.tribes.Member)
      */
-    public void sendMessage(ChannelMessage message, Member member) throws IOException {       
+    public void sendMessage(ChannelMessage message, Member[] destination) throws ChannelException {
+        ChannelException exception = null;
+        for (int i = 0; i < destination.length; i++) {
+            try {
+                sendMessage(message, destination[i]);
+            } catch (Exception x) {
+                if (exception == null) exception = new ChannelException(x);
+                exception.addFaultyMember(destination[i]);
+            }
+        }
+        if (exception != null)throw exception;
+
+    }
+    
+    public void sendMessage(ChannelMessage message, Member destination) throws IOException {       
         long time = 0 ;
         if(doTransmitterProcessingStats) {
             time = System.currentTimeMillis();
         }
         try {
-            Object key = getKey(member);
+            Object key = getKey(destination);
             IDataSender sender = (IDataSender) map.get(key);
             sendMessageData(message, sender);
         } finally {
@@ -533,12 +552,13 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
         try {
             Object key = getKey(member);
             if (!map.containsKey(key)) {
-                IDataSender sender = IDataSenderFactory.getIDataSender(
-                        replicationMode, member);
-                transferSenderProperty(sender);
-                sender.setRxBufSize(getRxBufSize());
-                sender.setTxBufSize(getTxBufSize());
-                map.put(key, sender);
+                IDataSender sender = IDataSenderFactory.getIDataSender(replicationMode, member);
+                if ( sender!= null ) {
+                    transferSenderProperty(sender);
+                    sender.setRxBufSize(getRxBufSize());
+                    sender.setTxBufSize(getTxBufSize());
+                    map.put(key, sender);
+                }
             }
         } catch (java.io.IOException x) {
             log.error("Unable to create and add a IDataSender object.", x);
