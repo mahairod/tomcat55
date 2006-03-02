@@ -19,17 +19,15 @@ package org.apache.catalina.tribes.tcp;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Arrays;
 
-import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.Member;
-import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
-import java.net.Socket;
 
 /**
  * This class is NOT thread safe and should never be used with more than one thread at a time
@@ -49,9 +47,6 @@ public class NioSender  {
 
     protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(NioSender.class);
 
-    
-    protected long ackTimeout = 15000;
-    protected String domain = "";
     protected boolean suspect = false;
     protected boolean connected = false;
     protected boolean waitForAck = false;
@@ -72,6 +67,8 @@ public class NioSender  {
     protected int curPos=0;
     protected XByteBuffer ackbuf = new XByteBuffer(128,true);
     protected int remaining = 0;
+    private boolean complete;
+    private int attempt;
 
     public NioSender(Member destination) {
         this.destination = destination;
@@ -204,13 +201,15 @@ public class NioSender  {
     public void disconnect() {
         try {
             this.connected = false;
-            Socket socket = socketChannel.socket();
-            socket.shutdownOutput();
-            socket.shutdownInput();
-            socket.close();
-            socketChannel.close();
-            socket = null;
-            socketChannel = null;
+            if ( socketChannel != null ) {
+                Socket socket = socketChannel.socket();
+                socket.shutdownOutput();
+                socket.shutdownInput();
+                socket.close();
+                socketChannel.close();
+                socket = null;
+                socketChannel = null;
+            }
         } catch ( Exception x ) {
             log.error("Unable to disconnect.",x);
         } finally {
@@ -228,6 +227,8 @@ public class NioSender  {
         curPos = 0;
         ackbuf.clear();
         remaining = 0;
+        complete = false;
+        attempt = 0;
     }
 
     private ByteBuffer getReadBuffer() {
@@ -252,6 +253,10 @@ public class NioSender  {
            }
        } 
    }
+   
+   public byte[] getMessage() {
+       return current;
+   }
 
 
     /**
@@ -263,19 +268,6 @@ public class NioSender  {
     public boolean checkKeepAlive() {
         return false;
     }
-
-    /**
-     * getAckTimeout
-     *
-     * @return long
-     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
-     */
-    public long getAckTimeout() {
-        return this.ackTimeout;
-    }
-
-    
-
     /**
      * getSuspect
      *
@@ -313,14 +305,17 @@ public class NioSender  {
     public boolean getDirect() {
         return direct;
     }
-    /**
-     * setAckTimeout
-     *
-     * @param timeout long
-     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
-     */
-    public void setAckTimeout(long timeout) {
-        this.ackTimeout = timeout;
+
+    public Member getDestination() {
+        return destination;
+    }
+
+    public boolean isComplete() {
+        return complete;
+    }
+
+    public int getAttempt() {
+        return attempt;
     }
 
     /**
@@ -369,5 +364,13 @@ public class NioSender  {
 
     public void setDirect(boolean directBuffer) {
         this.direct = directBuffer;
+    }
+
+    public void setComplete(boolean complete) {
+        this.complete = complete;
+    }
+
+    public void setAttempt(int attempt) {
+        this.attempt = attempt;
     }
 }
