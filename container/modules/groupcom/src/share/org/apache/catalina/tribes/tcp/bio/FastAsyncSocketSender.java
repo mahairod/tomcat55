@@ -24,6 +24,7 @@ import org.apache.catalina.tribes.util.IQueue;
 import org.apache.catalina.tribes.util.LinkObject;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.tcp.*;
+import org.apache.catalina.tribes.ChannelException;
 
 /**
  * Send cluster messages from a Message queue with only one socket. Ack and keep
@@ -281,7 +282,7 @@ public class FastAsyncSocketSender extends SinglePointDataSender {
      * 
      * @see org.apache.catalina.tribes.tcp.IDataSender#connect()
      */
-    public void connect() throws java.io.IOException {
+    public void connect() throws ChannelException {
         super.connect();
         checkThread();
         if(!queue.isEnabled())
@@ -314,8 +315,7 @@ public class FastAsyncSocketSender extends SinglePointDataSender {
      * 
      * @see org.apache.catalina.tribes.tcp.DataSender#pushMessage(ChannelMessage)
      */
-    public void sendMessage(ChannelMessage data)
-            throws java.io.IOException {
+    public void sendMessage(ChannelMessage data) throws ChannelException {
         queue.add(getUniqueIdAsString(data.getUniqueId()), data);
         synchronized (this) {
             inQueueCounter++;
@@ -328,15 +328,6 @@ public class FastAsyncSocketSender extends SinglePointDataSender {
                             data.getMessage().getLength())));
     }
 
-    /**
-     * Reset sender statistics
-     */
-    public synchronized void resetStatistics() {
-        super.resetStatistics();
-        inQueueCounter = queue.getSize();
-        outQueueCounter = 0;
-        queue.resetStatistics();
-    }
 
     /**
      * Name of this SockerSender

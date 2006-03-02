@@ -15,6 +15,8 @@
  */
 package org.apache.catalina.tribes.tcp;
 
+import org.apache.catalina.tribes.ChannelException;
+
 /**
  * <p>Title: </p>
  *
@@ -28,7 +30,7 @@ package org.apache.catalina.tribes.tcp;
  * @version 1.0
  */
 public interface DataSender {
-    public void connect() throws java.io.IOException;
+    public void connect() throws ChannelException;
     public void disconnect();
 
 }
