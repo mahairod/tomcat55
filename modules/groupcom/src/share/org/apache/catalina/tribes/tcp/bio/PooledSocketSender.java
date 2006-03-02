@@ -19,13 +19,12 @@ package org.apache.catalina.tribes.tcp.bio;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.LinkedList;
+
 import org.apache.catalina.tribes.ChannelMessage;
-import org.apache.catalina.tribes.tcp.*;
+import org.apache.catalina.tribes.ChannelException;
 
 /**
  * Send cluster messages with a pool of sockets (25).
- * 
- * FIXME support processing stats
  * 
  * @author Filip Hanik
  * @author Peter Rossbach
@@ -92,17 +91,15 @@ public class PooledSocketSender extends SinglePointDataSender {
 
     //  ----------------------------------------------------- Public Methode
 
-    public synchronized void connect() throws java.io.IOException {
+    public synchronized void connect() throws ChannelException {
         //do nothing, happens in the socket sender itself
         senderQueue.open();
         setSocketConnected(true);
-        connectCounter++;
     }
 
     public synchronized void disconnect() {
         senderQueue.close();
         setSocketConnected(false);
-        disconnectCounter++;
     }
 
     /**
@@ -112,7 +109,7 @@ public class PooledSocketSender extends SinglePointDataSender {
      * @param data Message data
      * @throws java.io.IOException
      */
-    public void sendMessage(ChannelMessage data) throws IOException {
+    public void sendMessage(ChannelMessage data) throws ChannelException {
         //get a socket sender from the pool
         if(!isConnected()) {
             synchronized(this) {
@@ -132,7 +129,6 @@ public class PooledSocketSender extends SinglePointDataSender {
             //return the connection to the pool
             senderQueue.returnSender(sender);
         }
-        addStats(data.getMessage().getLength());
     }
 
     public String toString() {

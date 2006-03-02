@@ -28,6 +28,7 @@ import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.util.StringManager;
 import java.util.Arrays;
 import org.apache.catalina.tribes.tcp.*;
+import org.apache.catalina.tribes.ChannelException;
 
 /**
  * Send cluster messages with only one socket. Ack and keep Alive Handling is
@@ -97,79 +98,10 @@ public class SinglePointDataSender implements SinglePointSender {
     private long ackTimeout;
 
     /**
-     * number of requests
-     */
-    protected long nrOfRequests = 0;
-
-    /**
-     * total bytes to transfer
-     */
-    protected long totalBytes = 0;
-
-    /**
-     * number of connects
-     */
-    protected long connectCounter = 0;
-
-    /**
-     * number of explizit disconnects
-     */
-    protected long disconnectCounter = 0;
-
-    /**
-     * number of failing acks
-     */
-    protected long missingAckCounter = 0;
-
-    /**
-     * number of data resends (second trys after socket failure)
-     */
-    protected long dataResendCounter = 0;
-
-    /**
-     * number of data failure sends 
-     */
-    protected long dataFailureCounter = 0;
-    
-    /**
-     * doProcessingStats
-     */
-    protected boolean doProcessingStats = false;
-
-    /**
-     * proessingTime
-     */
-    protected long processingTime = 0;
-    
-    /**
-     * min proessingTime
-     */
-    protected long minProcessingTime = Long.MAX_VALUE ;
-
-    /**
-     * max proessingTime
-     */
-    protected long maxProcessingTime = 0;
-   
-    /**
-     * doWaitAckStats
-     */
-    protected boolean doWaitAckStats = false;
-
-    /**
      * waitAckTime
      */
     protected long waitAckTime = 0;
     
-    /**
-     * min waitAckTime
-     */
-    protected long minWaitAckTime = Long.MAX_VALUE ;
-
-    /**
-     * max waitAckTime
-     */
-    protected long maxWaitAckTime = 0;
 
     /**
      * keep socket open for no more than one min
@@ -195,21 +127,6 @@ public class SinglePointDataSender implements SinglePointSender {
      * wait for receiver Ack
      */
     private boolean waitForAck = false;
-
-    /**
-     * number of socket close
-     */
-    private int socketCloseCounter = 0 ;
-
-    /**
-     * number of socket open
-     */
-    private int socketOpenCounter = 0 ;
-
-    /**
-     * number of socket open failures
-     */
-    private int socketOpenFailureCounter = 0 ;
 
     /**
      * After failure make a resend
@@ -260,167 +177,6 @@ public class SinglePointDataSender implements SinglePointSender {
 
     }
 
-    /**
-     * @return Returns the nrOfRequests.
-     */
-    public long getNrOfRequests() {
-        return nrOfRequests;
-    }
-
-    /**
-     * @return Returns the totalBytes.
-     */
-    public long getTotalBytes() {
-        return totalBytes;
-    }
-
-    /**
-     * @return Returns the avg totalBytes/nrOfRequests.
-     */
-    public long getAvgMessageSize() {
-        return totalBytes / nrOfRequests;
-    }
-
-    /**
-     * @return Returns the avg processingTime/nrOfRequests.
-     */
-    public double getAvgProcessingTime() {
-        return ((double)processingTime) / nrOfRequests;
-    }
- 
-    /**
-     * @return Returns the maxProcessingTime.
-     */
-    public long getMaxProcessingTime() {
-        return maxProcessingTime;
-    }
-    
-    /**
-     * @return Returns the minProcessingTime.
-     */
-    public long getMinProcessingTime() {
-        return minProcessingTime;
-    }
-    
-    /**
-     * @return Returns the processingTime.
-     */
-    public long getProcessingTime() {
-        return processingTime;
-    }
-    
-    /**
-     * @return Returns the doProcessingStats.
-     */
-    public boolean isDoProcessingStats() {
-        return doProcessingStats;
-    }
-    
-    /**
-     * @param doProcessingStats The doProcessingStats to set.
-     */
-    public void setDoProcessingStats(boolean doProcessingStats) {
-        this.doProcessingStats = doProcessingStats;
-    }
- 
- 
-    /**
-     * @return Returns the doWaitAckStats.
-     */
-    public boolean isDoWaitAckStats() {
-        return doWaitAckStats;
-    }
-    
-    /**
-     * @param doWaitAckStats The doWaitAckStats to set.
-     */
-    public void setDoWaitAckStats(boolean doWaitAckStats) {
-        this.doWaitAckStats = doWaitAckStats;
-    }
-    
-    /**
-     * @return Returns the avg waitAckTime/nrOfRequests.
-     */
-    public double getAvgWaitAckTime() {
-        return ((double)waitAckTime) / nrOfRequests;
-    }
- 
-    /**
-     * @return Returns the maxWaitAckTime.
-     */
-    public long getMaxWaitAckTime() {
-        return maxWaitAckTime;
-    }
-    
-    /**
-     * @return Returns the minWaitAckTime.
-     */
-    public long getMinWaitAckTime() {
-        return minWaitAckTime;
-    }
-    
-    /**
-     * @return Returns the waitAckTime.
-     */
-    public long getWaitAckTime() {
-        return waitAckTime;
-    }
-    
-    /**
-     * @return Returns the connectCounter.
-     */
-    public long getConnectCounter() {
-        return connectCounter;
-    }
-
-    /**
-     * @return Returns the disconnectCounter.
-     */
-    public long getDisconnectCounter() {
-        return disconnectCounter;
-    }
-
-    /**
-     * @return Returns the missingAckCounter.
-     */
-    public long getMissingAckCounter() {
-        return missingAckCounter;
-    }
-
-    /**
-     * @return Returns the socketOpenCounter.
-     */
-    public int getSocketOpenCounter() {
-        return socketOpenCounter;
-    }
-    
-    /**
-     * @return Returns the socketOpenFailureCounter.
-     */
-    public int getSocketOpenFailureCounter() {
-        return socketOpenFailureCounter;
-    }
-
-    /**
-     * @return Returns the socketCloseCounter.
-     */
-    public int getSocketCloseCounter() {
-        return socketCloseCounter;
-    }
-
-    /**
-     * @return Returns the dataResendCounter.
-     */
-    public long getDataResendCounter() {
-        return dataResendCounter;
-    }
-
-    /**
-     * @return Returns the dataFailureCounter.
-     */
-    public long getDataFailureCounter() {
-        return dataFailureCounter;
-    }
     
     /**
      * @param address The address to set.
@@ -598,14 +354,12 @@ public class SinglePointDataSender implements SinglePointSender {
      * Connect other cluster member receiver 
      * @see org.apache.catalina.tribes.tcp.IDataSender#connect()
      */
-    public synchronized void connect() throws java.io.IOException {
+    public synchronized void connect() throws ChannelException {
         if(!isMessageTransferStarted) {
             openSocket();
             if(isConnected()) {
-                connectCounter++;
                 if (log.isDebugEnabled())
-                    log.debug(sm.getString("IDataSender.connect", address.getHostAddress(),
-                            new Integer(port),new Long(connectCounter)));
+                    log.debug(sm.getString("IDataSender.connect", address.getHostAddress(),new Integer(port),new Long(0)));
             }
         } else 
             if (log.isWarnEnabled())
@@ -623,10 +377,8 @@ public class SinglePointDataSender implements SinglePointSender {
             boolean connect = isConnected() ;
             closeSocket();
             if(connect) {
-                disconnectCounter++;
                 if (log.isDebugEnabled())
-                    log.debug(sm.getString("IDataSender.disconnect", address.getHostAddress(),
-                        new Integer(port),new Long(disconnectCounter)));
+                    log.debug(sm.getString("IDataSender.disconnect", address.getHostAddress(),new Integer(port),new Long(0)));
             }
         } else 
             if (log.isWarnEnabled())
@@ -664,33 +416,17 @@ public class SinglePointDataSender implements SinglePointSender {
      * @see org.apache.catalina.tribes.tcp.IDataSender#sendMessage(,
      *      ChannelMessage)
      */
-    public synchronized void sendMessage(ChannelMessage data)
-            throws java.io.IOException {
-        pushMessage(data);
+    public synchronized void sendMessage(ChannelMessage data) throws ChannelException {
+        try {
+            pushMessage(data);
+        }catch ( Exception x ) {
+            ChannelException cx = new ChannelException(x);
+            cx.addFaultyMember(data.getAddress());
+            throw cx;
+        }
     }
 
-    /**
-     * Reset sender statistics
-     */
-    public synchronized void resetStatistics() {
-        nrOfRequests = 0;
-        totalBytes = 0;
-        disconnectCounter = 0;
-        connectCounter = isConnected() ? 1 : 0;
-        missingAckCounter = 0;
-        dataResendCounter = 0;
-        dataFailureCounter = 0 ;
-        socketOpenCounter =isConnected() ? 1 : 0;
-        socketOpenFailureCounter = 0 ;
-        socketCloseCounter = 0;
-        processingTime = 0 ;
-        minProcessingTime = Long.MAX_VALUE ;
-        maxProcessingTime = 0 ;
-        waitAckTime = 0 ;
-        minWaitAckTime = Long.MAX_VALUE ;
-        maxWaitAckTime = 0 ;
-    }
-
+    
     /**
      * Name of this SockerSender
      */
@@ -705,27 +441,23 @@ public class SinglePointDataSender implements SinglePointSender {
     /**
      * open real socket and set time out when waitForAck is enabled
      * is socket open return directly
-     * @throws IOException
-     * @throws SocketException
      */
-    protected void openSocket() throws IOException, SocketException {
+    protected void openSocket() throws ChannelException {
        if(isConnected())
            return ;
        try {
             createSocket();
             if (getWaitForAck()) socket.setSoTimeout((int) ackTimeout);
             isSocketConnected = true;
-            socketOpenCounter++;
             this.keepAliveCount = 0;
             this.keepAliveConnectTime = System.currentTimeMillis();
             if (log.isDebugEnabled())
-                log.debug(sm.getString("IDataSender.openSocket", address.getHostAddress(), new Integer(port),new Long(socketOpenCounter)));
+                log.debug(sm.getString("IDataSender.openSocket", address.getHostAddress(), new Integer(port),new Long(0)));
       } catch (IOException ex1) {
           getSenderState().setSuspect();
-          socketOpenFailureCounter++ ;
           if (log.isDebugEnabled())
-              log.debug(sm.getString("IDataSender.openSocket.failure",address.getHostAddress(), new Integer(port),new Long(socketOpenFailureCounter)), ex1);
-          throw ex1;
+              log.debug(sm.getString("IDataSender.openSocket.failure",address.getHostAddress(), new Integer(port),new Long(0)), ex1);
+          throw new ChannelException(ex1);
         }
         
      }
@@ -736,9 +468,6 @@ public class SinglePointDataSender implements SinglePointSender {
      */
     protected void createSocket() throws IOException, SocketException {
         socket = new Socket(getAddress(), getPort());
-//System.out.println("DEFAULT SOCKET RX="+socket.getReceiveBufferSize() +" our="+getRxBufSize());
-//System.out.println("DEFAULT CHANNEL TX="+socket.getSendBufferSize() +" our="+getTxBufSize());
-//
         socket.setSendBufferSize(getTxBufSize());
         socket.setReceiveBufferSize(getRxBufSize());
         this.socketout = socket.getOutputStream();
@@ -762,55 +491,11 @@ public class SinglePointDataSender implements SinglePointSender {
             }
             this.keepAliveCount = 0;
             isSocketConnected = false;
-            socketCloseCounter++;
             if (log.isDebugEnabled())
-                log.debug(sm.getString("IDataSender.closeSocket",address.getHostAddress(), new Integer(port),new Long(socketCloseCounter)));
+                log.debug(sm.getString("IDataSender.closeSocket",address.getHostAddress(), new Integer(port),new Long(0)));
        }
     }
 
-    /**
-     * Add statistic for this socket instance
-     * 
-     * @param length
-     */
-    protected void addStats(int length) {
-        nrOfRequests++;
-        totalBytes += length;
-        if (log.isDebugEnabled() && (nrOfRequests % 1000) == 0) {
-            log.debug(sm.getString("IDataSender.stats", new Object[] {
-                    getAddress().getHostAddress(), new Integer(getPort()),
-                    new Long(totalBytes), new Long(nrOfRequests),
-                    new Long(totalBytes / nrOfRequests),
-                    new Long(getProcessingTime()),
-                    new Double(getAvgProcessingTime())}));
-        }
-    }
-
-    /**
-     * Add processing stats times
-     * @param startTime
-     */
-    protected void addProcessingStats(long startTime) {
-        long time = System.currentTimeMillis() - startTime ;
-        if(time < minProcessingTime)
-            minProcessingTime = time ;
-        if( time > maxProcessingTime)
-            maxProcessingTime = time ;
-        processingTime += time ;
-    }
-    
-    /**
-     * Add waitAck stats times
-     * @param startTime
-     */
-    protected void addWaitAckStats(long startTime) {
-        long time = System.currentTimeMillis() - startTime ;
-        if(time < minWaitAckTime)
-            minWaitAckTime = time ;
-        if( time > maxWaitAckTime)
-            maxWaitAckTime = time ;
-        waitAckTime += time ;
-    }
     /**
      * Push messages with only one socket at a time
      * Wait for ack is needed and make auto retry when write message is failed.
@@ -826,54 +511,50 @@ public class SinglePointDataSender implements SinglePointSender {
      * 
      * @param data
      *            data to send
-     * @throws java.io.IOException
      * @since 5.5.10
      */
     
-    protected void pushMessage(ChannelMessage data, boolean reconnect) throws java.io.IOException {
+    protected void pushMessage(ChannelMessage data, boolean reconnect) throws ChannelException {
         synchronized(this) {
             checkKeepAlive();
             if ( reconnect ) closeSocket();
             if (!isConnected()) openSocket();
             else if(keepAliveTimeout > -1) this.keepAliveConnectTime = System.currentTimeMillis();
         }
-        writeData(data);
-        
+        try {
+            writeData(data);
+        } catch ( IOException x ) {
+            throw new ChannelException(x);
+        }
     }
     
-    protected void pushMessage( ChannelMessage data) throws java.io.IOException {
-        long time = 0 ;
-        if(doProcessingStats) time = System.currentTimeMillis();
+    protected void pushMessage( ChannelMessage data) throws ChannelException {
         boolean messageTransfered = false ;
-        IOException exception = null;
+        ChannelException exception = null;
         try {
              // first try with existing connection
              pushMessage(data,false);
              messageTransfered = true ;
-        } catch (java.io.IOException x) {
+        } catch (ChannelException x) {
             exception = x;
             //resend
-            dataResendCounter++;
             if (log.isTraceEnabled()) log.trace(sm.getString("IDataSender.send.again", address.getHostAddress(),new Integer(port)),x);
             try {
                 // second try with fresh connection
                 pushMessage(data,true);                    
                 messageTransfered = true;
                 exception = null;
-            } catch (IOException xx) {
+            } catch (ChannelException xx) {
                 exception = xx;
                 closeSocket();
             }
         } finally {
             this.keepAliveCount++;
             checkKeepAlive();
-            if(doProcessingStats) addProcessingStats(time);
             if(messageTransfered) {
-                addStats(data.getMessage().getLength());
                 if (log.isTraceEnabled()) log.trace(sm.getString("IDataSender.send.message", address.getHostAddress(),new Integer(port), data.getUniqueId(), new Long(data.getMessage().getLength())));
             } else {
-                dataFailureCounter++;
-                if ( exception != null ) throw exception;
+                if ( exception != null ) throw new ChannelException(exception);
             }
         }
     }
@@ -908,11 +589,6 @@ public class SinglePointDataSender implements SinglePointSender {
      * @throws java.net.SocketTimeoutException
      */
     protected synchronized void waitForAck(long timeout) throws java.io.IOException {
-        long time = 0 ;
-        
-        if(doWaitAckStats) {
-            time = System.currentTimeMillis();
-        }
         try {
             boolean ackReceived = false;
             ackbuf.clear();
@@ -933,7 +609,6 @@ public class SinglePointDataSender implements SinglePointSender {
                 else throw new IOException(sm.getString("IDataSender.ack.wrong",getAddress(), new Integer(socket.getLocalPort())));
             }
         } catch (IOException x) {
-            missingAckCounter++;
             String errmsg = sm.getString("IDataSender.ack.missing", getAddress(),new Integer(socket.getLocalPort()), new Long(this.ackTimeout));
             if ( !this.isSuspect() ) {
                 this.setSuspect(true);
@@ -944,7 +619,6 @@ public class SinglePointDataSender implements SinglePointSender {
             throw x;
         } finally {
             ackbuf.clear();
-            if(doWaitAckStats) addWaitAckStats(time);
         }
     }
 }
