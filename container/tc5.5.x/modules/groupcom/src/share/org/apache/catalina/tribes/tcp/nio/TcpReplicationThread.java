@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.apache.catalina.tribes.tcp;
+package org.apache.catalina.tribes.tcp.nio;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
 import org.apache.catalina.tribes.io.ObjectReader;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  * A worker thread class which can drain channels and echo-back the input. Each
@@ -47,7 +48,7 @@ public class TcpReplicationThread extends WorkerThread {
     private ByteBuffer buffer = null;
     private SelectionKey key;
     private int rxBufSize;
-    TcpReplicationThread ()
+    public TcpReplicationThread ()
     {
     }
 
@@ -111,8 +112,7 @@ public class TcpReplicationThread extends WorkerThread {
      * to ignore read-readiness for this channel while the
      * worker thread is servicing it.
      */
-    synchronized void serviceChannel (SelectionKey key)
-    {
+    public synchronized void serviceChannel (SelectionKey key) {
         this.key = key;
         key.interestOps (key.interestOps() & (~SelectionKey.OP_READ));
         key.interestOps (key.interestOps() & (~SelectionKey.OP_WRITE));
@@ -127,9 +127,7 @@ public class TcpReplicationThread extends WorkerThread {
      * re-enables OP_READ and calls wakeup() on the selector
      * so the selector will resume watching this channel.
      */
-    protected void drainChannel (SelectionKey key)
-        throws Exception
-    {
+    protected void drainChannel (SelectionKey key) throws Exception {
         SocketChannel channel = (SocketChannel) key.channel();
         int count;
         buffer.clear();			// make buffer empty

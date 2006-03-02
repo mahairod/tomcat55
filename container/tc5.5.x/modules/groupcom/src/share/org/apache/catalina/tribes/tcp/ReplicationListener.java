@@ -33,6 +33,7 @@ import org.apache.catalina.tribes.io.ListenCallback;
 import org.apache.catalina.tribes.io.ObjectReader;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.util.StringManager;
+import org.apache.catalina.tribes.tcp.nio.*;
 
 /**
  * @author Filip Hanik

@@ -35,7 +35,7 @@ public class ThreadPool
     Object mutex = new Object();
     Object interestOpsMutex = null;
 
-    ThreadPool (Object interestOpsMutex, WorkerThread[] threads) throws Exception {
+    public ThreadPool (Object interestOpsMutex, WorkerThread[] threads) throws Exception {
         // fill up the pool with worker threads
         this.interestOpsMutex = interestOpsMutex;
         for (int i = 0; i < threads.length; i++) {
@@ -50,7 +50,7 @@ public class ThreadPool
     }
 
 
-    ThreadPool (int poolSize, Class threadClass, Object interestOpsMutex, int threadOptions) throws Exception {
+    public ThreadPool (int poolSize, Class threadClass, Object interestOpsMutex, int threadOptions) throws Exception {
         // fill up the pool with worker threads
         this.interestOpsMutex = interestOpsMutex;
         for (int i = 0; i < poolSize; i++) {
@@ -70,7 +70,7 @@ public class ThreadPool
     /**
      * Find an idle worker thread, if any.  Could return null.
      */
-    WorkerThread getWorker()
+    public WorkerThread getWorker()
     {
         WorkerThread worker = null;
 
@@ -97,8 +97,7 @@ public class ThreadPool
      * Called by the worker thread to return itself to the
      * idle pool.
      */
-    void returnWorker (WorkerThread worker)
-    {
+    public void returnWorker (WorkerThread worker) {
         synchronized (mutex) {
             idle.add (worker);
             mutex.notify();

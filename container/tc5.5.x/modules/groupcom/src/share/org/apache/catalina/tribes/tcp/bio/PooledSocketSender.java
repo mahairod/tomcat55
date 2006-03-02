@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.apache.catalina.tribes.tcp;
+package org.apache.catalina.tribes.tcp.bio;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.LinkedList;
 import org.apache.catalina.tribes.ChannelMessage;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  * Send cluster messages with a pool of sockets (25).
@@ -34,7 +35,7 @@ import org.apache.catalina.tribes.ChannelMessage;
 public class PooledSocketSender extends SinglePointDataSender {
 
     private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
-            .getLog(org.apache.catalina.tribes.tcp.PooledSocketSender.class);
+            .getLog(org.apache.catalina.tribes.tcp.bio.PooledSocketSender.class);
 
     /**
      * The descriptive information about this implementation.

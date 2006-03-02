@@ -14,7 +14,7 @@
  * the License.
  */
 
-package org.apache.catalina.tribes.tcp;
+package org.apache.catalina.tribes.tcp.bio;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,6 +27,7 @@ import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.util.StringManager;
 import java.util.Arrays;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  * Send cluster messages with only one socket. Ack and keep Alive Handling is
