@@ -17,13 +17,8 @@
 package org.apache.catalina.tribes.tcp;
 
 /**
- * <p>Title: </p>
- *
- * <p>Description: </p>
- *
- * <p>Copyright: Copyright (c) 2005</p>
- *
- * <p>Company: </p>
+ * A class that uses NIO to send data in parallel to several remote nodes.
+ * 
  *
  * @author Filip Hanik
  * @version 1.0

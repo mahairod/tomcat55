@@ -238,11 +238,15 @@ public class XByteBuffer
         return true;
     }
 
-    private void expand(int newcount) {
+    public void expand(int newcount) {
         //don't change the allocation strategy
         byte newbuf[] = new byte[Math.max(buf.length << 1, newcount)];
         System.arraycopy(buf, 0, newbuf, 0, bufSize);
         buf = newbuf;
+    }
+    
+    public int getCapacity() {
+        return buf.length;
     }
 
 
@@ -285,7 +289,7 @@ public class XByteBuffer
 
     /**
      * Method to check if a package exists in this byte buffer.
-     * @return - true if a complete package (header,compress,size,data,footer) exists within the buffer
+     * @return - true if a complete package (header,options,size,data,footer) exists within the buffer
      */
     public boolean doesPackageExist()  {
         return (countPackages()>0);
@@ -297,19 +301,24 @@ public class XByteBuffer
      * @param clearFromBuffer - if true, the package will be removed from the byte buffer
      * @return - returns the actual message bytes (header, compress,size and footer not included).
      */
-    public ClusterData extractPackage(boolean clearFromBuffer)
-            throws java.io.IOException {
+    public byte[] extractDataPackage(boolean clearFromBuffer) {
         int psize = countPackages();
         if (psize == 0) throw new java.lang.IllegalStateException("No package exists in XByteBuffer");
         int size = toInt(buf, START_DATA.length);
         byte[] data = new byte[size];
         System.arraycopy(buf, START_DATA.length + 4, data, 0, size);
-        ClusterData cdata = ClusterData.getDataFromPackage(data);
         if (clearFromBuffer) {
             int totalsize = START_DATA.length + 4 + size + END_DATA.length;
             bufSize = bufSize - totalsize;
             System.arraycopy(buf, totalsize, buf, 0, bufSize);
         }
+        return data;
+
+    }
+    
+    public ClusterData extractPackage(boolean clearFromBuffer) throws java.io.IOException {
+        byte[] data = extractDataPackage(clearFromBuffer);
+        ClusterData cdata = ClusterData.getDataFromPackage(data);
         return cdata;
     }
     
@@ -324,20 +333,38 @@ public class XByteBuffer
         return createDataPackage(cdata.getDataPackage());
     }
     
-    public static byte[] createDataPackage(byte[] data) {
+    public static int getDataPackageLength(int datalength) {
         int length = 
             START_DATA.length + //header length
             4 + //data length indicator
-            data.length + //actual data length
+            datalength + //actual data length
             END_DATA.length; //footer length
+        return length;
+
+    }
+    
+    public static byte[] createDataPackage(byte[] data) {
+        int length = getDataPackageLength(data.length);
         byte[] result = new byte[length];
-        System.arraycopy(START_DATA, 0, result, 0, START_DATA.length);
-        System.arraycopy(toBytes(data.length), 0, result, START_DATA.length, 4);
-        System.arraycopy(data, 0, result, START_DATA.length + 4, data.length);
-        System.arraycopy(END_DATA, 0, result, START_DATA.length + 4 + data.length, END_DATA.length);
-        return result;
+        return createDataPackage(data,0,data.length,result,0);
+    }
+    
+    public static byte[] createDataPackage(byte[] data, int doff, int dlength, byte[] buffer, int bufoff) {
+        if ( (buffer.length-bufoff) > getDataPackageLength(dlength) ) {
+            throw new ArrayIndexOutOfBoundsException("Unable to create data package, buffer is too small.");
+        }
+        System.arraycopy(START_DATA, 0, buffer, bufoff, START_DATA.length);
+        System.arraycopy(toBytes(data.length), 0, buffer, bufoff+START_DATA.length, 4);
+        System.arraycopy(data, doff, buffer, bufoff+START_DATA.length + 4, dlength);
+        System.arraycopy(END_DATA, 0, buffer, bufoff+START_DATA.length + 4 + data.length, END_DATA.length);
+        return buffer;
     }
 
+    public static void fillDataPackage(byte[] data, int doff, int dlength, XByteBuffer buf) {
+        int pkglen = getDataPackageLength(dlength);
+        if ( buf.getCapacity() <  pkglen ) buf.expand(pkglen);
+        createDataPackage(data,doff,dlength,buf.getBytesDirect(),buf.getLength());
+    }
 
     /**
      * Convert four bytes to an int
