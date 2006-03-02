@@ -45,6 +45,7 @@ public class DataSenderFactory {
     public static final String ASYNC_MODE = "asynchronous";
     public static final String POOLED_SYNC_MODE = "pooled";
     public static final String FAST_ASYNC_QUEUE_MODE = "fastasyncqueue";
+    public static final String PARALLEL_MODE = "parallel";
 
     /**
      * The string manager for this package.
@@ -91,12 +92,10 @@ public class DataSenderFactory {
      * @return new sender object
      * @throws java.io.IOException
      */
-    public synchronized static SinglePointSender getIDataSender(String mode,
-            Member mbr) throws java.io.IOException {
+    public synchronized static SinglePointSender getSingleSender(String mode,Member mbr) throws java.io.IOException {
        // Identify the class name of the DataSender we should configure
-       SinglePointSender sender = factory.getSender(mode,mbr);
-       if(sender == null)
-           throw new java.io.IOException("Invalid replication mode=" + mode);          
+       SinglePointSender sender = factory.getSinglePointSender(mode,mbr);
+       if(sender == null) throw new java.io.IOException("Invalid replication mode=" + mode);          
        return sender ;    
     }
 
@@ -126,7 +125,7 @@ public class DataSenderFactory {
         return senderModes != null && senderModes.containsKey(mode) ;           
     }
 
-    private SinglePointSender getSender(String mode,Member mbr) {
+    private SinglePointSender getSinglePointSender(String mode,Member mbr) {
         SinglePointSender sender = null;
         String senderName = null;
         senderName = senderModes.getProperty(mode);
@@ -164,10 +163,7 @@ public class DataSenderFactory {
         // Load our mapping properties if necessary
         if (senderModes == null) {
             try {
-                InputStream is = SinglePointSender.class
-                        .getClassLoader()
-                        .getResourceAsStream(
-                                DATASENDERS_PROPERTIES);
+                InputStream is = SinglePointSender.class.getClassLoader().getResourceAsStream(DATASENDERS_PROPERTIES);
                 if (is != null) {
                     senderModes = new Properties();
                     senderModes.load(is);
