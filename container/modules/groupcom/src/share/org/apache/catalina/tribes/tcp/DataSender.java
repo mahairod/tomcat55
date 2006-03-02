@@ -26,6 +26,7 @@ import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.util.StringManager;
+import java.util.Arrays;
 
 /**
  * Send cluster messages with only one socket. Ack and keep Alive Handling is
@@ -921,7 +922,7 @@ public class DataSender implements IDataSender {
                 byte d = (byte)i;
                 ackbuf.append(d);
                 if (ackbuf.doesPackageExist() ) {
-                    ackReceived = true;
+                    ackReceived = Arrays.equals(ackbuf.extractDataPackage(true),Constants.ACK_DATA);
                     break;
                 }
                 i = socket.getInputStream().read();
