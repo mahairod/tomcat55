@@ -37,9 +37,9 @@ import java.util.Arrays;
  * @version $Revision: 377484 $ $Date: 2006-02-13 15:00:05 -0600 (Mon, 13 Feb 2006) $
  * @since 5.5.16
  */
-public class DataSender implements IDataSender {
+public class SinglePointDataSender implements SinglePointSender {
 
-    private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(DataSender.class);
+    private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(SinglePointDataSender.class);
 
     /**
      * The string manager for this package.
@@ -228,7 +228,7 @@ public class DataSender implements IDataSender {
 
     // ------------------------------------------------------------- Constructor
     
-    public DataSender(String domain,InetAddress host, int port) {
+    public SinglePointDataSender(String domain,InetAddress host, int port) {
         this.address = host;
         this.port = port;
         this.domain = domain;
@@ -236,11 +236,11 @@ public class DataSender implements IDataSender {
             log.debug(sm.getString("IDataSender.create",address, new Integer(port)));
     }
 
-    public DataSender(String domain,InetAddress host, int port, SenderState state) {
+    public SinglePointDataSender(String domain,InetAddress host, int port, SenderState state) {
         this(domain,host,port);
         if ( state != null ) this.senderState = state;
     }
-    public DataSender(String domain,InetAddress host, int port, SenderState state, int rxBufSize, int txBufSize) {
+    public SinglePointDataSender(String domain,InetAddress host, int port, SenderState state, int rxBufSize, int txBufSize) {
         this(domain,host,port,state);
         this.rxBufSize = rxBufSize;
         this.txBufSize = txBufSize;
