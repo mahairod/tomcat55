@@ -259,5 +259,9 @@ public class ParallelNioSender implements MultiPointSender {
     public void setConnected(boolean connected) {
         this.connected = connected;
     }
+    
+    public boolean checkKeepAlive() {
+        throw new UnsupportedOperationException("Method ParallelNioSender.checkKeepAlive() not implemented");
+    }
 
 }

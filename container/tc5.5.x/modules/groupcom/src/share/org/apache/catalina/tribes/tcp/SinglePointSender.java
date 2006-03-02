@@ -33,17 +33,9 @@ public interface SinglePointSender extends DataSender
     public void setPort(int port);
     public int getPort();
     public void sendMessage(ChannelMessage data) throws ChannelException;
-    public boolean isConnected();
     public void setSuspect(boolean suspect);
     public boolean getSuspect();
-    public void setAckTimeout(long timeout);
-    public long getAckTimeout();
-    public boolean getWaitForAck();
-    public void setWaitForAck(boolean isWaitForAck);
-    public boolean checkKeepAlive();
     public String getDomain() ;
     public void setDomain(String domain) ;
-    public void setRxBufSize(int size);
-    public void setTxBufSize(int size);
 
 }
