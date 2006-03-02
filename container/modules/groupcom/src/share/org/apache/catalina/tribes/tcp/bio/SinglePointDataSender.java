@@ -95,7 +95,7 @@ public class SinglePointDataSender implements SinglePointSender {
     /**
      * wait time for ack
      */
-    private long ackTimeout;
+    private long timeout;
 
     /**
      * waitAckTime
@@ -249,12 +249,12 @@ public class SinglePointDataSender implements SinglePointSender {
             this.senderState.setReady();
     }
 
-    public long getAckTimeout() {
-        return ackTimeout;
+    public long getTimeout() {
+        return timeout;
     }
 
-    public void setAckTimeout(long ackTimeout) {
-        this.ackTimeout = ackTimeout;
+    public void setTimeout(long ackTimeout) {
+        this.timeout = ackTimeout;
     }
 
     public long getKeepAliveTimeout() {
@@ -431,7 +431,8 @@ public class SinglePointDataSender implements SinglePointSender {
      * Name of this SockerSender
      */
     public String toString() {
-        StringBuffer buf = new StringBuffer("DataSender[");
+        StringBuffer buf = new StringBuffer("DataSender[(");
+        buf.append(super.toString()).append(")");
         buf.append(getAddress()).append(":").append(getPort()).append("]");
         return buf.toString();
     }
@@ -447,7 +448,7 @@ public class SinglePointDataSender implements SinglePointSender {
            return ;
        try {
             createSocket();
-            if (getWaitForAck()) socket.setSoTimeout((int) ackTimeout);
+            if (getWaitForAck()) socket.setSoTimeout((int) timeout);
             isSocketConnected = true;
             this.keepAliveCount = 0;
             this.keepAliveConnectTime = System.currentTimeMillis();
@@ -470,6 +471,7 @@ public class SinglePointDataSender implements SinglePointSender {
         socket = new Socket(getAddress(), getPort());
         socket.setSendBufferSize(getTxBufSize());
         socket.setReceiveBufferSize(getRxBufSize());
+        socket.setSoTimeout((int)timeout);
         this.socketout = socket.getOutputStream();
     }
 
@@ -573,7 +575,7 @@ public class SinglePointDataSender implements SinglePointSender {
         try {
             socketout.write(XByteBuffer.createDataPackage((ClusterData)data));
             socketout.flush();
-            if (getWaitForAck()) waitForAck(ackTimeout);
+            if (getWaitForAck()) waitForAck();
         } finally {
             synchronized(this) {
                 isMessageTransferStarted = false ;
@@ -588,7 +590,7 @@ public class SinglePointDataSender implements SinglePointSender {
      * @throws java.io.IOException
      * @throws java.net.SocketTimeoutException
      */
-    protected synchronized void waitForAck(long timeout) throws java.io.IOException {
+    protected synchronized void waitForAck() throws java.io.IOException {
         try {
             boolean ackReceived = false;
             ackbuf.clear();
@@ -609,7 +611,7 @@ public class SinglePointDataSender implements SinglePointSender {
                 else throw new IOException(sm.getString("IDataSender.ack.wrong",getAddress(), new Integer(socket.getLocalPort())));
             }
         } catch (IOException x) {
-            String errmsg = sm.getString("IDataSender.ack.missing", getAddress(),new Integer(socket.getLocalPort()), new Long(this.ackTimeout));
+            String errmsg = sm.getString("IDataSender.ack.missing", getAddress(),new Integer(socket.getLocalPort()), new Long(this.timeout));
             if ( !this.isSuspect() ) {
                 this.setSuspect(true);
                 if ( log.isWarnEnabled() ) log.warn(errmsg, x);

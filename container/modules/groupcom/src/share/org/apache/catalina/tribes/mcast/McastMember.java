@@ -81,6 +81,8 @@ public class McastMember implements Member, java.io.Externalizable {
      * For the local member only
      */
     protected transient long serviceStartTime;
+    
+    protected transient byte[] dataPkg = null;
 
     /**
      * Empty constructor for serialization
@@ -136,6 +138,14 @@ public class McastMember implements Member, java.io.Externalizable {
      * @throws Exception
      */
     public byte[] getData()  {
+        long alive=System.currentTimeMillis()-getServiceStartTime();
+        
+        //look in cache first
+        if ( dataPkg!=null ) {
+            XByteBuffer.toBytes((long)alive,dataPkg,0);
+            return dataPkg;
+        }
+        
         //package looks like
         //alive - 8 bytes
         //port - 4 bytes
@@ -145,7 +155,7 @@ public class McastMember implements Member, java.io.Externalizable {
         byte[] domaind = this.domain;
         byte[] addr = host;
         byte[] data = new byte[8+4+addr.length+4+domaind.length];
-        long alive=System.currentTimeMillis()-getServiceStartTime();
+        
         
         //reduce byte copying
         //System.arraycopy(XByteBuffer.toBytes((long)alive),0,data,0,8);
@@ -162,6 +172,7 @@ public class McastMember implements Member, java.io.Externalizable {
         XByteBuffer.toBytes(domaind.length,data,16);
         
         System.arraycopy(domaind,0,data,20,domaind.length);
+        dataPkg = data;
         return data;
     }
     /**
@@ -369,9 +380,11 @@ public class McastMember implements Member, java.io.Externalizable {
 
     public void setDomain(String domain) {
         this.domain = domain.getBytes();
+        this.dataPkg = null;
     }
     public void setPort(int port) {
         this.port = port;
+        this.dataPkg = null;
     }
 
     public void setServiceStartTime(long serviceStartTime) {
