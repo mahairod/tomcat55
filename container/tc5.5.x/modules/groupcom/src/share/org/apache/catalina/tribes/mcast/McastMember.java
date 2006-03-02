@@ -138,11 +138,17 @@ public class McastMember implements Member, java.io.Externalizable {
      * @throws Exception
      */
     public byte[] getData()  {
-        long alive=System.currentTimeMillis()-getServiceStartTime();
-        
+        return getData(true);
+    }
+    public byte[] getData(boolean getalive)  {
         //look in cache first
         if ( dataPkg!=null ) {
-            XByteBuffer.toBytes((long)alive,dataPkg,0);
+            if ( getalive ) {
+                //you'd be surprised, but System.currentTimeMillis
+                //shows up on the profiler
+                long alive=System.currentTimeMillis()-getServiceStartTime();
+                XByteBuffer.toBytes( (long) alive, dataPkg, 0);
+            }
             return dataPkg;
         }
         
@@ -152,9 +158,11 @@ public class McastMember implements Member, java.io.Externalizable {
         //host - 4 bytes
         //dlen - 4 bytes
         //domain - dlen bytes
+        
         byte[] domaind = this.domain;
         byte[] addr = host;
         byte[] data = new byte[8+4+addr.length+4+domaind.length];
+        long alive=System.currentTimeMillis()-getServiceStartTime();
         
         
         //reduce byte copying
@@ -173,6 +181,7 @@ public class McastMember implements Member, java.io.Externalizable {
         
         System.arraycopy(domaind,0,data,20,domaind.length);
         dataPkg = data;
+        System.out.println("McastMember.getData all the way");
         return data;
     }
     /**
