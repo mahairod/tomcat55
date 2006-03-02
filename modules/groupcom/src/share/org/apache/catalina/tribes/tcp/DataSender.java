@@ -32,5 +32,8 @@ import org.apache.catalina.tribes.ChannelException;
 public interface DataSender {
     public void connect() throws ChannelException;
     public void disconnect();
+    public boolean isConnected();
+    public void setRxBufSize(int size);
+    public void setTxBufSize(int size);
 
 }

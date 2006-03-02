@@ -17,16 +17,16 @@ package org.apache.catalina.tribes.tcp.nio;
 
 
 import java.io.IOException;
+import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
-import java.util.Iterator;
-import java.nio.channels.SelectionKey;
 import org.apache.catalina.tribes.tcp.MultiPointSender;
 
 /**
@@ -53,7 +53,8 @@ public class ParallelNioSender implements MultiPointSender {
     protected int rxBufSize = 43800;
     protected int txBufSize = 25188;
     protected boolean suspect = false;
-    
+    private boolean connected;
+
     public ParallelNioSender(long timeout, 
                              boolean waitForAck,
                              int retryAttempts,
@@ -189,6 +190,7 @@ public class ParallelNioSender implements MultiPointSender {
     
     public void connect() {
         //do nothing, we connect on demand
+        setConnected(true);
     }
     
     
@@ -211,6 +213,7 @@ public class ParallelNioSender implements MultiPointSender {
     
     public synchronized void disconnect() {
         try {close(); }catch (Exception x){}
+        setConnected(false);
     }
     
     public void finalize() {
@@ -220,6 +223,11 @@ public class ParallelNioSender implements MultiPointSender {
     public boolean getSuspect() {
         return suspect;
     }
+
+    public boolean isConnected() {
+        return connected;
+    }
+
     public void setSuspect(boolean suspect) {
         this.suspect = suspect;
     }
@@ -247,7 +255,9 @@ public class ParallelNioSender implements MultiPointSender {
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
-    
-    
+
+    public void setConnected(boolean connected) {
+        this.connected = connected;
+    }
 
 }
