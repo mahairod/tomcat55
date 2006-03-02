@@ -241,10 +241,10 @@ public class NioSender  {
     * @throws IOException
     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
     */
-   public synchronized void setMessage(ChannelMessage data) throws IOException {
+   public synchronized void setMessage(byte[] data) throws IOException {
        reset();
        if ( data != null ) {
-           current = XByteBuffer.createDataPackage((ClusterData)data);
+           current = data;
            remaining = current.length;
            curPos = 0;
            if (connected) {
