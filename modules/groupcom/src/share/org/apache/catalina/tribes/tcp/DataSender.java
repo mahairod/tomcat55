@@ -35,5 +35,10 @@ public interface DataSender {
     public boolean isConnected();
     public void setRxBufSize(int size);
     public void setTxBufSize(int size);
+    public boolean checkKeepAlive();
+    public void setTimeout(long timeout);
+    public void setWaitForAck(boolean isWaitForAck);
+
+
 
 }

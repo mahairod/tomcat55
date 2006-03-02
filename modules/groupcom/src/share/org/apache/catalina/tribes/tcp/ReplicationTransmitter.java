@@ -154,7 +154,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     /**
      * @return The ack timeout
      */
-    public long getAckTimeout() {
+    public long getTimeout() {
         return ackTimeout;
     }
 
