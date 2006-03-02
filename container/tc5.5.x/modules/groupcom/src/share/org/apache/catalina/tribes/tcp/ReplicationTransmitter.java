@@ -280,7 +280,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
 
     }
     
-    public void sendMessage(ChannelMessage message, Member destination) throws IOException {       
+    public void sendMessage(ChannelMessage message, Member destination) throws ChannelException {       
         Object key = getKey(destination);
         SinglePointSender sender = (SinglePointSender) map.get(key);
         sendMessageData(message, sender);
@@ -435,7 +435,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      * @throws java.io.IOException If an error occurs
      */
     protected void sendMessageData(ChannelMessage data,
-                                   SinglePointSender sender) throws IOException {
+                                   SinglePointSender sender) throws ChannelException {
         if (sender == null)
             throw new RuntimeException("Sender not available. Make sure sender information is available to the ReplicationTransmitter.");
         try {
@@ -447,7 +447,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
             }
             sender.sendMessage(data);
             sender.setSuspect(false);
-        } catch (IOException x) {
+        } catch (ChannelException x) {
             if (!sender.getSuspect()) {
                 if (log.isErrorEnabled() ) log.error("Unable to send replicated message, is member ["+sender.toString()+"] down?",x);
             } else if (log.isDebugEnabled() ) {

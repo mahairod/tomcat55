@@ -27,6 +27,7 @@ import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import java.util.Iterator;
 import java.nio.channels.SelectionKey;
+import org.apache.catalina.tribes.tcp.MultiPointSender;
 
 /**
  * <p>Title: </p>
@@ -40,7 +41,7 @@ import java.nio.channels.SelectionKey;
  * @author not attributable
  * @version 1.0
  */
-public class ParallelNioSender {
+public class ParallelNioSender implements MultiPointSender {
     protected long timeout = 15000;
     protected long selectTimeout = 50; 
     protected boolean waitForAck = false;
@@ -51,6 +52,8 @@ public class ParallelNioSender {
     protected boolean directBuf = false;
     protected int rxBufSize = 43800;
     protected int txBufSize = 25188;
+    protected boolean suspect = false;
+    
     public ParallelNioSender(long timeout, 
                              boolean waitForAck,
                              int retryAttempts,
@@ -89,7 +92,7 @@ public class ParallelNioSender {
                 throw cx;
             }
         } catch (Exception x ) {
-            try { this.close(); } catch (Exception ignore) {}
+            try { this.disconnect(); } catch (Exception ignore) {}
             if ( x instanceof ChannelException ) throw (ChannelException)x;
             else throw new ChannelException(x);
         }
@@ -184,7 +187,12 @@ public class ParallelNioSender {
         return result;
     }
     
-    public synchronized void close() throws ChannelException  {
+    public void connect() {
+        //do nothing, we connect on demand
+    }
+    
+    
+    private synchronized void close() throws ChannelException  {
         ChannelException x = null;
         Object[] members = nioSenders.keySet().toArray();
         for (int i=0; i<members.length; i++ ) {
@@ -201,8 +209,45 @@ public class ParallelNioSender {
         if ( x != null ) throw x;
     }
     
-    public void finalize() {
-        try {close(); }catch ( Exception ignore){}
+    public synchronized void disconnect() {
+        try {close(); }catch (Exception x){}
     }
+    
+    public void finalize() {
+        try {disconnect(); }catch ( Exception ignore){}
+    }
+    
+    public boolean getSuspect() {
+        return suspect;
+    }
+    public void setSuspect(boolean suspect) {
+        this.suspect = suspect;
+    }
+    
+    public void setUseDirectBuffer(boolean directBuf) {
+        this.directBuf = directBuf;
+    }
+    
+    public void setMaxRetryAttempts(int attempts) {
+        this.retryAttempts = attempts;
+    }
+    
+    public void setTxBufSize(int size) {
+        this.txBufSize = size;
+    }
+    
+    public void setRxBufSize(int size) {
+        this.rxBufSize = size;
+    }
+    
+    public void setWaitForAck(boolean wait) {
+        this.waitForAck = wait;
+    }
+    
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
+    }
+    
+    
 
 }

@@ -17,6 +17,7 @@
 package org.apache.catalina.tribes.tcp;
 
 import org.apache.catalina.tribes.ChannelMessage;
+import org.apache.catalina.tribes.ChannelException;
 
 /**
  * @author Filip Hanik
@@ -31,7 +32,7 @@ public interface SinglePointSender extends DataSender
     public java.net.InetAddress getAddress();
     public void setPort(int port);
     public int getPort();
-    public void sendMessage(ChannelMessage data) throws java.io.IOException;
+    public void sendMessage(ChannelMessage data) throws ChannelException;
     public boolean isConnected();
     public void setSuspect(boolean suspect);
     public boolean getSuspect();
