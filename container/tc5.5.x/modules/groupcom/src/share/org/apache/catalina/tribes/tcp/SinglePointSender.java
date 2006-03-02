@@ -25,14 +25,12 @@ import org.apache.catalina.tribes.ChannelMessage;
  * @since 5.5.7
  */
 
-public interface SinglePointSender
+public interface SinglePointSender extends DataSender
 {
     public void setAddress(java.net.InetAddress address);
     public java.net.InetAddress getAddress();
     public void setPort(int port);
     public int getPort();
-    public void connect() throws java.io.IOException;
-    public void disconnect();
     public void sendMessage(ChannelMessage data) throws java.io.IOException;
     public boolean isConnected();
     public void setSuspect(boolean suspect);

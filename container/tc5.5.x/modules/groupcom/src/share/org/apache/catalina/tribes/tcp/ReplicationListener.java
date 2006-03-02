@@ -327,12 +327,10 @@ public class ReplicationListener implements Runnable, ChannelReceiver, ListenCal
                                        .getHostAddress();
                 }
                 if (log.isDebugEnabled())
-                    log.debug("Starting replication listener on address:"
-                              + tcpListenAddress);
+                    log.debug("Starting replication listener on address:"+ tcpListenAddress);
                 bind = java.net.InetAddress.getByName(tcpListenAddress);
             } catch (IOException ioe) {
-                log.error("Failed bind replication listener on address:"
-                          + tcpListenAddress, ioe);
+                log.error("Failed bind replication listener on address:"+ tcpListenAddress, ioe);
             }
         }
         return bind;

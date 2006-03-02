@@ -36,7 +36,6 @@ import org.apache.tomcat.util.IntrospectionUtils;
  * type 
  * 
  * @author Filip Hanik
- * @author Peter Rossbach
  * @version $Revision: 379956 $ $Date: 2006-02-22 16:57:35 -0600 (Wed, 22 Feb 2006) $
  */
 public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
@@ -69,31 +68,6 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     }
 
     /**
-     * number of transmitted messages>
-     */
-    private long nrOfRequests = 0;
-
-    /**
-     * number of transmitted bytes
-     */
-    private long totalBytes = 0;
-
-    /**
-     * number of failure
-     */
-    private long failureCounter = 0;
-
-    /**
-     * Iteration count for background processing.
-     */
-    private int count = 0;
-
-    /**
-     * Frequency of the check sender keepAlive Socket Status.
-     */
-    protected int processSenderFrequency = 2;
-
-    /**
      * current sender replication mode
      */
     private String replicationMode;
@@ -111,36 +85,13 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     /**
      * autoConnect sender when next message send
      */
-    private boolean autoConnect = false; /**
-     * doTransmitterProcessingStats
-     */
-    protected boolean doTransmitterProcessingStats = false;
-
-    /**
-     * proessingTime
-     */
-    protected long processingTime = 0;
-    
-    /**
-     * min proessingTime
-     */
-    protected long minProcessingTime = Long.MAX_VALUE ;
-
-    /**
-     * max proessingTime
-     */
-    protected long maxProcessingTime = 0;
+    private boolean autoConnect = false; 
    
     /**
      * dynamic sender <code>properties</code>
      */
     private Map properties = new HashMap();
 
-
-    /**
-     * Transmitter Mbean name
-     */
-    private ObjectName objectName;
 
     // ------------------------------------------------------------- Properties
 
@@ -153,26 +104,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
         return (info);
     }
 
-    /**
-     * @return Returns the nrOfRequests.
-     */
-    public long getNrOfRequests() {
-        return nrOfRequests;
-    }
-
-    /**
-     * @return Returns the totalBytes.
-     */
-    public long getTotalBytes() {
-        return totalBytes;
-    }
-
-    /**
-     * @return Returns the failureCounter.
-     */
-    public long getFailureCounter() {
-        return failureCounter;
-    }
+    
 
     /**
      * current replication mode
@@ -200,61 +132,8 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
 
     }
 
-    /**
-     * @return Returns the avg processingTime/nrOfRequests.
-     */
-    public double getAvgProcessingTime() {
-        return ((double)processingTime) / nrOfRequests;
-    }
- 
-    /**
-     * @return Returns the maxProcessingTime.
-     */
-    public long getMaxProcessingTime() {
-        return maxProcessingTime;
-    }
     
-    /**
-     * @return Returns the minProcessingTime.
-     */
-    public long getMinProcessingTime() {
-        return minProcessingTime;
-    }
-    
-    /**
-     * @return Returns the processingTime.
-     */
-    public long getProcessingTime() {
-        return processingTime;
-    }
-    
-    /**
-     * @return Returns the doTransmitterProcessingStats.
-     */
-    public boolean isDoTransmitterProcessingStats() {
-        return doTransmitterProcessingStats;
-    }
-    
-    /**
-     * @param doProcessingStats The doTransmitterProcessingStats to set.
-     */
-    public void setDoTransmitterProcessingStats(boolean doProcessingStats) {
-        this.doTransmitterProcessingStats = doProcessingStats;
-    }
- 
 
-    /**
-     * Transmitter ObjectName
-     * 
-     * @param name
-     */
-    public void setObjectName(ObjectName name) {
-        objectName = name;
-    }
-
-    public ObjectName getObjectName() {
-        return objectName;
-    }
     /**
      * @return Returns the autoConnect.
      */
@@ -304,13 +183,6 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     }
 
     
-    /**
-     * @return Returns the processSenderFrequency.
-     */
-    public int getProcessSenderFrequency() {
-        return processSenderFrequency;
-    }
-
     public int getTxBufSize() {
         return txBufSize;
     }
@@ -323,13 +195,6 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
         return "parallel".equals(replicationMode);
     }
 
-    /**
-     * @param processSenderFrequency The processSenderFrequency to set.
-     */
-    public void setProcessSenderFrequency(int processSenderFrequency) {
-        this.processSenderFrequency = processSenderFrequency;
-    }
-
     public void setTxBufSize(int txBufSize) {
         this.txBufSize = txBufSize;
     }
@@ -340,11 +205,12 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
 
     /**
      * @return True if synchronized sender
-     * @deprecated since version 5.5.7
      */
     public boolean getIsSenderSynchronized() {
-        return DataSenderFactory.SYNC_MODE.equals(replicationMode)
-                || DataSenderFactory.POOLED_SYNC_MODE.equals(replicationMode);
+        return 
+            DataSenderFactory.SYNC_MODE.equals(replicationMode) ||
+            DataSenderFactory.POOLED_SYNC_MODE.equals(replicationMode) ||
+            (DataSenderFactory.PARALLEL_MODE.equals(replicationMode) && waitForAck);
     }
 
     // ------------------------------------------------------------- dynamic
@@ -415,48 +281,11 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     }
     
     public void sendMessage(ChannelMessage message, Member destination) throws IOException {       
-        long time = 0 ;
-        if(doTransmitterProcessingStats) {
-            time = System.currentTimeMillis();
-        }
-        try {
-            Object key = getKey(destination);
-            SinglePointSender sender = (SinglePointSender) map.get(key);
-            sendMessageData(message, sender);
-        } finally {
-            if (doTransmitterProcessingStats) {
-                addProcessingStats(time);
-            }
-        }
+        Object key = getKey(destination);
+        SinglePointSender sender = (SinglePointSender) map.get(key);
+        sendMessageData(message, sender);
     }
     
-    /**
-     * send message to all senders (broadcast)
-     * @see org.apache.catalina.tribes.ClusterSender#sendMessage(org.apache.catalina.tribes.ClusterMessage)
-     */
-//    public void sendMessage(ChannelMessage message, boolean domainOnly) throws IOException {
-//        long time = 0;
-//        if (doTransmitterProcessingStats) {
-//            time = System.currentTimeMillis();
-//        }
-//        try {
-//            IDataSender[] senders = getSenders();
-//            for (int i = 0; i < senders.length; i++) {
-//                IDataSender sender = senders[i];
-//                //domain filter
-//                String domain = message.getAddress().getDomain();
-//                if ( domainOnly && !(domain.equals(sender.getDomain())) ) continue;
-//                sendMessageData(message, sender);
-//            }
-//        } finally {
-//            if (doTransmitterProcessingStats) {
-//                addProcessingStats(time);
-//            }
-//        }
-//    }
-        
-    
-
     /**
      * start the sender and register transmitter mbean
      * 
@@ -488,11 +317,9 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      * 
      * @see SimpleTcpCluster#backgroundProcess()
      */
+
     public void heartbeat() {
-        count = (count + 1) % processSenderFrequency;
-        if (count == 0) {
-            checkKeepAlive();
-        }
+        checkKeepAlive();
     }
 
     /**
@@ -531,18 +358,6 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     }
 
     /**
-     * Reset sender statistics
-     */
-    public synchronized void resetStatistics() {
-        nrOfRequests = 0;
-        totalBytes = 0;
-        failureCounter = 0;
-        processingTime = 0;
-        minProcessingTime = Long.MAX_VALUE;
-        maxProcessingTime = 0;
-    }
-
-    /**
      * add new cluster member and create sender ( s. replicationMode) transfer
      * current properties to sender
      * 
@@ -552,7 +367,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
         try {
             Object key = getKey(member);
             if (!map.containsKey(key)) {
-                SinglePointSender sender = DataSenderFactory.getIDataSender(replicationMode, member);
+                SinglePointSender sender = DataSenderFactory.getSingleSender(replicationMode, member);
                 if ( sender!= null ) {
                     transferSenderProperty(sender);
                     sender.setRxBufSize(getRxBufSize());
@@ -581,22 +396,6 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     }
 
     // ------------------------------------------------------------- protected
-
-    /**
-     * calc number of requests and transfered bytes. Log stats all 100 requets
-     * 
-     * @param length
-     */
-    protected synchronized void addStats(int length) {
-        nrOfRequests++;
-        totalBytes += length;
-        if (log.isDebugEnabled() && (nrOfRequests % 100) == 0) {
-            log.debug("Nr of bytes sent=" + totalBytes + " over "
-                    + nrOfRequests + "; avg=" + (totalBytes / nrOfRequests)
-                    + " bytes/request; failures=" + failureCounter);
-        }
-
-    }
 
     /**
      * Transfer all properties from transmitter to concrete sender
@@ -643,13 +442,11 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
             // deprecated not needed DataSender#pushMessage can handle connection
             if (autoConnect) {
                 synchronized(sender) {
-                    if(!sender.isConnected())
-                        sender.connect();
+                    if(!sender.isConnected()) sender.connect();
                 }
             }
             sender.sendMessage(data);
             sender.setSuspect(false);
-            addStats(data.getMessage().getLength());
         } catch (IOException x) {
             if (!sender.getSuspect()) {
                 if (log.isErrorEnabled() ) log.error("Unable to send replicated message, is member ["+sender.toString()+"] down?",x);
@@ -657,23 +454,8 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
                 log.debug("Unable to send replicated message, is member ["+sender.toString()+"] down?",x);
             }
             sender.setSuspect(true);
-            failureCounter++;
             throw x;
         }
 
     }
-    /**
-     * Add processing stats times
-     * @param startTime
-     */
-    protected void addProcessingStats(long startTime) {
-        long time = System.currentTimeMillis() - startTime ;
-        if(time < minProcessingTime)
-            minProcessingTime = time ;
-        if( time > maxProcessingTime)
-            maxProcessingTime = time ;
-        processingTime += time ;
-    }
- 
- 
 }
