@@ -329,7 +329,7 @@ public class XByteBuffer
      * @return - a full package (header,compress,size,data,footer)
      * 
      */
-    public static byte[] createDataPackage(ClusterData cdata) throws java.io.IOException {
+    public static byte[] createDataPackage(ClusterData cdata) {
         return createDataPackage(cdata.getDataPackage());
     }
     
