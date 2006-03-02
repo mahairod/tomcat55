@@ -36,8 +36,10 @@ public interface ChannelSender
 
     public void heartbeat() ;
 
-    public void sendMessage(ChannelMessage message, Member member) throws java.io.IOException;
+    public void sendMessage(ChannelMessage message, Member[] destination) throws ChannelException;
 
     public boolean getWaitForAck();
     public void setWaitForAck(boolean isWaitForAck);
+    
+    public boolean isParallel();
 }
