@@ -26,6 +26,9 @@ import org.apache.catalina.tribes.ChannelMessage;
 import java.nio.channels.SelectionKey;
 import java.nio.ByteBuffer;
 import org.apache.catalina.tribes.io.XByteBuffer;
+import org.apache.catalina.tribes.Member;
+import java.util.Arrays;
+import org.apache.catalina.tribes.io.ClusterData;
 
 /**
  * This class is NOT thread safe and should never be used with more than one thread at a time
@@ -47,25 +50,29 @@ public class NioSender  {
 
     
     protected long ackTimeout = 15000;
-    protected InetAddress address;
     protected String domain = "";
-    protected int port;
     protected boolean suspect = false;
     protected boolean connected = false;
     protected boolean waitForAck = false;
     protected int rxBufSize = 25188;
     protected int txBufSize = 43800;
     protected Selector selector;
-    
+    protected Member destination;
     
     protected SocketChannel socketChannel;
-    protected ByteBuffer buf = null;
+
+    /*
+     * STATE VARIABLES *
+     */
+    protected ByteBuffer readbuf = null;
     protected boolean direct = false;
-    protected ChannelMessage current = null;
+    protected byte[] current = null;
     protected int curPos=0;
     protected XByteBuffer ackbuf = new XByteBuffer(128,true);
+    protected int remaining = 0;
 
-    public NioSender() {
+    public NioSender(Member destination) {
+        this.destination = destination;
         
     }
     
@@ -76,7 +83,11 @@ public class NioSender  {
             if ( socketChannel.finishConnect() ) {
                 //we connected, register ourselves for writing
                 this.connected = true;
-                key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
+                if ( current != null ) key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
+                return false;
+            } else  { 
+                //wait for the connection to finish
+                key.interestOps(key.interestOps() | SelectionKey.OP_CONNECT);
                 return false;
             }
         } else if ( key.isWritable() ) {
@@ -84,7 +95,7 @@ public class NioSender  {
             if ( writecomplete ) {
                 //we are completed, should we read an ack?
                 if ( waitForAck ) key.interestOps(key.interestOps()|SelectionKey.OP_READ);
-                //if not, we are ready, setMessage will reregister us for write interest
+                //if not, we are ready, setMessage will reregister us for another write interest
                 else return true;
             } else {
                 //we are not complete, lets write some more
@@ -106,12 +117,19 @@ public class NioSender  {
     protected boolean read(SelectionKey key) throws IOException {
         //if there is no message here, we are done
         if ( current == null ) return true;
-        int read = socketChannel.read(buf);
+        int read = socketChannel.read(readbuf);
         //end of stream
-        if ( read == -1 ) return true;
+        if ( read == -1 ) throw new IOException("Unable to receive an ack message.");
         //no data read
         else if ( read == 0 ) return false;
-        throw new UnsupportedOperationException();
+        readbuf.flip();
+        ackbuf.append(readbuf,read);
+        readbuf.clear();
+        if (ackbuf.doesPackageExist() ) {
+            return Arrays.equals(ackbuf.extractDataPackage(true),Constants.ACK_DATA);
+        } else {
+            return false;
+        }
     }
 
     
@@ -120,25 +138,20 @@ public class NioSender  {
             throw new IOException("NioSender is not connected, this should not occur.");
         }
         if ( current != null ) {
-            int remaining = buf.remaining();
             if ( remaining > 0 ) {
-                //write the rest of the buffer
-                remaining -= socketChannel.write(buf);
-            }            
-            if ( remaining == 0 ) {
                 //weve written everything, or we are starting a new package
-                XByteBuffer msg = current.getMessage();
-                remaining = msg.getLength() - curPos;
-                buf.clear();
                 //protect against buffer overwrite
-                int length = Math.min(remaining,txBufSize);
-                buf.put(msg.getBytesDirect(),curPos,length);
-                
-                //if the entire message fits in the buffer
+                int length = current.length-curPos;
+                ByteBuffer writebuf = ByteBuffer.wrap(current,curPos,length);
+                int byteswritten = socketChannel.write(writebuf);
+                curPos += byteswritten;
+                remaining -= byteswritten;
+                //if the entire message was written from the buffer
                 //reset the position counter
-                curPos += length;
-                if ( curPos >= msg.getLength() ) curPos = 0;
-                remaining -= socketChannel.write(buf);
+                if ( curPos >= current.length ) {
+                    curPos = 0;
+                    remaining = 0;
+                }
             }
             //the write 
             return (remaining==0 && curPos == 0);
@@ -155,11 +168,12 @@ public class NioSender  {
      */
     public synchronized void connect() throws IOException {
         if ( connected ) throw new IOException("NioSender is already in connected state.");
-        if ( buf == null ) {
-            if ( direct ) buf = ByteBuffer.allocateDirect(txBufSize);
-            else buf = ByteBuffer.allocate(txBufSize);
+        if ( readbuf == null ) {
+            readbuf = getReadBuffer();
+        } else {
+            readbuf.clear();
         }
-        InetSocketAddress addr = new InetSocketAddress(address,port);
+        InetSocketAddress addr = new InetSocketAddress(InetAddress.getByAddress(destination.getHost()),destination.getPort());
         if ( socketChannel != null ) throw new IOException("Socket channel has already been established. Connection might be in progress.");
         socketChannel = SocketChannel.open();
         socketChannel.configureBlocking(false);
@@ -177,14 +191,29 @@ public class NioSender  {
     public void disconnect() {
         try {
             this.connected = false;
-            if ( buf != null ) buf.clear();
             socketChannel.close();
             socketChannel = null;
-            curPos = 0;
         } catch ( Exception x ) {
             log.error("Unable to disconnect.",x);
+        } finally {
+            reset();
         }
 
+    }
+    
+    public void reset() {
+        if ( connected && readbuf == null) {
+            readbuf = getReadBuffer();
+        }
+        if ( readbuf != null ) readbuf.clear();
+        current = null;
+        curPos = 0;
+        ackbuf.clear();
+        remaining = 0;
+    }
+
+    private ByteBuffer getReadBuffer() {
+        return (direct?ByteBuffer.allocateDirect(rxBufSize):ByteBuffer.allocate(rxBufSize));
     }
     
     /**
@@ -195,14 +224,15 @@ public class NioSender  {
     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
     */
    public synchronized void setMessage(ChannelMessage data) throws IOException {
-       this.current = data;
+       reset();
        if ( data != null ) {
-           if (!this.connected) {
-               connect();
-           } else {
+           current = XByteBuffer.createDataPackage((ClusterData)data);
+           remaining = current.length;
+           curPos = 0;
+           if (connected) {
                socketChannel.register(getSelector(), SelectionKey.OP_WRITE, this);
            }
-       }
+       } 
    }
 
 
@@ -226,35 +256,7 @@ public class NioSender  {
         return this.ackTimeout;
     }
 
-    /**
-     * getAddress
-     *
-     * @return InetAddress
-     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
-     */
-    public InetAddress getAddress() {
-        return address;
-    }
-
-    /**
-     * getDomain
-     *
-     * @return String
-     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
-     */
-    public String getDomain() {
-        return domain;
-    }
-
-    /**
-     * getPort
-     *
-     * @return int
-     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
-     */
-    public int getPort() {
-        return port;
-    }
+    
 
     /**
      * getSuspect
@@ -303,36 +305,6 @@ public class NioSender  {
      */
     public void setAckTimeout(long timeout) {
         this.ackTimeout = timeout;
-    }
-
-    /**
-     * setAddress
-     *
-     * @param address InetAddress
-     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
-     */
-    public void setAddress(InetAddress address) {
-        this.address = address;
-    }
-
-    /**
-     * setDomain
-     *
-     * @param domain String
-     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
-     */
-    public void setDomain(String domain) {
-        this.domain = domain;
-    }
-
-    /**
-     * setPort
-     *
-     * @param port int
-     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
-     */
-    public void setPort(int port) {
-        this.port = port;
     }
 
     /**
