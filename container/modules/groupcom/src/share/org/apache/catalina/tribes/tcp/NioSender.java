@@ -19,16 +19,16 @@ package org.apache.catalina.tribes.tcp;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.Arrays;
 
 import org.apache.catalina.tribes.ChannelMessage;
-import java.nio.channels.SelectionKey;
-import java.nio.ByteBuffer;
-import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.Member;
-import java.util.Arrays;
 import org.apache.catalina.tribes.io.ClusterData;
+import org.apache.catalina.tribes.io.XByteBuffer;
 
 /**
  * This class is NOT thread safe and should never be used with more than one thread at a time
@@ -59,6 +59,7 @@ public class NioSender  {
     protected Selector selector;
     protected Member destination;
     
+    
     protected SocketChannel socketChannel;
 
     /*
@@ -76,13 +77,19 @@ public class NioSender  {
         
     }
     
+    /**
+     * State machine to send data
+     * @param key SelectionKey
+     * @return boolean
+     * @throws IOException
+     */
     public boolean process(SelectionKey key) throws IOException {
         int ops = key.readyOps();
         key.interestOps(key.interestOps() & ~ops);
         if ( key.isConnectable() ) {
             if ( socketChannel.finishConnect() ) {
                 //we connected, register ourselves for writing
-                this.connected = true;
+                connected = true;
                 if ( current != null ) key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
                 return false;
             } else  { 
@@ -102,17 +109,18 @@ public class NioSender  {
                 key.interestOps(key.interestOps()|SelectionKey.OP_WRITE);
             }
         } else if ( key.isReadable() ) {
-            //TODO, HANDLE ACK TIMEOUT-and reconnect
             boolean readcomplete = read(key);
             if ( readcomplete ) return true;
             else key.interestOps(key.interestOps()|SelectionKey.OP_READ);
         } else {
-            //unknown state
+            //unknown state, should never happen
             log.warn("Data is in unknown state. readyOps="+ops);
+            throw new IOException("Data is in unknown state. readyOps="+ops);
         }
         return false;
-        
     }
+    
+    
 
     protected boolean read(SelectionKey key) throws IOException {
         //if there is no message here, we are done
@@ -295,8 +303,6 @@ public class NioSender  {
     public boolean getDirect() {
         return direct;
     }
-
-   
     /**
      * setAckTimeout
      *
@@ -354,5 +360,4 @@ public class NioSender  {
     public void setDirect(boolean directBuffer) {
         this.direct = directBuffer;
     }
-
 }
