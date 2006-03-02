@@ -29,6 +29,7 @@ import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
+import java.net.Socket;
 
 /**
  * This class is NOT thread safe and should never be used with more than one thread at a time
@@ -103,7 +104,12 @@ public class NioSender  {
                 //we are completed, should we read an ack?
                 if ( waitForAck ) key.interestOps(key.interestOps()|SelectionKey.OP_READ);
                 //if not, we are ready, setMessage will reregister us for another write interest
-                else return true;
+                else {
+                    //do a health check, we have no way of verify a disconnected
+                    //socket since we don't register for OP_READ on waitForAck=false
+                    read(key);
+                    return true;
+                }
             } else {
                 //we are not complete, lets write some more
                 key.interestOps(key.interestOps()|SelectionKey.OP_WRITE);
@@ -127,7 +133,7 @@ public class NioSender  {
         if ( current == null ) return true;
         int read = socketChannel.read(readbuf);
         //end of stream
-        if ( read == -1 ) throw new IOException("Unable to receive an ack message.");
+        if ( read == -1 ) throw new IOException("Unable to receive an ack message. EOF on socket channel has been reached.");
         //no data read
         else if ( read == 0 ) return false;
         readbuf.flip();
@@ -161,7 +167,6 @@ public class NioSender  {
                     remaining = 0;
                 }
             }
-            //the write 
             return (remaining==0 && curPos == 0);
         }
         //no message to send, we can consider that complete
@@ -199,7 +204,12 @@ public class NioSender  {
     public void disconnect() {
         try {
             this.connected = false;
+            Socket socket = socketChannel.socket();
+            socket.shutdownOutput();
+            socket.shutdownInput();
+            socket.close();
             socketChannel.close();
+            socket = null;
             socketChannel = null;
         } catch ( Exception x ) {
             log.error("Unable to disconnect.",x);
