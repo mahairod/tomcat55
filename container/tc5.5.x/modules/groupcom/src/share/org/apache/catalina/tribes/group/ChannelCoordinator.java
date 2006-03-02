@@ -60,16 +60,7 @@ public class ChannelCoordinator extends ChannelInterceptorBase implements Messag
      */
     public void sendMessage(Member[] destination, ChannelMessage msg, InterceptorPayload payload) throws ChannelException {
         if ( destination == null ) destination = membershipService.getMembers();
-        ChannelException exception = null;
-        for ( int i=0; i<destination.length; i++ ) {
-            try {
-                clusterSender.sendMessage(msg, destination[i]);
-            }catch ( Exception x ) {
-                if ( exception == null ) exception = new ChannelException(x);
-                exception.addFaultyMember(destination[i]);
-            }
-        }
-        if ( exception != null ) throw exception;
+        clusterSender.sendMessage(msg,destination);
     }
 
 
