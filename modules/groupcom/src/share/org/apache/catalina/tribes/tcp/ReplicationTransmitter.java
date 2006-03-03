@@ -29,6 +29,7 @@ import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.util.IDynamicProperty;
 import org.apache.catalina.util.StringManager;
 import org.apache.tomcat.util.IntrospectionUtils;
+import org.apache.catalina.tribes.tcp.nio.PooledParallelSender;
 
 /**
  * Transmit message to other cluster members
@@ -154,7 +155,7 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     /**
      * @return The ack timeout
      */
-    public long getTimeout() {
+    public long getAckTimeout() {
         return ackTimeout;
     }
 
@@ -267,17 +268,38 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      * @see org.apache.catalina.tribes.ClusterSender#sendMessage(org.apache.catalina.tribes.ClusterMessage, org.apache.catalina.tribes.Member)
      */
     public void sendMessage(ChannelMessage message, Member[] destination) throws ChannelException {
-        ChannelException exception = null;
-        for (int i = 0; i < destination.length; i++) {
-            try {
-                sendMessage(message, destination[i]);
-            } catch (Exception x) {
-                if (exception == null) exception = new ChannelException(x);
-                exception.addFaultyMember(destination[i]);
+        if ( !isParallel() ) {
+            ChannelException exception = null;
+            for (int i = 0; i < destination.length; i++) {
+                try {
+                    sendMessage(message, destination[i]);
+                } catch (Exception x) {
+                    if (exception == null) exception = new ChannelException(x);
+                    exception.addFaultyMember(destination[i]);
+                }
             }
+            if (exception != null)throw exception;
+        } else {
+            MultiPointSender sender = getParallelSender();
+            sender.sendMessage(destination,message);
         }
-        if (exception != null)throw exception;
+    }
+    
+    PooledParallelSender parallelsender = null;
+    public MultiPointSender getParallelSender() {
+        if ( parallelsender == null ) {
 
+
+            PooledParallelSender sender = new PooledParallelSender();
+            sender.setMaxRetryAttempts(2);
+            sender.setRxBufSize(getRxBufSize());
+            sender.setTimeout(ackTimeout);
+            sender.setUseDirectBuffer(true);
+            sender.setWaitForAck(getWaitForAck());
+            sender.setTxBufSize(getTxBufSize());
+            parallelsender = sender;
+        }
+        return parallelsender;
     }
     
     public void sendMessage(ChannelMessage message, Member destination) throws ChannelException {       
@@ -365,14 +387,16 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
      */
     public synchronized void add(Member member) {
         try {
-            Object key = getKey(member);
-            if (!map.containsKey(key)) {
-                SinglePointSender sender = DataSenderFactory.getSingleSender(replicationMode, member);
-                if ( sender!= null ) {
-                    transferSenderProperty(sender);
-                    sender.setRxBufSize(getRxBufSize());
-                    sender.setTxBufSize(getTxBufSize());
-                    map.put(key, sender);
+            if ( !isParallel() ) {
+                Object key = getKey(member);
+                if (!map.containsKey(key)) {
+                    SinglePointSender sender = DataSenderFactory.getSingleSender(replicationMode, member);
+                    if (sender != null) {
+                        transferSenderProperty(sender);
+                        sender.setRxBufSize(getRxBufSize());
+                        sender.setTxBufSize(getTxBufSize());
+                        map.put(key, sender);
+                    }
                 }
             }
         } catch (java.io.IOException x) {
