@@ -132,8 +132,8 @@
         corruption, submitted by Rudiger Plum (jim)
       </fix>
       <fix>
-        Fix problems with request.getReader().readLine(). 
-        patch by Rainer Jung (billbarker)
+        <bug>38346</bug>: Fix problems with request.getReader().readLine(). 
+        Patch by Rainer Jung (billbarker)
       </fix>
       <fix>
         Don't write out the shutdown secret file if shutdown is disabled (the default) (billbarker)
@@ -141,6 +141,9 @@
       <fix>
         Fix NPE when no sink is supplied. (billbarker)
       </fix>
+      <update>
+        Downgrade "Response already committed" logging entry to DEBUG. (billbarker)
+     </update>
     </changelog>
   </subsection>
   <subsection name="Jasper">
