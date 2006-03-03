@@ -1893,11 +1893,7 @@ public class Request
      */
     public String getQueryString() {
         String queryString = coyoteRequest.queryString().toString();
-        if (queryString == null || queryString.equals("")) {
-            return (null);
-        } else {
-            return queryString;
-        }
+	return queryString;
     }
 
 
