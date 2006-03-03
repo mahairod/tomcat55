@@ -48,7 +48,7 @@ import org.apache.catalina.tribes.MembershipListener;
 import org.apache.catalina.tribes.group.GroupChannel;
 
 import org.apache.catalina.ha.session.DeltaManager;
-import org.apache.catalina.ha.util.IDynamicProperty;
+import org.apache.catalina.tribes.util.IDynamicProperty;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
