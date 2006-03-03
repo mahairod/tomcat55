@@ -285,11 +285,12 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
         }
     }
     
+    /**
+     * @todo FIX THIS TO BE IN THE FACTORY
+     */
     PooledParallelSender parallelsender = null;
     public MultiPointSender getParallelSender() {
         if ( parallelsender == null ) {
-
-
             PooledParallelSender sender = new PooledParallelSender();
             sender.setMaxRetryAttempts(2);
             sender.setRxBufSize(getRxBufSize());
@@ -305,6 +306,10 @@ public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     public void sendMessage(ChannelMessage message, Member destination) throws ChannelException {       
         Object key = getKey(destination);
         SinglePointSender sender = (SinglePointSender) map.get(key);
+        if ( sender == null ) {
+            add(destination);
+            sender = (SinglePointSender) map.get(key);
+        }
         sendMessageData(message, sender);
     }
     
