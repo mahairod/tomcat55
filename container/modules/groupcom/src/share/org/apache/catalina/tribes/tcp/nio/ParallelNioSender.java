@@ -43,7 +43,7 @@ import org.apache.catalina.tribes.tcp.MultiPointSender;
  */
 public class ParallelNioSender implements MultiPointSender {
     protected long timeout = 15000;
-    protected long selectTimeout = 50; 
+    protected long selectTimeout = 1000; 
     protected boolean waitForAck = false;
     protected int retryAttempts=0;
     protected int keepAliveCount = Integer.MAX_VALUE;

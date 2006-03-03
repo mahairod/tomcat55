@@ -88,6 +88,8 @@ public class NioSender  {
             if ( socketChannel.finishConnect() ) {
                 //we connected, register ourselves for writing
                 connected = true;
+                socketChannel.socket().setSendBufferSize(txBufSize);
+                socketChannel.socket().setReceiveBufferSize(rxBufSize);
                 if ( current != null ) key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
                 return false;
             } else  { 
