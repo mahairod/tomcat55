@@ -16,7 +16,7 @@
 
 package org.apache.catalina.tribes.tcp.bio.util;
 
-import org.apache.catalina.tribes.util.*;
+
 
 /**
  * A queue interface<BR>
