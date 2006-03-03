@@ -47,7 +47,8 @@ don't return until all have been processed on the remote end.)
     Once it has received state, it will pretty much take itself out of the loop
     The benefit of the new ParallelNioSender is that it doesn't require to know about
     a member to transfer state, all it has to do is to reply to a message that came in.
-    beee-aaaa-uuuu-tiful.
+    beee-aaaa-uuuu-tiful. state is a one time deal for the entire channel, so a 
+    session replication cluster, would transfer state as one block, not one per context
     
 14. Keepalive count and idle kill off 
 
