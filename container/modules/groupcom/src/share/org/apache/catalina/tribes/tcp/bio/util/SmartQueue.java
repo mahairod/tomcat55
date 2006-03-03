@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.catalina.tribes.util;
+package org.apache.catalina.tribes.tcp.bio.util;
 
 /**
  * A smart queue, used for async replication <BR>
