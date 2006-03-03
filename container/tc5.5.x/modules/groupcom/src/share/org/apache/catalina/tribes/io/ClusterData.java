@@ -24,7 +24,7 @@ import java.io.ObjectOutputStream;
 import org.apache.catalina.tribes.mcast.McastMember;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
-import java.util.UUID;
+import org.apache.catalina.tribes.util.UUIDGenerator;
 import java.util.Arrays;
 
 /**
@@ -37,7 +37,8 @@ import java.util.Arrays;
  * @since 5.5.10
  */
 public class ClusterData implements ChannelMessage {
-
+    public static boolean USE_SECURE_RANDOM_FOR_UUID = false;
+    
     private int options = 0 ;
     private XByteBuffer message ;
     private long timestamp ;
@@ -129,15 +130,8 @@ public class ClusterData implements ChannelMessage {
     }
     
     public void generateUUID() {
-        UUID id = UUID.randomUUID();
-        long msb = id.getMostSignificantBits();
-        long lsb = id.getLeastSignificantBits();
         byte[] data = new byte[16];
-        //reduce byte copy
-        //System.arraycopy(XByteBuffer.toBytes(msb),0,data,0,8);
-        XByteBuffer.toBytes(msb,data,0);
-        //System.arraycopy(XByteBuffer.toBytes(lsb),0,data,8,8);
-        XByteBuffer.toBytes(lsb,data,8);
+        UUIDGenerator.randomUUID(USE_SECURE_RANDOM_FOR_UUID,data,0);
         setUniqueId(data);
     }
 
