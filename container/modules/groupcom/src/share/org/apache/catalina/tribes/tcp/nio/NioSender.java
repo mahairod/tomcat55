@@ -189,7 +189,6 @@ public class NioSender  {
         socketChannel.configureBlocking(false);
         socketChannel.connect(addr);
         socketChannel.register(getSelector(),SelectionKey.OP_CONNECT,this);
-        this.connected = true;
     }
     
 
