@@ -238,6 +238,16 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
     public Member[] getMembers() {
         return coordinator.getMembershipService().getMembers();
     }
+    
+    /**
+     * 
+     * @param mbr Member
+     * @return Member
+     */
+    public Member getMember(Member mbr){
+        return coordinator.getMembershipService().getMember(mbr);
+    }
+
 
     /**
      * Return the member that represents this node.

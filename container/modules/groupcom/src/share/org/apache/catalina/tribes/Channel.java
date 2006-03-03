@@ -102,6 +102,13 @@ public interface Channel {
      * @return Member
      */
     public Member getLocalMember() ;
+    
+    /**
+     * 
+     * @param mbr Member
+     * @return Member
+     */
+    public Member getMember(Member mbr);
 
     
 }
