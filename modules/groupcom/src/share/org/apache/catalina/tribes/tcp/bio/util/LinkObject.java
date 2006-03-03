@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.catalina.tribes.util;
+package org.apache.catalina.tribes.tcp.bio.util;
 
 /**
  * The class <b>LinkObject</b> implements an element
