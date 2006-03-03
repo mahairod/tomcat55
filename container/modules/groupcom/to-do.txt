@@ -8,7 +8,6 @@ Documentation:
 Code Tasks:
 ===========================================
 
-6. NIO and IO DataSender, since the IO is blocking
 
 8. WaitForCompletionInterceptor - waits for the message to get processed by all receivers before returning
   (This is useful when synchronized=false and waitForAck=false, to improve
@@ -40,6 +39,15 @@ don't return until all have been processed on the remote end.)
     names and the locations.
     It can replicate every X seconds, or on dirty flags by the objects stored,
     or a request to scan for dirty flags, or a request with the objects.
+    
+13. StateTransfer interceptor
+    the ideas just come up in my head. the state transfer interceptor 
+    will hold all incoming messages until it has received a message
+    with a STATE_TRANSFER header as the first of the bytes.
+    Once it has received state, it will pretty much take itself out of the loop
+    The benefit of the new ParallelNioSender is that it doesn't require to know about
+    a member to transfer state, all it has to do is to reply to a message that came in.
+    beee-aaaa-uuuu-tiful.
 
 Tasks Completed
 ===========================================
@@ -67,6 +75,9 @@ Notes: Instead of using a streamable, this is implemented using the XByteBuffer,
 
 5. OrderInterceptor - guarantees the order of messages
 Notes: completed
+
+6. NIO and IO DataSender, since the IO is blocking
+Notes: completed. works very well, have not implemented suspect error logging.
 
 7. FragmentationInterceptor - splits up messages that are larger than X bytes.
 Notes: complated
