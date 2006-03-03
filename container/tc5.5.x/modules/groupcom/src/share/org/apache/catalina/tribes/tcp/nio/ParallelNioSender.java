@@ -77,6 +77,7 @@ public class ParallelNioSender implements MultiPointSender {
         NioSender[] senders = setupForSend(destination);
         connect(senders);
         setData(senders,data);
+        
         int remaining = senders.length;
         try {
             //loop until complete, an error happens, or we timeout
@@ -103,9 +104,11 @@ public class ParallelNioSender implements MultiPointSender {
     private int doLoop(long selectTimeOut, int maxAttempts) throws IOException, ChannelException {
         int completed = 0;
         int selectedKeys = selector.select(selectTimeOut);
+        
         if (selectedKeys == 0) {
             return 0;
         }
+        
         Iterator it = selector.selectedKeys().iterator();
         while (it.hasNext()) {
             SelectionKey sk = (SelectionKey) it.next();
@@ -261,7 +264,8 @@ public class ParallelNioSender implements MultiPointSender {
     }
     
     public boolean checkKeepAlive() {
-        throw new UnsupportedOperationException("Method ParallelNioSender.checkKeepAlive() not implemented");
+        //throw new UnsupportedOperationException("Method ParallelNioSender.checkKeepAlive() not implemented");
+        return false;
     }
 
 }

@@ -181,7 +181,6 @@ public class McastMember implements Member, java.io.Externalizable {
         
         System.arraycopy(domaind,0,data,20,domaind.length);
         dataPkg = data;
-        System.out.println("McastMember.getData all the way");
         return data;
     }
     /**
