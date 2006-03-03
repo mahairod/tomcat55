@@ -48,6 +48,8 @@ don't return until all have been processed on the remote end.)
     The benefit of the new ParallelNioSender is that it doesn't require to know about
     a member to transfer state, all it has to do is to reply to a message that came in.
     beee-aaaa-uuuu-tiful.
+    
+14. Keepalive count and idle kill off 
 
 Tasks Completed
 ===========================================
