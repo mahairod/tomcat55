@@ -58,7 +58,7 @@
         would be retrieved using the wrong classloader (remm)
       </fix>
       <fix>
-        HttpSession.getId and getLastAccessTime will no longer throw an ISE when the session is invalid (remm,pero)
+        HttpSession.getId will no longer throw an ISE when the session is invalid (remm)
       </fix>
       <fix>
          ore detailed errors for naming issues (remm)
@@ -169,7 +169,7 @@
         Update DeltaManager session access stats  (pero)
       </fix>
       <fix>
-        DeltaSession getId and getLastAccessTime will no longer throw an ISE when the session is invalid (pero)
+        DeltaSession getId will no longer throw an ISE when the session is invalid (pero)
       </fix>
       <update>
           Resurrected the &quot;suspect&quot; property so that the logs don't fill
