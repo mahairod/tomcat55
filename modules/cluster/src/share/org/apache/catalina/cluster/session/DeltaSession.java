@@ -42,14 +42,12 @@ import javax.servlet.http.HttpSessionContext;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
 import org.apache.catalina.SessionEvent;
 import org.apache.catalina.SessionListener;
 import org.apache.catalina.cluster.ClusterSession;
-import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.StringManager;
@@ -333,12 +331,6 @@ public class DeltaSession implements HttpSession, Session, Serializable,
      * Return the session identifier for this session.
      */
     public String getId() {
-
-        if ( !isValid() ) {
-            throw new IllegalStateException
-            (sm.getString("standardSession.getId.ise"));
-        }
-
         return (this.id);
 
     }
@@ -443,13 +435,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
      * value associated with the session, do not affect the access time.
      */
     public long getLastAccessedTime() {
-        if (!isValid) {
-            throw new IllegalStateException(sm
-                    .getString("standardSession.getLastAccessedTime.ise"));
-
-        }
         return (this.lastAccessedTime);
-
     }
 
     /**
@@ -738,10 +724,30 @@ public class DeltaSession implements HttpSession, Session, Serializable,
             accessCount = 0;
             setValid(false);
 
-            // Remove this session from our manager's active sessions
-            if (manager != null)
-                manager.remove(this);
+            if (manager != null) {
 
+                /*
+                 * Compute how long this session has been alive, and update
+                 * session manager's related properties accordingly
+                 */
+                long timeNow = System.currentTimeMillis();
+                int timeAlive = (int) ((timeNow - creationTime)/1000);
+                synchronized (manager) {
+                    if (timeAlive > manager.getSessionMaxAliveTime()) {
+                        manager.setSessionMaxAliveTime(timeAlive);
+                    }
+                    int numExpired = manager.getExpiredSessions();
+                    numExpired++;
+                    manager.setExpiredSessions(numExpired);
+                    int average = manager.getSessionAverageAliveTime();
+                    average = ((average * (numExpired-1)) + timeAlive)/numExpired;
+                    manager.setSessionAverageAliveTime(average);
+                }
+
+                // Remove this session from our manager's active sessions
+                manager.remove(this);
+            }
+            
             // Notify interested session event listeners
             if (notify) {
                 fireSessionEvent(Session.SESSION_DESTROYED_EVENT, null);
@@ -755,14 +761,13 @@ public class DeltaSession implements HttpSession, Session, Serializable,
             for (int i = 0; i < keys.length; i++)
                 removeAttributeInternal(keys[i], notify, false);
 
-            if (notifyCluster) {
+            if (notifyCluster && manager != null) {
                 if (log.isDebugEnabled())
                     log.debug(smp.getString("deltaSession.notifying",
-                            ((DeltaManager) manager).getName(), new Boolean(
-                                    isPrimarySession()), expiredId));
+                        ((DeltaManager) manager).getName(), new Boolean(
+                                isPrimarySession()), expiredId));
                 ((DeltaManager) manager).sessionExpired(expiredId);
             }
-
         }
 
     }
