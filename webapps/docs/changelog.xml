@@ -58,7 +58,7 @@
         would be retrieved using the wrong classloader (remm)
       </fix>
       <fix>
-        HttpSession.getId will no longer throw an ISE when the session is invalid (remm)
+        HttpSession.getId and getLastAccessTime will no longer throw an ISE when the session is invalid (remm,pero)
       </fix>
       <fix>
          ore detailed errors for naming issues (remm)
@@ -165,17 +165,16 @@
   </subsection>
   <subsection name="Cluster">
     <changelog>
-      <update>
-        server.xml configuration change. The &lt;Receiver&gt; element
-        now contains the ClusterReceiverBase instead of ReplictionListener.
-        The ReplicationListener is separated out as a listener component, 
-        and how no clue about session replication.
-      </update>
+      <fix>
+        Update DeltaManager session access stats  (pero)
+      </fix>
+      <fix>
+        DeltaSession getId and getLastAccessTime will no longer throw an ISE when the session is invalid (pero)
+      </fix>
       <update>
           Resurrected the &quot;suspect&quot; property so that the logs don't fill
-          up with errors when member disappears or a connection is lost.
+          up with errors when member disappears or a connection is lost. Only useful for pooled mode (fhanik)
       </update>
-
       <add>
        <bug>35710</bug>: Add session replication for cross context session changes.
        The portlet api need this support, see refactored ReplicationValve. (pero)
