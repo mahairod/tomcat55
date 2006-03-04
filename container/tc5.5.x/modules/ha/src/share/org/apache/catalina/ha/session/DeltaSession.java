@@ -437,7 +437,12 @@ public class DeltaSession implements HttpSession, Session, Serializable,
      * value associated with the session, do not affect the access time.
      */
     public long getLastAccessedTime() {
-        return (this.lastAccessedTime);
+       
+		 if (!isValid()) {
+            throw new IllegalStateException(sm
+                    .getString("standardSession.getId.ise"));
+        }
+		return (this.lastAccessedTime);
 
     }
 
