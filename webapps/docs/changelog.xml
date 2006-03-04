@@ -144,6 +144,9 @@
       <update>
         Downgrade "Response already committed" logging entry to DEBUG. (billbarker)
      </update>
+     <fix>
+       <bug>38113</bug>: Return the empty String for an empty query-string instead of null. (billbarker)
+     </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
