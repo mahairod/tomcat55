@@ -50,7 +50,10 @@ don't return until all have been processed on the remote end.)
     beee-aaaa-uuuu-tiful. state is a one time deal for the entire channel, so a 
     session replication cluster, would transfer state as one block, not one per context
     
-14. Keepalive count and idle kill off 
+14. Keepalive count and idle kill off for Nio senders
+
+15. remove DataSenderFactory and DataSender.properties -
+    these cause the settings to be hard coded ant not pluggable.
 
 Tasks Completed
 ===========================================
