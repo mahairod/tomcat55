@@ -52,6 +52,14 @@ public class UUIDGenerator {
         into[8+offset] |= 0x80; //1000 0000
         return into;
     }
+    
+    /**
+     * Same as java.util.Random.nextBytes except this one we dont have to allocate a new byte array
+     * @param into byte[]
+     * @param offset int
+     * @param length int
+     * @param r Random
+     */
     public static void nextBytes(byte[] into, int offset, int length, Random r) {
         int numRequested = length;
         int numGot = 0, rnd = 0;
