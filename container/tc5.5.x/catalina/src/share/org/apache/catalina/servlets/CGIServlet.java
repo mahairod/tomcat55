@@ -19,7 +19,6 @@ package org.apache.catalina.servlets;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1639,7 +1637,6 @@ public final class CGIServlet extends HttpServlet {
              * with major modifications by Martin Dengler
              */
             Runtime rt = null;
-            BufferedReader commandsStdOut = null;
             InputStream cgiOutput = null;
             BufferedReader commandsStdErr = null;
             BufferedOutputStream commandsStdIn = null;
@@ -1737,17 +1734,6 @@ public final class CGIServlet extends HttpServlet {
             boolean isRunning = true;
             commandsStdErr = new BufferedReader
                 (new InputStreamReader(proc.getErrorStream()));
-            BufferedWriter servletContainerStdout = null;
-
-            try {
-                if (response.getOutputStream() != null) {
-                    servletContainerStdout =
-                        new BufferedWriter(new OutputStreamWriter
-                            (response.getOutputStream()));
-                }
-            } catch (IOException ignored) {
-                //NOOP: no output will be written
-            }
             final BufferedReader stdErrRdr = commandsStdErr ;
 
             new Thread() {
@@ -1760,7 +1746,6 @@ public final class CGIServlet extends HttpServlet {
                 new HTTPHeaderInputStream(proc.getInputStream());
             BufferedReader cgiHeaderReader =
                 new BufferedReader(new InputStreamReader(cgiHeaderStream));
-            boolean isBinaryContent = false;
             
             while (isRunning) {
                 try {
@@ -1783,56 +1768,34 @@ public final class CGIServlet extends HttpServlet {
                             } else {
                                 response.addHeader(header , value);
                             }
-                            if ((header.toLowerCase().equals("content-type"))
-                                && (!value.toLowerCase().startsWith("text"))) {
-                                isBinaryContent = true;
-                            }
                         } else {
                             log("runCGI: bad header line \"" + line + "\"");
                         }
                     }
 
                     //write output
-                    if (isBinaryContent) {
-                        byte[] bBuf = new byte[2048];
-                        OutputStream out = response.getOutputStream();
-                        cgiOutput = proc.getInputStream();
+                    byte[] bBuf = new byte[2048];
+
+                    OutputStream out = response.getOutputStream();
+                    cgiOutput = proc.getInputStream();
+
+                    try {
                         while ((bufRead = cgiOutput.read(bBuf)) != -1) {
                             if (debug >= 4) {
                                 log("runCGI: output " + bufRead +
-                                    " bytes of binary data");
+                                    " bytes of data");
                             }
                             out.write(bBuf, 0, bufRead);
                         }
-                    } else {
-                        commandsStdOut = new BufferedReader
-                            (new InputStreamReader(proc.getInputStream()));
-
-                        char[] cBuf = new char[1024];
-                        try {
-                            while ((bufRead = commandsStdOut.read(cBuf)) != -1) {
-                                if (servletContainerStdout != null) {
-                                    if (debug >= 4) {
-                                        log("runCGI: write(\"" +
-                                                new String(cBuf, 0, bufRead) + "\")");
-                                    }
-                                    servletContainerStdout.write(cBuf, 0, bufRead);
-                                }
-                            }
-                        } finally {
-                            // Attempt to consume any leftover byte if something bad happens,
-                            // such as a socket disconnect on the servlet side; otherwise, the
-                            // external process could hang
-                            if (bufRead != -1) {
-                                while ((bufRead = commandsStdOut.read(cBuf)) != -1) {}
-                            }
-                        }
-    
-                        if (servletContainerStdout != null) {
-                            servletContainerStdout.flush();
+                    } finally {
+                        // Attempt to consume any leftover byte if something bad happens,
+                        // such as a socket disconnect on the servlet side; otherwise, the
+                        // external process could hang
+                        if (bufRead != -1) {
+                            while ((bufRead = cgiOutput.read(bBuf)) != -1) {}
                         }
                     }
-
+    
                     proc.exitValue(); // Throws exception if alive
 
                     isRunning = false;
@@ -1844,12 +1807,9 @@ public final class CGIServlet extends HttpServlet {
                     }
                 }
             } //replacement for Process.waitFor()
+
             // Close the output stream used
-            if (isBinaryContent) {
-                cgiOutput.close();
-            } else {
-                commandsStdOut.close();
-            }
+            cgiOutput.close();
         }
 
         /**
