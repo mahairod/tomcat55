@@ -56,6 +56,18 @@ public class JspConfig {
     public JspConfig(ServletContext ctxt) {
 	this.ctxt = ctxt;
     }
+    
+    private double getVersion(TreeNode webApp) {
+        if (webApp == null) {
+            String v = webApp.findAttribute("version");
+            if (v != null) {
+                try {
+                    return Double.parseDouble(v);
+                } catch (Exception e) {}
+            }
+        }
+        return 2.4;
+    }
 
     private void processWebDotXml(ServletContext ctxt) throws JasperException {
 
@@ -76,7 +88,7 @@ public class JspConfig {
 	    TreeNode webApp = pu.parseXMLDocument(WEB_XML, ip);
 
 	    if (webApp == null
-                    || !"2.4".equals(webApp.findAttribute("version"))) {
+                    || getVersion(webApp) < 2.4) {
 	        defaultIsELIgnored = "true";
 	        return;
 	    }

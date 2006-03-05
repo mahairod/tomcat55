@@ -28,6 +28,7 @@ import javax.el.ValueExpression;
 import javax.servlet.jsp.tagext.BodyTag;
 import javax.servlet.jsp.tagext.DynamicAttributes;
 import javax.servlet.jsp.tagext.IterationTag;
+import javax.servlet.jsp.tagext.JspIdConsumer;
 import javax.servlet.jsp.tagext.SimpleTag;
 import javax.servlet.jsp.tagext.TagAttributeInfo;
 import javax.servlet.jsp.tagext.TagData;
@@ -907,7 +908,7 @@ abstract class Node implements TagConstants {
     public static class ELExpression extends Node {
 
         private ELNode.Nodes el;
-        
+
         private final char type;
 
         public ELExpression(char type, String text, Mark start, Node parent) {
@@ -926,7 +927,7 @@ abstract class Node implements TagConstants {
         public ELNode.Nodes getEL() {
             return el;
         }
-        
+
         public char getType() {
             return this.type;
         }
@@ -1380,6 +1381,8 @@ abstract class Node implements TagConstants {
 
         private boolean implementsTryCatchFinally;
 
+        private boolean implementsJspIdConsumer;
+
         private boolean implementsSimpleTag;
 
         private boolean implementsDynamicAttributes;
@@ -1445,6 +1448,8 @@ abstract class Node implements TagConstants {
                     .isAssignableFrom(tagHandlerClass);
             this.implementsDynamicAttributes = DynamicAttributes.class
                     .isAssignableFrom(tagHandlerClass);
+            this.implementsJspIdConsumer = JspIdConsumer.class
+                    .isAssignableFrom(tagHandlerClass);
         }
 
         /*
@@ -1479,6 +1484,7 @@ abstract class Node implements TagConstants {
             this.implementsBodyTag = false;
             this.implementsTryCatchFinally = false;
             this.implementsSimpleTag = true;
+            this.implementsJspIdConsumer = false;
             this.implementsDynamicAttributes = tagInfo.hasDynamicAttributes();
         }
 
@@ -1502,6 +1508,19 @@ abstract class Node implements TagConstants {
 
         public void setJspAttributes(JspAttribute[] jspAttrs) {
             this.jspAttrs = jspAttrs;
+        }
+
+        public TagAttributeInfo getTagAttributeInfo(String name) {
+            TagInfo info = this.getTagInfo();
+            if (info == null)
+                return null;
+            TagAttributeInfo[] tai = info.getAttributes();
+            for (int i = 0; i < tai.length; i++) {
+                if (tai[i].getName().equals(name)) {
+                    return tai[i];
+                }
+            }
+            return null;
         }
 
         public JspAttribute[] getJspAttributes() {
@@ -1566,6 +1585,10 @@ abstract class Node implements TagConstants {
 
         public boolean implementsTryCatchFinally() {
             return implementsTryCatchFinally;
+        }
+
+        public boolean implementsJspIdConsumer() {
+            return implementsJspIdConsumer;
         }
 
         public boolean implementsSimpleTag() {
@@ -2037,7 +2060,9 @@ abstract class Node implements TagConstants {
 
         private boolean dynamic;
 
-        private ELNode.Nodes el;
+        private final ELNode.Nodes el;
+
+        private final TagAttributeInfo tai;
 
         // If true, this JspAttribute represents a <jsp:attribute>
         private boolean namedAttribute;
@@ -2045,8 +2070,9 @@ abstract class Node implements TagConstants {
         // The node in the parse tree for the NamedAttribute
         private NamedAttribute namedAttributeNode;
 
-        JspAttribute(String qName, String uri, String localName, String value,
-                boolean expr, ELNode.Nodes el, boolean dyn) {
+        JspAttribute(TagAttributeInfo tai, String qName, String uri,
+                String localName, String value, boolean expr, ELNode.Nodes el,
+                boolean dyn) {
             this.qName = qName;
             this.uri = uri;
             this.localName = localName;
@@ -2056,18 +2082,22 @@ abstract class Node implements TagConstants {
             this.el = el;
             this.dynamic = dyn;
             this.namedAttribute = false;
+            this.tai = tai;
         }
-        
+
         /**
          * Allow node to validate itself
+         * 
          * @param ef
          * @param ctx
          * @throws ELException
          */
-        public void validateEL(ExpressionFactory ef, ELContext ctx) throws ELException {
+        public void validateEL(ExpressionFactory ef, ELContext ctx)
+                throws ELException {
             if (this.el != null) {
                 // determine exact type
-                ValueExpression ve = ef.createValueExpression(ctx, this.value, String.class);
+                ValueExpression ve = ef.createValueExpression(ctx, this.value,
+                        String.class);
             }
         }
 
@@ -2076,7 +2106,7 @@ abstract class Node implements TagConstants {
          * attribute. In this case, we have to store the nodes of the body of
          * the attribute.
          */
-        JspAttribute(NamedAttribute na, boolean dyn) {
+        JspAttribute(NamedAttribute na, TagAttributeInfo tai, boolean dyn) {
             this.qName = na.getName();
             this.localName = na.getLocalName();
             this.value = null;
@@ -2085,6 +2115,7 @@ abstract class Node implements TagConstants {
             this.el = null;
             this.dynamic = dyn;
             this.namedAttribute = true;
+            this.tai = null;
         }
 
         /**
@@ -2107,6 +2138,66 @@ abstract class Node implements TagConstants {
          */
         public String getURI() {
             return uri;
+        }
+
+        public TagAttributeInfo getTagAttributeInfo() {
+            return this.tai;
+        }
+
+        /**
+         * 
+         * @return return true if there's TagAttributeInfo meaning we need to
+         *         assign a ValueExpression
+         */
+        public boolean isDeferredInput() {
+            return (this.tai != null) ? this.tai.isDeferredValue() : false;
+        }
+
+        /**
+         * 
+         * @return return true if there's TagAttributeInfo meaning we need to
+         *         assign a MethodExpression
+         */
+        public boolean isDeferredMethodInput() {
+            return (this.tai != null) ? this.tai.isDeferredMethod() : false;
+        }
+
+        public String getExpectedTypeName() {
+            if (this.tai != null) {
+                if (this.isDeferredInput()) {
+                    return this.tai.getExpectedTypeName();
+                } else if (this.isDeferredMethodInput()) {
+                    String m = this.tai.getMethodSignature();
+                    if (m != null) {
+                        int rti = m.trim().indexOf(' ');
+                        if (rti > 0) {
+                            return m.substring(0, rti).trim();
+                        }
+                    }
+                }
+            }
+            return "java.lang.Object";
+        }
+        
+        public String[] getParameterTypeNames() {
+            if (this.tai != null) {
+                if (this.isDeferredMethodInput()) {
+                    String m = this.tai.getMethodSignature();
+                    if (m != null) {
+                        m = m.trim();
+                        m = m.substring(m.indexOf('(') + 1);
+                        m = m.substring(0, m.length() - 1);
+                        if (m.trim().length() > 0) {
+                            String[] p = m.split(",");
+                            for (int i = 0; i < p.length; i++) {
+                                p[i] = p[i].trim();
+                            }
+                            return p;
+                        }
+                    }
+                }
+            }
+            return new String[0];
         }
 
         /**
@@ -2150,7 +2241,8 @@ abstract class Node implements TagConstants {
          *         interpreted or reevaluated
          */
         public boolean isELInterpreterInput() {
-            return el != null;
+            return el != null || this.isDeferredInput()
+                    || this.isDeferredMethodInput();
         }
 
         /**
