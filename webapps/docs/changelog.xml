@@ -135,12 +135,18 @@
         <bug>38346</bug>: Fix problems with request.getReader().readLine(). 
         Patch by Rainer Jung (billbarker)
       </fix>
+      <update>
+        Local address reuse for APR Endpoints (via APR_SO_REUSEADDR) now enabled (jim)
+     </update>
       <fix>
         Don't write out the shutdown secret file if shutdown is disabled (the default) (billbarker)
       </fix>
       <fix>
         Fix NPE when no sink is supplied. (billbarker)
       </fix>
+      <update>
+        APR Endpoints now IPv6 aware (jim)
+     </update>
       <update>
         Downgrade "Response already committed" logging entry to DEBUG. (billbarker)
      </update>
