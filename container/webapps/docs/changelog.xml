@@ -14,6 +14,19 @@
 
 <body>
 
+<section name="Tomcat 5.5.17 (yoavs)">
+  <subsection name="Catalina">
+    <changelog>
+      <fix>
+        <bug>38814</bug>: CGIServlet correctly handles Shift_JIS output. (markt) 
+      </fix>
+      <fix>
+        Add missing REQUEST_URI environment variable to CGI environment. (markt)
+      </fix>
+    </changelog>
+  </subsection>
+</section>
+
 <section name="Tomcat 5.5.16 (yoavs)">
   <subsection name="General">
     <changelog>
