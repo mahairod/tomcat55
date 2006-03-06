@@ -1026,6 +1026,7 @@ public class CGIServlet extends HttpServlet {
 
             envp.put("REQUEST_METHOD", nullsToBlanks(req.getMethod()));
 
+            envp.put("REQUEST_URI", nullsToBlanks(req.getRequestURI()));
 
 
             /*-
