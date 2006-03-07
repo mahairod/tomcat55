@@ -360,8 +360,8 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
         LoadMessage msg = new LoadMessage();
         
         messageSize = LoadMessage.getMessageSize(msg);
-        channel.setChannelListener(test);
-        channel.setMembershipListener(test);
+        channel.addChannelListener(test);
+        channel.addMembershipListener(test);
         channel.start(channel.DEFAULT);
         Runtime.getRuntime().addShutdownHook(new Shutdown(channel));
         while ( threads > 1 ) {
