@@ -174,7 +174,7 @@ public abstract class PooledSender implements DataSender {
                 if ( delta > timeout && timeout>0) return null;
                 else {
                     try {
-                        wait(timeout - delta);
+                        wait(Math.max(timeout - delta,1));
                     }catch (InterruptedException x){}
                 }//end if
             }
