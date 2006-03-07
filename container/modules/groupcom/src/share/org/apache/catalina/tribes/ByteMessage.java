@@ -16,6 +16,10 @@
 package org.apache.catalina.tribes;
 
 import java.io.Serializable;
+import java.io.Externalizable;
+import java.io.ObjectInput;
+import java.io.IOException;
+import java.io.ObjectOutput;
 
 /**
  * A byte message is not serialized and deserialized by the channel
@@ -23,7 +27,7 @@ import java.io.Serializable;
  * @version $Revision: 304032 $, $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
  */
 
-public class ByteMessage implements Serializable {
+public class ByteMessage implements Serializable, Externalizable {
     private byte[] message;
     
     public ByteMessage() {
@@ -39,6 +43,17 @@ public class ByteMessage implements Serializable {
 
     public void setMessage(byte[] message) {
         this.message = message;
+    }
+    
+    public void readExternal(ObjectInput in ) throws IOException {
+        int length = in.readInt();
+        message = new byte[length];
+        in.read(message,0,length);
+    }
+    
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(message.length);
+        out.write(message,0,message.length);
     }
 
 }
