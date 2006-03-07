@@ -31,6 +31,7 @@ public class EchoRpcTest implements RpcCallback, Runnable {
     RpcChannel rpc;
     int options;
     long timeout;
+    String name;
     
     public EchoRpcTest(Channel channel, String name, int count, String message, long pause, int options, long timeout) {
         this.channel = channel;
@@ -40,6 +41,7 @@ public class EchoRpcTest implements RpcCallback, Runnable {
         this.options = options;
         this.rpc = new RpcChannel(name.getBytes(),channel,this);
         this.timeout = timeout;
+        this.name = name;
     }
 
     /**
@@ -65,7 +67,7 @@ public class EchoRpcTest implements RpcCallback, Runnable {
      */
     public Serializable replyRequest(Serializable msg, Member sender) {
         System.out.println("Received a reply request message from ["+sender.getName()+"] with data ["+msg+"]");
-        return "Reply:"+msg;
+        return "Reply("+name+"):"+msg;
     }
     
     public void run() {

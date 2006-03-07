@@ -79,11 +79,15 @@ public class RpcChannel implements ChannelListener{
         if ( destination==null || destination.length == 0 ) return new Response[0];
         RpcCollectorKey key = new RpcCollectorKey(UUIDGenerator.randomUUID(false));
         RpcCollector collector = new RpcCollector(key,options,destination.length,timeout);
-        synchronized (collector) {
-            responseMap.put(key,collector);
-            RpcMessage rmsg = new RpcMessage(rpcId,key.id,message);
-            channel.send(destination,rmsg);
-            collector.wait(timeout);
+        try {
+            synchronized (collector) {
+                responseMap.put(key, collector);
+                RpcMessage rmsg = new RpcMessage(rpcId, key.id, message);
+                channel.send(destination, rmsg);
+                collector.wait(timeout);
+            }
+        }finally {
+            responseMap.remove(key);
         }
         return collector.getResponses();
     }
@@ -98,8 +102,10 @@ public class RpcChannel implements ChannelListener{
                 callback.leftOver(rmsg.message, sender);
             } else {
                 synchronized (collector) {
-                    collector.addResponse(rmsg.message, sender);
-                    if (collector.isComplete()) collector.notifyAll();
+                    if ( responseMap.containsKey(key) ) {
+                        collector.addResponse(rmsg.message, sender);
+                        if (collector.isComplete()) collector.notifyAll();
+                    }
                 }//synchronized
             }//end if
         } else{
