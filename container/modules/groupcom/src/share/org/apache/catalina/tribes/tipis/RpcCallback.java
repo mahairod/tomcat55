@@ -13,41 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.catalina.tribes.group.tipis;
+package org.apache.catalina.tribes.tipis;
 
 import java.io.Serializable;
-
 import org.apache.catalina.tribes.Member;
 
 /**
- * A response object holds a message from a responding partner.
- * @author Filip Hanik
+ * The RpcCallback interface is an interface for the Tribes channel to request a
+ * response object to a request that came in.
+ * @author not attributable
  * @version 1.0
  */
-public class Response {
-    private Member source;
-    private Serializable message;
-    public Response() {
-    }
+public interface RpcCallback {
     
-    public Response(Member source, Serializable message) {
-        this.source = source;
-        this.message = message;
-    }
-
-    public void setSource(Member source) {
-        this.source = source;
-    }
-
-    public void setMessage(Serializable message) {
-        this.message = message;
-    }
-
-    public Member getSource() {
-        return source;
-    }
-
-    public Serializable getMessage() {
-        return message;
-    }
+    /**
+     * 
+     * @param msg Serializable
+     * @return Serializable - null if no reply should be sent
+     */
+    public Serializable replyRequest(Serializable msg, Member sender);
+    
+    /**
+     * If the reply has already been sent to the requesting thread,
+     * the rpc callback can handle any data that comes in after the fact.
+     * @param msg Serializable
+     * @param sender Member
+     */
+    public void leftOver(Serializable msg, Member sender);
+    
 }
