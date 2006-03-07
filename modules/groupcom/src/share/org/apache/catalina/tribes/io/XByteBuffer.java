@@ -106,14 +106,6 @@ public class XByteBuffer
         this.discard = discard;
     }
 
-
-    /**
-     * Constructs a new XByteBuffer with an initial size of 1024 bytes
-     */
-    public XByteBuffer(boolean discard)  {
-        this(DEF_SIZE,discard);
-    }
-    
     public int getLength() {
         return bufSize;
     }
