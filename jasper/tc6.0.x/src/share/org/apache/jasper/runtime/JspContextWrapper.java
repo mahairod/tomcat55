@@ -441,10 +441,15 @@ public class JspContextWrapper extends PageContext implements VariableResolver {
 		return alias;
 	}
 
-	private ELContextImpl elContext;
+	//private ELContextImpl elContext;
 
 	public ELContext getELContext() {
-		if (this.elContext == null) {
+        // instead decorate!!!
+        
+        return this.invokingJspCtxt.getELContext();
+        
+        /*
+		if (this.elContext != null) {
 			JspFactory jspFact = JspFactory.getDefaultFactory();
 			ServletContext servletContext = this.getServletContext();
 			JspApplicationContextImpl jspCtx = (JspApplicationContextImpl) jspFact
@@ -452,5 +457,6 @@ public class JspContextWrapper extends PageContext implements VariableResolver {
 			this.elContext = jspCtx.createELContext(this);
 		}
 		return this.elContext;
+        */
 	}
 }

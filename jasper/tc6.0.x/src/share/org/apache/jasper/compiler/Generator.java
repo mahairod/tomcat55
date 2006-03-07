@@ -32,10 +32,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import javax.el.ExpressionFactory;
 import javax.el.MethodExpression;
 import javax.el.ValueExpression;
-import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.tagext.TagAttributeInfo;
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagVariableInfo;
@@ -397,7 +395,13 @@ class Generator {
         }
         
         out.printin(VAR_EXPRESSIONFACTORY);
-        out.println(" = JspFactory.getDefaultFactory().getJspApplicationContext(getServletConfig().getServletContext()).getExpressionFactory();");
+        out.print(" = JspFactory.getDefaultFactory().getJspApplicationContext(");
+        if (ctxt.isTagFile()) {
+            out.print("config");
+        } else {
+            out.print("getServletConfig()");
+        }
+        out.println(".getServletContext()).getExpressionFactory();");
         
         out.popIndent();
         out.printil("}");
@@ -3375,6 +3379,10 @@ class Generator {
         if (isPoolingEnabled && !tagHandlerPoolNames.isEmpty()) {
             out.printil("_jspInit(config);");
         }
+        
+        // set current JspContext on ELContext
+        out.printil("jspContext.getELContext().putContext(JspContext.class,jspContext);");
+        
         generatePageScopedVariables(tagInfo);
 
         declareTemporaryScriptingVars(tag);
@@ -3403,6 +3411,22 @@ class Generator {
         out.popIndent();
         out.printil("} finally {");
         out.pushIndent();
+        
+        // handle restoring VariableMapper
+        TagAttributeInfo[] attrInfos = tagInfo.getAttributes();
+        for (int i = 0; i < attrInfos.length; i++) {
+            if (attrInfos[i].isDeferredMethod() || attrInfos[i].isDeferredValue()) {
+                out.printin("_el_variablemapper.setVariable(");
+                out.print(quote(attrInfos[i].getName()));
+                out.print(",_el_ve");
+                out.print(i);
+                out.println(");");
+            }
+        }
+        
+        // restore nested JspContext on ELContext
+        out.printil("jspContext.getELContext().putContext(JspContext.class,getJspContext());");
+        
         out
                 .printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).syncEndTagFile();");
         if (isPoolingEnabled && !tagHandlerPoolNames.isEmpty()) {
@@ -3608,16 +3632,44 @@ class Generator {
 
         // "normal" attributes
         TagAttributeInfo[] attrInfos = tagInfo.getAttributes();
+        boolean variableMapperVar = false;
         for (int i = 0; i < attrInfos.length; i++) {
             String attrName = attrInfos[i].getName();
-            out.printil("if( " + toGetterMethod(attrName) + " != null ) ");
-            out.pushIndent();
-            out.printin("_jspx_page_context.setAttribute(");
-            out.print(quote(attrName));
-            out.print(", ");
-            out.print(toGetterMethod(attrName));
-            out.println(");");
-            out.popIndent();
+            
+            // handle assigning deferred vars to VariableMapper, storing
+            // previous values under '_el_ve[i]' for later re-assignment
+            if (attrInfos[i].isDeferredValue() || attrInfos[i].isDeferredMethod()) {
+                
+                // we need to scope the modified VariableMapper for consistency and performance
+                if (!variableMapperVar) {
+                    out.println("javax.el.VariableMapper _el_variablemapper = jspContext.getELContext().getVariableMapper();");
+                    variableMapperVar = true;
+                }
+                
+                out.printin("javax.el.ValueExpression _el_ve");
+                out.print(i);
+                out.print(" = _el_variablemapper.setVariable(");
+                out.print(quote(attrName));
+                out.print(',');
+                if (attrInfos[i].isDeferredMethod()) {
+                    out.print(VAR_EXPRESSIONFACTORY);
+                    out.print(".createValueExpression(");
+                    out.print(toGetterMethod(attrName));
+                    out.print(",javax.el.MethodExpression.class)");
+                } else {
+                    out.print(toGetterMethod(attrName));
+                }
+                out.println(");");
+            } else {
+                out.printil("if( " + toGetterMethod(attrName) + " != null ) ");
+                out.pushIndent();
+                out.printin("_jspx_page_context.setAttribute(");
+                out.print(quote(attrName));
+                out.print(", ");
+                out.print(toGetterMethod(attrName));
+                out.println(");");
+                out.popIndent();
+            }
         }
 
         // Expose the Map containing dynamic attributes as a page-scoped var

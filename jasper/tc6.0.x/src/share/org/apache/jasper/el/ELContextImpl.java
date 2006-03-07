@@ -15,9 +15,14 @@
  */
 package org.apache.jasper.el;
 
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.el.ELContext;
 import javax.el.ELResolver;
 import javax.el.FunctionMapper;
+import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 
 /**
@@ -26,37 +31,68 @@ import javax.el.VariableMapper;
  * @author Jacob Hookom
  */
 public class ELContextImpl extends ELContext {
-	
-	private final ELResolver resolver;
-	private FunctionMapper functionMapper;
-	private VariableMapper variableMapper;
-    
+
+    private final static FunctionMapper NullFunctionMapper = new FunctionMapper() {
+        public Method resolveFunction(String prefix, String localName) {
+            return null;
+        }
+    };
+
+    private final static class VariableMapperImpl extends VariableMapper {
+
+        private Map<String, ValueExpression> vars;
+
+        public ValueExpression resolveVariable(String variable) {
+            if (vars == null) {
+                return null;
+            }
+            return vars.get(variable);
+        }
+
+        public ValueExpression setVariable(String variable,
+                ValueExpression expression) {
+            if (vars == null)
+                vars = new HashMap<String, ValueExpression>();
+            return vars.put(variable, expression);
+        }
+
+    }
+
+    private final ELResolver resolver;
+
+    private FunctionMapper functionMapper = NullFunctionMapper; // immutable
+
+    private VariableMapper variableMapper;
+
     public ELContextImpl() {
         this(ELResolverImpl.DefaultResolver);
     }
 
-	public ELContextImpl(ELResolver resolver) {
-		this.resolver = resolver;
-	}
+    public ELContextImpl(ELResolver resolver) {
+        this.resolver = resolver;
+    }
 
-	public ELResolver getELResolver() {
-		return this.resolver;
-	}
+    public ELResolver getELResolver() {
+        return this.resolver;
+    }
 
-	public FunctionMapper getFunctionMapper() {
-		return this.functionMapper;
-	}
+    public FunctionMapper getFunctionMapper() {
+        return this.functionMapper;
+    }
 
-	public VariableMapper getVariableMapper() {
-		return this.variableMapper;
-	}
-	
-	public void setFunctionMapper(FunctionMapper functionMapper) {
-		this.functionMapper = functionMapper;
-	}
-	
-	public void setVariableMapper(VariableMapper variableMapper) {
-		this.variableMapper = variableMapper;
-	}
+    public VariableMapper getVariableMapper() {
+        if (this.variableMapper == null) {
+            this.variableMapper = new VariableMapperImpl();
+        }
+        return this.variableMapper;
+    }
+
+    public void setFunctionMapper(FunctionMapper functionMapper) {
+        this.functionMapper = functionMapper;
+    }
+
+    public void setVariableMapper(VariableMapper variableMapper) {
+        this.variableMapper = variableMapper;
+    }
 
 }

@@ -604,7 +604,7 @@ public class JspRuntimeLibrary {
 	Object value = null;
         try {
             Method method = getReadMethod(o.getClass(), prop);
-	    value = method.invoke(o, null);
+	    value = method.invoke(o, (Object[]) null);
         } catch (Exception ex) {
 	    throw new JasperException (ex);
         }
