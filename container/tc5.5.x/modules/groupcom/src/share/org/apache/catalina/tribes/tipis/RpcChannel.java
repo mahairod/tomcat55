@@ -102,9 +102,12 @@ public class RpcChannel implements ChannelListener{
                 callback.leftOver(rmsg.message, sender);
             } else {
                 synchronized (collector) {
+                    //make sure it hasn't been removed
                     if ( responseMap.containsKey(key) ) {
                         collector.addResponse(rmsg.message, sender);
                         if (collector.isComplete()) collector.notifyAll();
+                    } else {
+                        callback.leftOver(rmsg.message, sender);
                     }
                 }//synchronized
             }//end if
@@ -222,7 +225,7 @@ public class RpcChannel implements ChannelListener{
                 case MAJORITY_REPLY:
                 {
                     float perc = ((float)responses.size()) / ((float)destcnt);
-                    return perc >= 50f;
+                    return perc >= 0.50f;
                 }
                 case FIRST_REPLY:
                     return responses.size()>0;
