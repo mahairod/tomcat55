@@ -35,6 +35,7 @@ import org.apache.catalina.tribes.util.UUIDGenerator;
  * @author Filip Hanik
  */
 public class RpcChannel implements ChannelListener{
+    protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(RpcChannel.class);
     
     public static final int FIRST_REPLY = 1;
     public static final int MAJORITY_REPLY = 2;
@@ -57,7 +58,7 @@ public class RpcChannel implements ChannelListener{
         this.channel = channel;
         this.callback = callback;
         this.rpcId = rpcId;
-        //channel.addChannelListener(this);
+        channel.addChannelListener(this);
     }
     
     
@@ -75,6 +76,7 @@ public class RpcChannel implements ChannelListener{
                            int options, 
                            long timeout) throws ChannelException, InterruptedException {
         
+        if ( destination==null || destination.length == 0 ) return new Response[0];
         RpcCollectorKey key = new RpcCollectorKey(UUIDGenerator.randomUUID(false));
         RpcCollector collector = new RpcCollector(key,options,destination.length,timeout);
         synchronized (collector) {
@@ -90,16 +92,26 @@ public class RpcChannel implements ChannelListener{
     public void messageReceived(Serializable msg, Member sender) {
         RpcMessage rmsg = (RpcMessage)msg;
         RpcCollectorKey key = new RpcCollectorKey(rmsg.uuid);
-        RpcCollector collector = (RpcCollector)responseMap.get(key);
-        if ( collector == null ) {
-            callback.leftOver(rmsg.message,sender);
-        } else {
-            synchronized (collector) {
-                collector.addResponse(rmsg.message,sender);
-                if ( collector.isComplete() ) collector.notifyAll();
+        if ( rmsg.reply ) {
+            RpcCollector collector = (RpcCollector)responseMap.get(key);
+            if (collector == null) {
+                callback.leftOver(rmsg.message, sender);
+            } else {
+                synchronized (collector) {
+                    collector.addResponse(rmsg.message, sender);
+                    if (collector.isComplete()) collector.notifyAll();
+                }//synchronized
+            }//end if
+        } else{
+            Serializable reply = callback.replyRequest(rmsg.message,sender);
+            rmsg.reply = true;
+            rmsg.message = reply;
+            try {
+                channel.send(new Member[] {sender}, rmsg);
+            }catch ( Exception x )  {
+                log.error("Unable to send back reply in RpcChannel.",x);
             }
-        }
-        
+        }//end if
     }
     
     public boolean accept(Serializable msg, Member sender) {
@@ -138,6 +150,11 @@ public class RpcChannel implements ChannelListener{
         private Serializable message;
         private byte[] uuid;
         private byte[] rpcId;
+        private boolean reply = false;
+
+        public RpcMessage() {
+            //for serialization
+        }
         
         public RpcMessage(byte[] rpcId, byte[] uuid, Serializable message) {
             this.rpcId = rpcId;
@@ -146,6 +163,7 @@ public class RpcChannel implements ChannelListener{
         }
         
         public void readExternal(ObjectInput in) throws IOException,ClassNotFoundException {
+            reply = in.readBoolean();
             int length = in.readInt();
             uuid = new byte[length];
             in.read(uuid, 0, length);
@@ -156,6 +174,7 @@ public class RpcChannel implements ChannelListener{
         }
     
         public void writeExternal(ObjectOutput out) throws IOException {
+            out.writeBoolean(reply);
             out.writeInt(uuid.length);
             out.write(uuid, 0, uuid.length);
             out.writeInt(rpcId.length);
