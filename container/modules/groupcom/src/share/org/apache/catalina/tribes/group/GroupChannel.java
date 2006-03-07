@@ -32,6 +32,7 @@ import org.apache.catalina.tribes.MembershipListener;
 import org.apache.catalina.tribes.MembershipService;
 import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
+import java.util.ArrayList;
 
 /**
  * The GroupChannel manages the replication channel. It coordinates
@@ -46,8 +47,9 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
     
     private ChannelCoordinator coordinator = new ChannelCoordinator();
     private ChannelInterceptor interceptors = null;
-    private MembershipListener membershipListener;
-    private ChannelListener channelListener;
+    
+    private ArrayList membershipListeners = new ArrayList();
+    private ArrayList channelListeners = new ArrayList();
 
     public GroupChannel() {
         addInterceptor(this);
@@ -126,8 +128,12 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
             }
             //get the actual member with the correct alive time
             Member source = msg.getAddress();
-            if ( channelListener != null && channelListener.accept(fwd,source)) 
-                channelListener.messageReceived(fwd,source);
+            
+            for ( int i=0; i<channelListeners.size(); i++ ) {
+                ChannelListener channelListener = (ChannelListener)channelListeners.get(i);
+                if (channelListener != null && channelListener.accept(fwd, source))
+                    channelListener.messageReceived(fwd, source);
+            }//for
         }catch ( Exception x ) {
             log.error("Unable to deserialize channel message.",x);
         }
@@ -135,12 +141,18 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
     
     public void memberAdded(Member member) {
         //notify upwards
-        if (membershipListener != null) membershipListener.memberAdded(member);
+        for (int i=0; i<membershipListeners.size(); i++ ) {
+            MembershipListener membershipListener = (MembershipListener)membershipListeners.get(i);
+            if (membershipListener != null) membershipListener.memberAdded(member);
+        }
     }
     
     public void memberDisappeared(Member member) {
         //notify upwards
-        if (membershipListener != null) membershipListener.memberDisappeared(member);
+        for (int i=0; i<membershipListeners.size(); i++ ) {
+            MembershipListener membershipListener = (MembershipListener)membershipListeners.get(i);
+            if (membershipListener != null) membershipListener.memberDisappeared(member);
+        }
     }    
     
     public ChannelInterceptor getFirstInterceptor() {
@@ -202,62 +214,29 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
         coordinator.setMembershipService(membershipService);
     }
 
-    public void setMembershipListener(MembershipListener membershipListener) {
-        this.membershipListener = membershipListener;
+    public void addMembershipListener(MembershipListener membershipListener) {
+        if (!this.membershipListeners.contains(membershipListener) )
+            this.membershipListeners.add(membershipListener);
     }
 
-    public void setChannelListener(ChannelListener channelListener) {
-
-        this.channelListener = channelListener;
+    public void removeMembershipListener(MembershipListener membershipListener) {
+        membershipListeners.remove(membershipListener);
     }
 
-    public MembershipListener getMembershipListener() {
-        return membershipListener;
+    public void addChannelListener(ChannelListener channelListener) {
+        if (!this.channelListeners.contains(channelListener) )
+            this.channelListeners.add(channelListener);
     }
     
+    public void removeChannelListener(ChannelListener channelListener) {
+        channelListeners.remove(channelListener);
+    }
+
     public Iterator getInterceptors() { 
         return new InterceptorIterator(this.getNext(),this.coordinator);
     }
 
-    public ChannelListener getChannelListener() {
 
-        return channelListener;
-    }
-
-    /**
-     * has members
-     */
-    public boolean hasMembers() {
-        return coordinator.getMembershipService().hasMembers();
-    }
-
-    /**
-     * Get all current cluster members
-     * @return all members or empty array
-     */
-    public Member[] getMembers() {
-        return coordinator.getMembershipService().getMembers();
-    }
-    
-    /**
-     * 
-     * @param mbr Member
-     * @return Member
-     */
-    public Member getMember(Member mbr){
-        return coordinator.getMembershipService().getMember(mbr);
-    }
-
-
-    /**
-     * Return the member that represents this node.
-     *
-     * @return Member
-     */
-    public Member getLocalMember() {
-        return coordinator.getMembershipService().getLocalMember();
-    }
-    
     public static class InterceptorIterator implements Iterator {
         private ChannelInterceptor end;
         private ChannelInterceptor start;

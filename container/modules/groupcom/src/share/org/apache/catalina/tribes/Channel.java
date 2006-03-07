@@ -82,8 +82,11 @@ public interface Channel {
      */
     public void heartbeat();
     
-    public void setMembershipListener(MembershipListener listener);
-    public void setChannelListener(ChannelListener listener);
+    public void addMembershipListener(MembershipListener listener);
+    public void addChannelListener(ChannelListener listener);
+
+    public void removeMembershipListener(MembershipListener listener);
+    public void removeChannelListener(ChannelListener listener);
     
     /**
      * has members
