@@ -157,16 +157,27 @@ public abstract class PooledSender implements DataSender {
         }
 
         public synchronized DataSender getSender(long timeout) {
-            if ( !isOpen ) throw new IllegalStateException("Queue is closed");
-            DataSender sender = null;
-            if ( notinuse.size() == 0 && inuse.size()<limit) {
-                sender = parent.getNewDataSender();
-            } else if (notinuse.size() > 0) {
+            long start = System.currentTimeMillis();
+            while ( true ) {
+                if (!isOpen)throw new IllegalStateException("Queue is closed");
+                DataSender sender = null;
+                if (notinuse.size() == 0 && inuse.size() < limit) {
+                    sender = parent.getNewDataSender();
+                } else if (notinuse.size() > 0) {
                     sender = (DataSender) notinuse.remove(0);
-            }            
-            if ( sender != null ) inuse.add(sender);
-//            System.out.println("get: in use:"+inuse.size()+" not:"+notinuse.size()+" thread:"+Thread.currentThread().getName());
-            return sender;
+                }
+                if (sender != null) {
+                    inuse.add(sender);
+                    return sender;
+                }//end if
+                long delta = System.currentTimeMillis() - start;
+                if ( delta > timeout && timeout>0) return null;
+                else {
+                    try {
+                        wait(timeout - delta);
+                    }catch (InterruptedException x){}
+                }//end if
+            }
         }
 
         public synchronized void returnSender(DataSender sender) {
@@ -177,7 +188,7 @@ public abstract class PooledSender implements DataSender {
             //to do
             inuse.remove(sender);
             notinuse.add(sender);
-//            System.out.println("return: in use:"+inuse.size()+" not:"+notinuse.size()+" thread:"+Thread.currentThread().getName());
+            notify();
         }
 
         public synchronized void close() {
@@ -194,6 +205,7 @@ public abstract class PooledSender implements DataSender {
             }//for
             notinuse.clear();
             inuse.clear();
+            notify();
             
 
 
@@ -201,6 +213,7 @@ public abstract class PooledSender implements DataSender {
 
         public synchronized void open() {
             isOpen = true;
+            notify();
         }
     }
     
