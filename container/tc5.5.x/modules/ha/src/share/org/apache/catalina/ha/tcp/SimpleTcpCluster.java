@@ -652,8 +652,8 @@ public class SimpleTcpCluster
         try {
             if ( clusterDeployer != null ) clusterDeployer.setCluster(this);
             this.registerClusterValve();
-            channel.setMembershipListener(this);
-            channel.setChannelListener(this);
+            channel.addMembershipListener(this);
+            channel.addChannelListener(this);
             channel.start(channel.DEFAULT);
             if (clusterDeployer != null) clusterDeployer.start();
             this.started = true;
@@ -732,6 +732,8 @@ public class SimpleTcpCluster
         try {
             if ( clusterDeployer != null ) clusterDeployer.setCluster(null);
             channel.stop(Channel.DEFAULT);
+            channel.removeChannelListener(this);
+            channel.removeMembershipListener(this);
             this.unregisterClusterValve();
         } catch (Exception x) {
             log.error("Unable to stop cluster valve.", x);

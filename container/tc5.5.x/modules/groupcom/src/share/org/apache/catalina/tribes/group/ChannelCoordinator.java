@@ -164,5 +164,40 @@ public class ChannelCoordinator extends ChannelInterceptorBase implements Messag
         if ( clusterSender!=null ) clusterSender.heartbeat();
         super.heartbeat();
     }
+    
+    /**
+     * has members
+     */
+    public boolean hasMembers() {
+        return this.getMembershipService().hasMembers();
+    }
+
+    /**
+     * Get all current cluster members
+     * @return all members or empty array
+     */
+    public Member[] getMembers() {
+        return this.getMembershipService().getMembers();
+    }
+
+    /**
+     * 
+     * @param mbr Member
+     * @return Member
+     */
+    public Member getMember(Member mbr){
+        return this.getMembershipService().getMember(mbr);
+    }
+
+
+    /**
+     * Return the member that represents this node.
+     *
+     * @return Member
+     */
+    public Member getLocalMember() {
+        return this.getMembershipService().getLocalMember();
+    }
+
    
 }

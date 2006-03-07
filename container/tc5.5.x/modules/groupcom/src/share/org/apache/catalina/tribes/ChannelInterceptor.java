@@ -43,4 +43,30 @@ public interface ChannelInterceptor extends MembershipListener {
     public void messageReceived(ChannelMessage data);
     
     public void heartbeat();
+    
+    /**
+     * has members
+     */
+    public boolean hasMembers() ;
+
+    /**
+     * Get all current cluster members
+     * @return all members or empty array 
+     */
+    public Member[] getMembers() ;
+
+    /**
+     * Return the member that represents this node.
+     * 
+     * @return Member
+     */
+    public Member getLocalMember() ;
+
+    /**
+     * 
+     * @param mbr Member
+     * @return Member
+     */
+    public Member getMember(Member mbr);
+
 }

@@ -212,7 +212,9 @@ public class NioSender  {
                 socketChannel = null;
             }
         } catch ( Exception x ) {
-            log.error("Unable to disconnect.",x);
+            log.error("Unable to disconnect. msg="+x.getMessage());
+            if ( log.isDebugEnabled() ) 
+                log.debug("Unable to disconnect. msg="+x.getMessage(),x);
         } finally {
             reset();
         }
