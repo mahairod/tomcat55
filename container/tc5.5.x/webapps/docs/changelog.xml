@@ -25,6 +25,14 @@
       </fix>
     </changelog>
   </subsection>
+  <subsection name="Webapps">
+    <changelog>
+      <fix>
+        <bug>38508</bug>: Several enhancements to Host Manager application, including configurable
+          manager app support and dialog box enhancements.  Thanks to George Sexton for the patch. (yoavs)
+      </fix>
+    </changelog>
+  </subsection>
 </section>
 
 <section name="Tomcat 5.5.16 (yoavs)">

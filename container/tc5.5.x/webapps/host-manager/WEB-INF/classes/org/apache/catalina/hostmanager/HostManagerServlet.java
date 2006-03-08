@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ import org.apache.commons.modeler.Registry;
  *     attribute is a comma separated list of the host alias names. 
  *     The <code>manager</code> attribute is a boolean value indicating if the
  *     webapp manager will be installed in the newly created host (optional, 
- *     true by default).</li>
+ *     false by default).</li>
  * <li><b>/remove?name={host-name}</b> - Remove a virtual host. 
  *     The <code>host-name</code> attribute indicates the name of the host.
  *     </li>
@@ -255,15 +255,17 @@ public class HostManagerServlet
 
 
     /**
-     * Add host with all parameter
-     * @param request
-     * @param writer
-     * @param name
+     * Add host with the given parameters.
+     *
+     * @param request The request
+     * @param writer The output writer
+     * @param name The host name
+     * @param htmlMode Flag value
      */
     protected void add(HttpServletRequest request, PrintWriter writer, String name, boolean htmlMode ) {
         String aliases = request.getParameter("aliases");
         String appBase = request.getParameter("appBase");
-        boolean manager = booleanParameter(request, "manager", true, htmlMode);
+        boolean manager = booleanParameter(request, "manager", false, htmlMode);
         boolean autoDeploy = booleanParameter(request, "autoDeploy", true, htmlMode);
         boolean deployOnStartup = booleanParameter(request, "deployOnStartup", true, htmlMode);
         boolean deployXML = booleanParameter(request, "deployXML", true, htmlMode);
