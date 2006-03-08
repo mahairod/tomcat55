@@ -40,8 +40,7 @@ import org.apache.catalina.tribes.tcp.nio.PooledParallelSender;
  * @version $Revision: 379956 $ $Date: 2006-02-22 16:57:35 -0600 (Wed, 22 Feb 2006) $
  */
 public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
-    private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
-            .getLog(ReplicationTransmitter.class);
+    private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(ReplicationTransmitter.class);
 
     /**
      * The descriptive information about this implementation.
