@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004-2005 The Apache Software Foundation.
+ * Copyright 1999,2004-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -256,11 +256,16 @@ public final class HTMLHostManagerServlet extends HostManagerServlet {
                         buf.append(", ").append(aliases[j]);
                     }
                 }
+
+                if (buf.length() == 0) {
+                    buf.append("&nbsp;");
+                }
+
                 args[1] = buf.toString();
                 writer.print
                     (MessageFormat.format(HOSTS_ROW_DETAILS_SECTION, args));
 
-                args = new Object[6];
+                args = new Object[7];
                 args[0] = response.encodeURL
                     (request.getContextPath() +
                      "/html/start?name=" + hostName);
@@ -273,6 +278,7 @@ public final class HTMLHostManagerServlet extends HostManagerServlet {
                     (request.getContextPath() +
                      "/html/remove?name=" + hostName);
                 args[5] = hostsRemove;
+                args[6] = hostName;
                 if (host == this.host) {
                     writer.print(MessageFormat.format(
                         MANAGER_HOST_ROW_BUTTON_SECTION, args));
@@ -320,6 +326,10 @@ public final class HTMLHostManagerServlet extends HostManagerServlet {
         args[2] = "";
         writer.print(MessageFormat.format(ADD_SECTION_BOOLEAN, args));
 
+        args[0] = sm.getString("htmlHostManagerServlet.addManager");
+        args[1] = "manager";
+        args[2] = "checked";
+        writer.print(MessageFormat.format(ADD_SECTION_BOOLEAN, args));
         
         args = new Object[1];
         args[0] = sm.getString("htmlHostManagerServlet.addButton");
@@ -375,7 +385,7 @@ public final class HTMLHostManagerServlet extends HostManagerServlet {
 
     private static final String HOSTS_ROW_DETAILS_SECTION =
         "<tr>\n" +
-        " <td class=\"row-left\"><small><a href=\"{0}\">{0}</a>" +
+        " <td class=\"row-left\"><small><a href=\"http://{0}\">{0}</a>" +
         "</small></td>\n" +
         " <td class=\"row-center\"><small>{1}</small></td>\n";
 
@@ -390,11 +400,11 @@ public final class HTMLHostManagerServlet extends HostManagerServlet {
         "</tr>\n";
 
     private static final String HOSTS_ROW_BUTTON_SECTION =
-        " <td class=\"row-left\">\n" +
+        " <td class=\"row-left\" NOWRAP>\n" +
         "  <small>\n" +
-        "  &nbsp;<a href=\"{0}\" onclick=\"return(confirm('Are you sure?'))\">{1}</a>&nbsp;\n" +
-        "  &nbsp;<a href=\"{2}\" onclick=\"return(confirm('Are you sure?'))\">{3}</a>&nbsp;\n" +
-        "  &nbsp;<a href=\"{4}\" onclick=\"return(confirm('Are you sure?'))\">{5}</a>&nbsp;\n" +
+        "  &nbsp;<a href=\"{0}\" onclick=\"return(confirm(''{1} {6}\\n\\nAre you sure?''))\">{1}</a>&nbsp;\n" +
+        "  &nbsp;<a href=\"{2}\" onclick=\"return(confirm(''{3} {6}\\n\\nAre you sure?''))\">{3}</a>&nbsp;\n" +
+        "  &nbsp;<a href=\"{4}\" onclick=\"return(confirm(''{5} {6}\\n\\nAre you sure?''))\">{5}</a>&nbsp;\n" +
         "  </small>\n" +
         " </td>\n" +
         "</tr>\n";
@@ -454,7 +464,6 @@ public final class HTMLHostManagerServlet extends HostManagerServlet {
         "  &nbsp;\n" +
         " </td>\n" +
         " <td class=\"row-left\">\n" +
-        "  <input type=\"hidden\" name=\"manager\" value=\"true\">\n" +
         "  <input type=\"submit\" value=\"{0}\">\n" +
         " </td>\n" +
         "</tr>\n" +
