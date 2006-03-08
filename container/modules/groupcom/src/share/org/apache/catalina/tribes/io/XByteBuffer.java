@@ -515,9 +515,14 @@ public class XByteBuffer
     
     public static Serializable deserialize(byte[] data) 
         throws IOException, ClassNotFoundException, ClassCastException {
+        return deserialize(data,0,data.length);
+    }
+    
+    public static Serializable deserialize(byte[] data, int offset, int length) 
+            throws IOException, ClassNotFoundException, ClassCastException {
         Object message = null;
         if (data != null) {
-            InputStream  instream = new ByteArrayInputStream(data);
+            InputStream  instream = new ByteArrayInputStream(data,offset,length);
             ReplicationStream stream = new ReplicationStream(instream,new ClassLoader[] {XByteBuffer.class.getClassLoader()});
             message = stream.readObject();
             instream.close();

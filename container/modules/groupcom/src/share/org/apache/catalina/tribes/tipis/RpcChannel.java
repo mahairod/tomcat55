@@ -123,6 +123,14 @@ public class RpcChannel implements ChannelListener{
         }//end if
     }
     
+    public void breakDown() {
+        channel.removeChannelListener(this);
+    }
+    
+    public void finalize() {
+        breakDown();
+    }
+    
     public boolean accept(Serializable msg, Member sender) {
         if ( msg instanceof RpcMessage ) {
             RpcMessage rmsg = (RpcMessage)msg;
