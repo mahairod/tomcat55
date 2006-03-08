@@ -61,6 +61,11 @@
       You must specify the standard value defined below.</p>
     </attribute>
 
+    <attribute name="allowTrace" required="false">
+      <p>A boolean value which can be used to enable or disable the TRACE
+      HTTP method. If not specified, this attribute is set to false.</p>
+    </attribute>
+
     <attribute name="enableLookups" required="false">
       <p>Set to <code>true</code> if you want calls to
       <code>request.getRemoteHost()</code> to perform DNS lookups in
@@ -198,6 +203,12 @@
       pipelining. Setting this to -1 will allow an unlimited amount of
       pipelined or keep-alive HTTP requests.
       If not specified, this attribute is set to 100.</p>
+    </attribute>
+
+    <attribute name="maxSpareProcessors" required="false">
+      <p>The maximum number of unused request processing threads that
+      will be allowed to exist until the thread pool starts stopping the
+      unnecessary threads.  The default value is 5.</p>
     </attribute>
 
     <attribute name="maxProcessors" required="false">
