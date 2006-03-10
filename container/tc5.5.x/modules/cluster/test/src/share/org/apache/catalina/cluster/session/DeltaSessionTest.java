@@ -38,7 +38,7 @@ public class DeltaSessionTest extends TestCase {
         } catch (Exception sleep) {
         }
         long timeNow = System.currentTimeMillis();
-        int timeIdle = (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
+        int timeIdle = (int) ((timeNow - session.getLastAccessedTimeInternal()) / 1000L);
         assertEquals(2,timeIdle);
         assertTrue(timeIdle > session.getMaxInactiveInterval());
         assertFalse(session.isValid()) ;

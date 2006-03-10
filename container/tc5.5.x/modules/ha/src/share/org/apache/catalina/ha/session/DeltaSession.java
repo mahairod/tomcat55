@@ -425,6 +425,14 @@ public class DeltaSession
     }
 
     /**
+     * Return the last client access time without invalidation check
+     * @see #getLastAccessedTime().
+     */
+    public long getLastAccessedTimeInternal() {
+        return (this.lastAccessedTime);
+    }
+
+    /**
      * Return the Manager within which this Session is valid.
      */
     public Manager getManager() {

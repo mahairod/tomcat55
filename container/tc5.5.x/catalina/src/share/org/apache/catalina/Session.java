@@ -133,6 +133,11 @@ public interface Session {
      */
     public long getLastAccessedTime();
 
+    /**
+     * Return the last client access time without invalidation check
+     * @see #getLastAccessedTime().
+     */
+    public long getLastAccessedTimeInternal();
 
     /**
      * Return the Manager within which this Session is valid.
