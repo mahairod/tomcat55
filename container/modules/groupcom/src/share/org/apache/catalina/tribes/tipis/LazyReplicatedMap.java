@@ -112,6 +112,63 @@ public class LazyReplicatedMap extends LinkedHashMap
         this.stateTransferred = false;
     }
     
+    /**
+     * Replicates any changes to the object since the last time
+     * The object has to be primary, ie, if the object is a proxy or a backup, it will not be replicated<br>
+     * @param complete - if set to true, the object is replicated to its backup
+     * if set to false, only objects that implement ReplicatedMapEntry and the isDirty() returns true will
+     * be replicated
+     */
+    public void replicate(Object key, boolean complete) {
+        MapEntry entry = (MapEntry) super.get(key);
+        if (entry!=null && entry.isPrimary() ) {
+            Object value = entry.getValue();
+            boolean repl = complete || ((value instanceof ReplicatedMapEntry) && ((ReplicatedMapEntry)value).isDirty());
+            if (!repl) return;
+
+            boolean diff = ((value instanceof ReplicatedMapEntry) && ((ReplicatedMapEntry)value).isDiffable());
+            MapMessage msg = null;
+            if ( diff ) {
+                try {
+                    msg = new MapMessage(mapContextName, MapMessage.MSG_BACKUP,
+                                         true, (Serializable) entry.getKey(), null,
+                                         ( (ReplicatedMapEntry) entry.getValue()).getDiff(),
+                                         entry.getBackupNode());
+                }catch (IOException x ) {
+                    log.error("Unable to diff object. Will replicate the entire object instead.",x);
+                }
+            }
+            if ( msg == null ) {
+                msg = new MapMessage(mapContextName, MapMessage.MSG_BACKUP,
+                                     false, (Serializable) entry.getKey(), 
+                                     (Serializable)entry.getValue(),
+                                     null,entry.getBackupNode());
+
+            }
+            try {
+                channel.send(new Member[] {entry.getBackupNode()}, msg);
+            } catch ( ChannelException x ) {
+                log.error("Unable to replicate data.",x);
+            }
+        }//end if
+
+    }
+    
+    /**
+     * This can be invoked by a periodic thread to replicate out any changes.
+     * For maps that don't store objects that implement ReplicatedMapEntry, this
+     * method should be used infrequently to avoid large amounts of data transfer
+     * @param complete boolean
+     */
+    public void replicate(boolean complete) {
+        Iterator i = super.entrySet().iterator();
+        while (i.hasNext()) {
+            Map.Entry e = (Map.Entry) i.next();
+            replicate(e.getKey(),complete);
+        } //while
+
+    }
+    
 //------------------------------------------------------------------------------    
 //              GROUP COM INTERFACES
 //------------------------------------------------------------------------------   
@@ -211,22 +268,22 @@ public class LazyReplicatedMap extends LinkedHashMap
                 entry.setBackupNode(mapmsg.getBackupNode());
                 super.put(entry.getKey(), entry);
             } else {
-                if ( mapmsg.isDiff() ) {
-                    if ( entry.getValue() instanceof Diffable ) {
-                        Diffable diff = (Diffable)entry.getValue();
+                if ( entry.getValue() instanceof ReplicatedMapEntry ) {
+                    ReplicatedMapEntry diff = (ReplicatedMapEntry)entry.getValue();
+                    if ( mapmsg.isDiff() ) {
                         try {
                             diff.applyDiff(mapmsg.getDiffValue(), 0, mapmsg.getDiffValue().length);
                         }catch ( IOException x ) {
                             log.error("Unable to apply diff to key:"+entry.getKey(),x);
                         }
                     } else {
-                        log.warn("Received a DIFF replication, but object["+entry.getValue()+"] does not implement Diffable");
-                    }
+                        entry.setValue(mapmsg.getValue());
+                    }//end if
                 } else {
                     entry.setValue(mapmsg.getValue());
-                }
-            }
-        }
+                }//end if
+            }//end if
+        }//end if
         
     }
     
@@ -402,6 +459,12 @@ public class LazyReplicatedMap extends LinkedHashMap
         throw new UnsupportedOperationException("This operation is not valid on a replicated map");
     }
     
+    /**
+     * Returns the entire contents of the map
+     * Map.Entry.getValue() will return a LazyReplicatedMap.MapEntry object containing all the information 
+     * about the object.
+     * @return Set
+     */
     public Set entrySetFull() {
         return super.entrySet();
     }
@@ -504,7 +567,7 @@ public class LazyReplicatedMap extends LinkedHashMap
         }
 
         public boolean isDiffable() {
-            return (value instanceof Diffable);
+            return (value instanceof ReplicatedMapEntry);
         }
         
         public void setBackupNode(Member node) {
@@ -532,7 +595,7 @@ public class LazyReplicatedMap extends LinkedHashMap
 
         public byte[] getDiff() throws IOException {
             if ( isDiffable() ) {
-                return ((Diffable)value).getDiff();
+                return ((ReplicatedMapEntry)value).getDiff();
             } else {
                 return getData();
             }
@@ -566,7 +629,7 @@ public class LazyReplicatedMap extends LinkedHashMap
          */
         public void apply(byte[] data, int offset, int length, boolean diff) throws IOException, ClassNotFoundException {
             if ( isDiffable() && diff ) {
-                ((Diffable)value).applyDiff(data,offset,length);
+                ((ReplicatedMapEntry)value).applyDiff(data,offset,length);
             } else if ( length == 0 ) {
                 value = null;
                 proxy = true;

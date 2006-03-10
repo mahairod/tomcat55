@@ -20,16 +20,44 @@ import java.io.IOException;
 
 /**
  * 
- *
+ * For smarter replication, an object can implement this interface to replicate diffs
  * @author Filip Hanik
  * @version 1.0
  */
-public interface Diffable extends Serializable {
+public interface ReplicatedMapEntry extends Serializable {
     
+    /**
+     * Has the object changed since last replication
+     * and is not in a locked state
+     * @return boolean
+     */
+    public boolean isDirty();
+    
+    public boolean setDirty(boolean dirty);
+    
+    /**
+     * If this returns true, the map will extract the diff using getDiff()
+     * Otherwise it will serialize the entire object.
+     * @return boolean
+     */
+    public boolean isDiffable();
+    
+    /**
+     * Returns a diff and sets the dirty map to false
+     * @return byte[]
+     * @throws IOException
+     */
     public byte[] getDiff() throws IOException;
     
+    
+    /**
+     * Applies a diff to an existing object.
+     * @param diff byte[]
+     * @param offset int
+     * @param length int
+     * @throws IOException
+     */
     public void applyDiff(byte[] diff, int offset, int length) throws IOException;
     
-    public boolean hasDiff();
     
 }
