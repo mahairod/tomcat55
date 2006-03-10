@@ -74,7 +74,7 @@ public class RpcChannel implements ChannelListener{
     public Response[] send(Member[] destination, 
                            Serializable message,
                            int options, 
-                           long timeout) throws ChannelException, InterruptedException {
+                           long timeout) throws ChannelException {
         
         if ( destination==null || destination.length == 0 ) return new Response[0];
         RpcCollectorKey key = new RpcCollectorKey(UUIDGenerator.randomUUID(false));
@@ -86,6 +86,8 @@ public class RpcChannel implements ChannelListener{
                 channel.send(destination, rmsg);
                 collector.wait(timeout);
             }
+        } catch ( InterruptedException ix ) {
+            throw new ChannelException(ix);
         }finally {
             responseMap.remove(key);
         }

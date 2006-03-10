@@ -54,6 +54,12 @@ don't return until all have been processed on the remote end.)
 
 15. remove DataSenderFactory and DataSender.properties -
     these cause the settings to be hard coded ant not pluggable.
+    
+16. Guaranteed delivery of messages, ie either all get it or none get it.
+    Meaning, that all receivers get it, then wait for a process command.
+
+17. Implement transactions - the ability to start a transaction, send several messages,
+                             and then commit the transaction
 
 Tasks Completed
 ===========================================
