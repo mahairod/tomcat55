@@ -402,6 +402,14 @@ public class LazyReplicatedMap extends LinkedHashMap
         throw new UnsupportedOperationException("This operation is not valid on a replicated map");
     }
     
+    public Set entrySetFull() {
+        return super.entrySet();
+    }
+    
+    public Set keySetFull() {
+        return super.keySet();
+    }
+    
     public Set entrySet() {
         LinkedHashSet set = new LinkedHashSet(super.size());
         Iterator i = super.entrySet().iterator();
