@@ -20,6 +20,7 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import org.apache.catalina.cluster.tcp.ClusterData;
+import org.apache.catalina.cluster.ClusterMessage;
 
 /**
  * @author Peter Rossbach
@@ -93,9 +94,9 @@ public class XByteBufferTest extends TestCase {
      * @throws IOException
      */
     private byte[] createMessage() throws IOException {
-        byte[] d1 = XByteBuffer.createDataPackage(new byte[] { 1 });
-        byte[] d2 = XByteBuffer.createDataPackage(new byte[] { 2 });
-        byte[] d3 = XByteBuffer.createDataPackage(new byte[] { 3 });
+        byte[] d1 = XByteBuffer.createDataPackage(new byte[] { 1 },ClusterMessage.FLAG_FORBIDDEN);
+        byte[] d2 = XByteBuffer.createDataPackage(new byte[] { 2 },ClusterMessage.FLAG_FORBIDDEN);
+        byte[] d3 = XByteBuffer.createDataPackage(new byte[] { 3 },ClusterMessage.FLAG_FORBIDDEN);
         byte[] test = new byte[d1.length + d2.length + d3.length + 5];
         System.arraycopy(d1, 0, test, 0, d1.length);
         System.arraycopy(d2, 0, test, d1.length, d2.length);
