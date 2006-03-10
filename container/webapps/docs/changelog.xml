@@ -18,6 +18,9 @@
   <subsection name="Catalina">
     <changelog>
       <fix>
+        Fix SingleSignOn Valve and add Session.getLastAccessTimeInternal() without session invalidation test. (pero)
+      </fix>
+      <fix>
         <bug>38814</bug>: CGIServlet correctly handles Shift_JIS output. (markt) 
       </fix>
       <fix>
@@ -33,7 +36,14 @@
       </fix>
     </changelog>
   </subsection>
-</section>
+  <subsection name="Cluster">
+    <changelog>
+      <update>
+        Add DeltaSession.getLastAccessTimeInternal() without session invalidation test. (pero)
+      </update>
+    </changelog>
+  </subsection>
+ </section>
 
 <section name="Tomcat 5.5.16 (yoavs)">
   <subsection name="General">
