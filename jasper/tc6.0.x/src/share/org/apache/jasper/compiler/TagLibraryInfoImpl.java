@@ -563,12 +563,12 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
             rtexprvalue = true;
         }
 
-        if (!rtexprvalue) {
+        if (!rtexprvalue && type == null) {
             // According to JSP spec, for static values (those determined at
             // translation time) the type is fixed at java.lang.String.
             type = "java.lang.String";
         }
-
+        
         return new TagAttributeInfo(name, required, type, rtexprvalue,
                 isFragment, null, deferredValue, deferredMethod, expectedType,
                 methodSignature);

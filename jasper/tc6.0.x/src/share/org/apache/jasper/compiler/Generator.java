@@ -159,7 +159,7 @@ class Generator {
         if (this.jspIdPrefix == null) {
             StringBuffer sb = new StringBuffer(32);
             String name = ctxt.getServletJavaFileName();
-            sb.append('_').append(Math.abs(name.hashCode())).append('_');
+            sb.append("jsp_").append(Math.abs(name.hashCode())).append('-');
             this.jspIdPrefix = sb.toString();
         }
         return this.jspIdPrefix + (this.jspId++);
@@ -2872,6 +2872,7 @@ class Generator {
                 String attrValue = evaluateAttribute(handlerInfo, attrs[i], n,
                         tagHandlerVar);
                 
+                out.printil("// "+attrs[i].getTagAttributeInfo());
                 if (attrs[i].isDynamic()) {
                     out.printin(tagHandlerVar);
                     out.print(".");
