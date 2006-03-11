@@ -93,7 +93,8 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
     public void send(Member[] destination, Serializable msg) throws ChannelException {
         if ( msg == null ) return;
         try {
-            if ( destination == null ) destination = getMembers();
+            if ( destination == null ) throw new ChannelException("No destination given");
+            if ( destination.length == 0 ) return;
             int options = 0;
             ClusterData data = new ClusterData();//generates a unique Id
             data.setAddress(getLocalMember());
