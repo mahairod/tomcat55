@@ -27,7 +27,7 @@ import javax.el.VariableMapper;
  * 
  * @author jhook
  */
-public class ELContextWrapper extends ELContext {
+public final class ELContextWrapper extends ELContext {
 
     private final ELContext target;
     private final FunctionMapper fnMapper;

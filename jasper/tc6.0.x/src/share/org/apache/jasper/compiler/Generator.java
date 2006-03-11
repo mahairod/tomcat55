@@ -2720,10 +2720,23 @@ class Generator {
 
                 // reset buffer
                 sb.setLength(0);
+                
+                // create our mark
+                sb.append(n.getStart().toString());
+                sb.append(" '");
+                sb.append(attrValue);
+                sb.append('\'');                
+                String mark = sb.toString();
+                
+                // reset buffer
+                sb.setLength(0);
 
                 // depending on type
                 if (attr.isDeferredInput()
                         || ValueExpression.class.getName().equals(type)) {
+                    sb.append("new org.apache.jasper.el.JspValueExpression(");
+                    sb.append(quote(mark));
+                    sb.append(',');
                     sb.append(getExpressionFactoryVar());
                     sb.append(".createValueExpression(");
                     if (attr.getEL() != null) { // optimize
@@ -2733,10 +2746,13 @@ class Generator {
                     sb.append(quote(attrValue));
                     sb.append(',');
                     sb.append(returnType);
-                    sb.append(')');
+                    sb.append("))");
                     attrValue = sb.toString();
                 } else if (attr.isDeferredMethodInput()
                         || MethodExpression.class.getName().equals(type)) {
+                    sb.append("new org.apache.jasper.el.JspMethodExpression(");
+                    sb.append(quote(mark));
+                    sb.append(',');
                     sb.append(getExpressionFactoryVar());
                     sb.append(".createMethodExpression(");
                     sb.append(elContext);
@@ -2756,7 +2772,7 @@ class Generator {
                         sb.setLength(sb.length() - 1);
                     }
 
-                    sb.append("})");
+                    sb.append("}))");
                     attrValue = sb.toString();
                 } else {
                     // run attrValue through the expression interpreter
@@ -2875,7 +2891,8 @@ class Generator {
                 String attrValue = evaluateAttribute(handlerInfo, attrs[i], n,
                         tagHandlerVar);
                 
-                out.printil("// "+attrs[i].getTagAttributeInfo());
+                Mark m = n.getStart();
+                out.printil("// "+m.getFile()+"("+m.getLineNumber()+","+m.getColumnNumber()+") "+ attrs[i].getTagAttributeInfo());
                 if (attrs[i].isDynamic()) {
                     out.printin(tagHandlerVar);
                     out.print(".");

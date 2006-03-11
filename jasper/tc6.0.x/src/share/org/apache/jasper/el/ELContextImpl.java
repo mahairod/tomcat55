@@ -30,7 +30,7 @@ import javax.el.VariableMapper;
  * 
  * @author Jacob Hookom
  */
-public class ELContextImpl extends ELContext {
+public final class ELContextImpl extends ELContext {
 
     private final static FunctionMapper NullFunctionMapper = new FunctionMapper() {
         public Method resolveFunction(String prefix, String localName) {
