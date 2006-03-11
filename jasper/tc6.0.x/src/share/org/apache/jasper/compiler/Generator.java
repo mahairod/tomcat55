@@ -60,6 +60,9 @@ import org.xml.sax.Attributes;
  * @author Shawn Bayern
  * @author Mark Roth
  * @author Denis Benoit
+ * 
+ * Tomcat 6.x
+ * @author Jacob Hookom
  */
 
 class Generator {
@@ -159,7 +162,7 @@ class Generator {
         if (this.jspIdPrefix == null) {
             StringBuffer sb = new StringBuffer(32);
             String name = ctxt.getServletJavaFileName();
-            sb.append("jsp_").append(Math.abs(name.hashCode())).append('-');
+            sb.append("jsp_").append(Math.abs(name.hashCode())).append('_');
             this.jspIdPrefix = sb.toString();
         }
         return this.jspIdPrefix + (this.jspId++);

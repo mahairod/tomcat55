@@ -75,6 +75,10 @@ class TagFileProcessor {
                 new JspUtil.ValidAttribute("fragment"),
                 new JspUtil.ValidAttribute("rtexprvalue"),
                 new JspUtil.ValidAttribute("type"),
+                new JspUtil.ValidAttribute("deferredValue"),            // JSP 2.1
+                new JspUtil.ValidAttribute("deferredValueType"),        // JSP 2.1
+                new JspUtil.ValidAttribute("deferredMethod"),           // JSP 2
+                new JspUtil.ValidAttribute("deferredMethodSignature"),  // JSP 21
                 new JspUtil.ValidAttribute("description") };
 
         private static final JspUtil.ValidAttribute[] variableDirectiveAttrs = {
