@@ -18,13 +18,12 @@ package org.apache.catalina.tribes.tcp.bio;
 
 import java.net.InetAddress;
 
-import org.apache.catalina.tribes.ChannelMessage;
-import org.apache.catalina.tribes.util.FastQueue;
-import org.apache.catalina.tribes.util.IQueue;
-import org.apache.catalina.tribes.util.LinkObject;
-import org.apache.catalina.tribes.io.XByteBuffer;
-import org.apache.catalina.tribes.tcp.*;
 import org.apache.catalina.tribes.ChannelException;
+import org.apache.catalina.tribes.ChannelMessage;
+import org.apache.catalina.tribes.io.XByteBuffer;
+import org.apache.catalina.tribes.tcp.bio.util.FastQueue;
+import org.apache.catalina.tribes.tcp.bio.util.IQueue;
+import org.apache.catalina.tribes.tcp.bio.util.LinkObject;
 
 /**
  * Send cluster messages from a Message queue with only one socket. Ack and keep
