@@ -28,6 +28,16 @@
       </fix>
     </changelog>
   </subsection>
+  <subsection name="Coyote">
+    <changelog>
+      <fix>
+        Make the default cipher suites available for SSL the same as the set of cipher
+        suites enabled by default rather than the set of all cipher suites. This prevents
+        ciphers suites that do not provide confidentiality protection and/or server
+        authentication being used by default. (markt)
+      </fix>
+    </changelog>
+  </subsection>
   <subsection name="Webapps">
     <changelog>
       <fix>
