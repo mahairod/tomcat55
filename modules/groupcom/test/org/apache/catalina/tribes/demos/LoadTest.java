@@ -136,7 +136,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
                         if (debug) {
                             printArray(msg.getMessage());
                         }
-                        channel.send(null, msg);
+                        channel.send(channel.getMembers(), msg);
                         if ( pause > 0 ) {
                             if ( debug) System.out.println("Pausing sender for "+pause+" ms.");
                             Thread.sleep(pause);

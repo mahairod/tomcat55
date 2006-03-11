@@ -783,7 +783,7 @@ public class SimpleTcpCluster
                 } else
                     log.error("Unable to send message to local member " + msg);
             } else {
-                channel.send(null,msg);
+                channel.send(channel.getMembers(),msg);
             }
         } catch (Exception x) {
             log.error("Unable to send message through cluster sender.", x);
