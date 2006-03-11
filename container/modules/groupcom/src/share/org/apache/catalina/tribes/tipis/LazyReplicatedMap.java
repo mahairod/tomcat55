@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -41,19 +42,48 @@ import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.mcast.McastMember;
 
 /**
- * @todo implement periodic sync/transfer 
+ * A smart implementation of a stateful replicated map. uses primary/secondary backup strategy. 
+ * One node is always the primary and one node is always the backup.
+ * This map is synchronized across a cluster, and only has one backup member.<br/>
+ * A perfect usage for this map would be a session map for a session manager in a clustered environment.<br/>
+ * The only way to modify this list is to use the <code>put, putAll, remove</code> methods.
+ * entrySet, entrySetFull, keySet, keySetFull, returns all non modifiable sets.<br><br>
+ * If objects (values) in the map change without invoking <code>put()</code> or <code>remove()</code>
+ * the data can be distributed using two different methods:<br>
+ * <code>replicate(boolean)</code> and <code>replicate(Object, boolean)</code><br>
+ * These two methods are very important two understand. The map can work with two set of value objects:<br>
+ * 1. Serializable - the entire object gets serialized each time it is replicated<br>
+ * 2. ReplicatedMapEntry - this interface allows for a isDirty() flag and to replicate diffs if desired.<br>
+ * Implementing the <code>ReplicatedMapEntry</code> interface allows you to decide what objects 
+ * get replicated and how much data gets replicated each time.<br>
+ * If you implement a smart AOP mechanism to detect changes in underlying objects, you can replicate
+ * only those changes by implementing the ReplicatedMapEntry interface, and return true when isDiffable()
+ * is invoked.<br><br>
+ * 
+ * This map implementation doesn't have a background thread running to replicate changes.
+ * If you do have changes without invoking put/remove then you need to invoke one of the following methods:
+ * <ul>
+ * <li><code>replicate(Object,boolean)</code> - replicates only the object that belongs to the key</li>
+ * <li><code>replicate(boolean)</code> - Scans the entire map for changes and replicates data</li>
+ *  </ul>
+ * the <code>boolean</code> value in the <code>replicate</code> method used to decide 
+ * whether to only replicate objects that implement the <code>ReplicatedMapEntry</code> interface
+ * or to replicate all objects. If an object doesn't implement the <code>ReplicatedMapEntry</code> interface
+ * each time the object gets replicated the entire object gets serialized, hence a call to <code>replicate(true)</code>
+ * will replicate all objects in this map that are using this node as primary.
+ * 
+ * @todo implement periodic sync/transfer thread
  * @author Filip Hanik
  * @version 1.0
  */
 public class LazyReplicatedMap extends LinkedHashMap 
     implements RpcCallback, ChannelListener, MembershipListener {
     protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(LazyReplicatedMap.class);
-    protected static long TIME_OUT = 15000;//hard coded timeout
     
 //------------------------------------------------------------------------------    
 //              INSTANCE VARIABLES
 //------------------------------------------------------------------------------   
-
+    private transient long rpcTimeout = 5000;
     private transient Channel channel;
     private transient RpcChannel rpcChannel;
     private transient byte[] mapContextName;
@@ -64,24 +94,25 @@ public class LazyReplicatedMap extends LinkedHashMap
 //------------------------------------------------------------------------------    
 //              CONSTRUCTORS / DESTRUCTORS
 //------------------------------------------------------------------------------   
-    public LazyReplicatedMap(Channel channel, String mapContextName, int initialCapacity, float loadFactor) {
+    public LazyReplicatedMap(Channel channel, long timeout, String mapContextName, int initialCapacity, float loadFactor) {
         super(initialCapacity,loadFactor);
-        init(channel,mapContextName);
+        init(channel,mapContextName,timeout);
     }
 
-    public LazyReplicatedMap(Channel channel, String mapContextName, int initialCapacity) {
+    public LazyReplicatedMap(Channel channel, long timeout, String mapContextName, int initialCapacity) {
         super(initialCapacity);
-        init(channel,mapContextName);
+        init(channel,mapContextName, timeout);
     }
 
-    public LazyReplicatedMap(Channel channel, String mapContextName) {
+    public LazyReplicatedMap(Channel channel, long timeout, String mapContextName) {
         super();
-        init(channel,mapContextName);
+        init(channel,mapContextName,timeout);
     }
     
-    void init(Channel channel, String mapContextName) {
+    void init(Channel channel, String mapContextName, long timeout) {
         final String chset = "ISO-8859-1";
         this.channel = channel;
+        this.rpcTimeout = timeout;
         try {
             this.mapContextName = mapContextName.getBytes(chset);
         }catch (UnsupportedEncodingException x) {
@@ -92,7 +123,6 @@ public class LazyReplicatedMap extends LinkedHashMap
         this.channel.addChannelListener(this);
         this.channel.addMembershipListener(this);
         transferState();
-        
     }
     
     public void breakDown() {
@@ -179,7 +209,7 @@ public class LazyReplicatedMap extends LinkedHashMap
             if ( backup != null ) {
                 MapMessage msg = new MapMessage(mapContextName,MapMessage.MSG_STATE,false,
                                                 null,null,null,null);
-                Response[] resp = rpcChannel.send(new Member[] {backup},msg,rpcChannel.FIRST_REPLY,TIME_OUT);
+                Response[] resp = rpcChannel.send(new Member[] {backup},msg,rpcChannel.FIRST_REPLY,rpcTimeout);
                 if ( resp.length > 0 ) {
                     msg = (MapMessage)resp[0].getMessage();
                     ArrayList list = (ArrayList)msg.getValue();
@@ -398,7 +428,7 @@ public class LazyReplicatedMap extends LinkedHashMap
                 MapMessage msg = new MapMessage(mapContextName, MapMessage.MSG_RETRIEVE_BACKUP, false,
                                                 (Serializable) key, null, null, null);
                 Response[] resp = rpcChannel.send(new Member[] {entry.getBackupNode()},
-                                                  msg, this.rpcChannel.FIRST_REPLY, TIME_OUT);
+                                                  msg, this.rpcChannel.FIRST_REPLY, rpcTimeout);
                 if (resp == null || resp.length == 0) {
                     //no responses
                     log.warn("Unable to retrieve object for key:" + key);
@@ -517,7 +547,7 @@ public class LazyReplicatedMap extends LinkedHashMap
             MapEntry entry = (MapEntry)e.getValue();
             if ( entry.isPrimary() ) set.add(entry.getValue());
         }
-        return set;
+        return Collections.unmodifiableSet(set);
     }
     
     public Set keySet() {
@@ -530,7 +560,7 @@ public class LazyReplicatedMap extends LinkedHashMap
             MapEntry entry = (MapEntry)e.getValue();
             if ( entry.isPrimary() ) set.add(entry.getKey());
         }
-        return set;
+        return Collections.unmodifiableSet(set);
     }
     
     public int sizeFull() {
@@ -566,7 +596,7 @@ public class LazyReplicatedMap extends LinkedHashMap
             MapEntry entry = (MapEntry)e.getValue();
             if ( entry.isPrimary() ) values.add(entry.getValue());
         }
-        return values;
+        return Collections.unmodifiableCollection(values);
     }
     
 
