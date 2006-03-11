@@ -59,18 +59,18 @@ public class SnoopServlet extends HttpServlet {
 
 	out.println("Context init parameters:");
 	ServletContext context = getServletContext();
-	Enumeration enum = context.getInitParameterNames();
-	while (enum.hasMoreElements()) {
-	    String key = (String)enum.nextElement();
+	Enumeration enumx = context.getInitParameterNames();
+	while (enumx.hasMoreElements()) {
+	    String key = (String)enumx.nextElement();
             Object value = context.getInitParameter(key);
             out.println("   " + key + " = " + value);
 	}
 	out.println();
 
 	out.println("Context attributes:");
-	enum = context.getAttributeNames();
-	while (enum.hasMoreElements()) {
-	    String key = (String)enum.nextElement();
+	enumx = context.getAttributeNames();
+	while (enumx.hasMoreElements()) {
+	    String key = (String)enumx.nextElement();
             Object value = context.getAttribute(key);
             out.println("   " + key + " = " + value);
 	}

@@ -216,9 +216,9 @@ public class PolicyInterceptor extends PolicyLoader { //  BaseInterceptor {
 	    Policy.getPolicy().refresh();
 	    PermissionCollection pFileP=Policy.getPolicy().getPermissions(cs);
 	    if( pFileP!= null ) {
-		Enumeration enum=pFileP.elements();
-		while(enum.hasMoreElements()) {
-		    p.add((Permission)enum.nextElement());
+		Enumeration enumx=pFileP.elements();
+		while(enumx.hasMoreElements()) {
+		    p.add((Permission)enumx.nextElement());
 		}
 	    }
 

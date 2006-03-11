@@ -309,9 +309,9 @@ public class JservConfig  extends BaseInterceptor {
 
     	    // Set up contexts
     	    // XXX deal with Virtual host configuration !!!!
-    	    Enumeration  enum = cm.getContexts();
-    	    while (enum.hasMoreElements()) {
-                Context context = (Context)enum.nextElement();
+    	    Enumeration  enumx = cm.getContexts();
+    	    while (enumx.hasMoreElements()) {
+                Context context = (Context)enumx.nextElement();
                 String host = context.getHost();
                 if( host == null ) {
                     if( forwardAll )
@@ -328,9 +328,9 @@ public class JservConfig  extends BaseInterceptor {
                 }
     	    }
 
-            enum = vhosts.elements();
-            while( enum.hasMoreElements() ) {
-                Vector vhostContexts = (Vector)enum.nextElement();
+            enumx = vhosts.elements();
+            while( enumx.hasMoreElements() ) {
+                Vector vhostContexts = (Vector)enumx.nextElement();
                 for( int i = 0; i < vhostContexts.size(); i++ ) {
                     Context context = (Context)vhostContexts.elementAt(i);
                     if( i == 0 )

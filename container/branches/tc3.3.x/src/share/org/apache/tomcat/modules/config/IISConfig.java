@@ -209,9 +209,9 @@ public class IISConfig extends BaseJkConfig  {
 
             // Set up contexts
             // XXX deal with Virtual host configuration !!!!
-            Enumeration enum = cm.getContexts();
-            while (enum.hasMoreElements()) {
-                Context context = (Context)enum.nextElement();
+            Enumeration enumx = cm.getContexts();
+            while (enumx.hasMoreElements()) {
+                Context context = (Context)enumx.nextElement();
 
                 String vhost = context.getHost();
                 if(vhost != null) {

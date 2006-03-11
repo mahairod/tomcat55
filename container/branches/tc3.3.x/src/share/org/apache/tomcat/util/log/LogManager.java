@@ -54,9 +54,9 @@ public class LogManager {
 	if(name==null) name="";
 
 	channels.put( name, logH );
-	Enumeration enum=loggers.keys();
-	while( enum.hasMoreElements() ) {
-	    String k=(String)enum.nextElement();
+	Enumeration enumx=loggers.keys();
+	while( enumx.hasMoreElements() ) {
+	    String k=(String)enumx.nextElement();
 	    Log l=(Log)loggers.get( k );
 	    if( name.equals( l.getChannel( this ) )) {
 		l.setProxy( this, logH );

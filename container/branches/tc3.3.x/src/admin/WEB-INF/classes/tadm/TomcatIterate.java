@@ -27,7 +27,7 @@ import javax.servlet.jsp.tagext.Tag;
  */
 public class TomcatIterate extends BodyTagSupport {
     PageContext pageContext;
-    Enumeration enum;
+    Enumeration enumx;
     Object array[];
     int pos=0;
     String name;
@@ -36,7 +36,7 @@ public class TomcatIterate extends BodyTagSupport {
     public TomcatIterate() {}
 
     public void setEnumeration( Enumeration e ) {
-	enum=e;
+	enumx=e;
     }
 
     public void setArray( Object array[] ) {
@@ -61,12 +61,12 @@ public class TomcatIterate extends BodyTagSupport {
     }
     
     public int doStartTag() throws JspException {
-	if( enum == null && array == null ) 
+	if( enumx == null && array == null ) 
 	    return SKIP_BODY;
-	if( enum !=null ) {
-	    if( ! enum.hasMoreElements() )
+	if( enumx !=null ) {
+	    if( ! enumx.hasMoreElements() )
 		return SKIP_BODY;
-	    pageContext.setAttribute( name , enum.nextElement(),
+	    pageContext.setAttribute( name , enumx.nextElement(),
 				      PageContext.PAGE_SCOPE );
 	    return EVAL_BODY_TAG;
 	}
@@ -82,9 +82,9 @@ public class TomcatIterate extends BodyTagSupport {
     }
 
     public int doAfterBody() throws JspException {
-	if( enum!=null )
-	    if( enum.hasMoreElements() ) {
-		pageContext.setAttribute( name , enum.nextElement(),
+	if( enumx!=null )
+	    if( enumx.hasMoreElements() ) {
+		pageContext.setAttribute( name , enumx.nextElement(),
 					  PageContext.PAGE_SCOPE );
 		return EVAL_BODY_TAG;
 	}

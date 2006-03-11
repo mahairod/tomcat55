@@ -319,9 +319,9 @@ public class JspInterceptor extends BaseInterceptor {
 	    }
 	    if( debug>-1)
 		log( "jspServlet=" +  jspServlet.getServletClassName());
-	    Enumeration enum=args.keys();
-	    while( enum.hasMoreElements() ) {
-		String s=(String)enum.nextElement();
+	    Enumeration enumx=args.keys();
+	    while( enumx.hasMoreElements() ) {
+		String s=(String)enumx.nextElement();
 		String v=(String)args.get(s);
 		if( debug>0 ) log( "Setting " + s + "=" + v );
 		jspServlet.getServletInfo().addInitParam(s, v );

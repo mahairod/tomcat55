@@ -409,9 +409,9 @@ public class ContextManager {
 	if( state== STATE_CONFIG ) return;
 	
 	// addContext hook for all existing contexts
-	Enumeration enum = getContexts();
-	while (enum.hasMoreElements()) {
-	    Context ctx = (Context)enum.nextElement();
+	Enumeration enumx = getContexts();
+	while (enumx.hasMoreElements()) {
+	    Context ctx = (Context)enumx.nextElement();
 	    try {
 		ri.addContext( this, ctx ); 
 	    } catch( TomcatException ex ) {
@@ -420,9 +420,9 @@ public class ContextManager {
 	}
 	
 	// contextInit hook if we're started
-	enum = getContexts();
-	while (enum.hasMoreElements()) {
-	    Context ctx = (Context)enum.nextElement();
+	enumx = getContexts();
+	while (enumx.hasMoreElements()) {
+	    Context ctx = (Context)enumx.nextElement();
 	    try {
 		ri.contextInit( ctx );
 	    } catch( TomcatException ex ) {
@@ -458,9 +458,9 @@ public class ContextManager {
 	    ri.engineStop(this);
 
 	if( state >= STATE_INIT ) {
-	    Enumeration enum = getContexts();
-	    while (enum.hasMoreElements()) {
-		Context ctx = (Context)enum.nextElement();
+	    Enumeration enumx = getContexts();
+	    while (enumx.hasMoreElements()) {
+		Context ctx = (Context)enumx.nextElement();
 		try {
 		    ri.contextShutdown( ctx );
 		} catch( TomcatException ex ) {
@@ -468,9 +468,9 @@ public class ContextManager {
 		}
 	    }
 	    
-	    enum = getContexts();
-	    while (enum.hasMoreElements()) {
-		Context ctx = (Context)enum.nextElement();
+	    enumx = getContexts();
+	    while (enumx.hasMoreElements()) {
+		Context ctx = (Context)enumx.nextElement();
 		try {
 		    ri.removeContext( this, ctx ); 
 		} catch( TomcatException ex ) {
@@ -512,17 +512,17 @@ public class ContextManager {
 	// ( by user or modules during engineInit )
 
 	// first trusted apps - they may do special actions
-	Enumeration enum = getContexts();
-	while (enum.hasMoreElements()) {
-	    Context ctx = (Context)enum.nextElement();
+	Enumeration enumx = getContexts();
+	while (enumx.hasMoreElements()) {
+	    Context ctx = (Context)enumx.nextElement();
 	    if( ctx.isTrusted() )
 		fireAddContext(ctx, existingI );
 	}
 	
 	// Initialize the contexts
-	enum = getContexts();
-	while (enum.hasMoreElements()) {
-	    Context ctx = (Context)enum.nextElement();
+	enumx = getContexts();
+	while (enumx.hasMoreElements()) {
+	    Context ctx = (Context)enumx.nextElement();
 	    if( ctx.isTrusted() ) {
 		try {
 		    ctx.init();
@@ -538,17 +538,17 @@ public class ContextManager {
 	existingI=defaultContainer.getInterceptors();
 
 	// Same thing for untrusted apps 
-	enum = getContexts();
-	while (enum.hasMoreElements()) {
-	    Context ctx = (Context)enum.nextElement();
+	enumx = getContexts();
+	while (enumx.hasMoreElements()) {
+	    Context ctx = (Context)enumx.nextElement();
 	    if( ! ctx.isTrusted() )
 		fireAddContext(ctx, existingI );
 	}
 
 	// Initialize the contexts
-	enum = getContexts();
-	while (enum.hasMoreElements()) {
-	    Context ctx = (Context)enum.nextElement();
+	enumx = getContexts();
+	while (enumx.hasMoreElements()) {
+	    Context ctx = (Context)enumx.nextElement();
 	    if( ! ctx.isTrusted() ) {
 		try {
 		    ctx.init();
@@ -618,9 +618,9 @@ public class ContextManager {
     public void shutdown() throws TomcatException {
         if( state==STATE_START ) stop();
 
-	Enumeration enum = getContexts();
-	while (enum.hasMoreElements()) {
-	    Context ctx = (Context)enum.nextElement();
+	Enumeration enumx = getContexts();
+	while (enumx.hasMoreElements()) {
+	    Context ctx = (Context)enumx.nextElement();
 	    try {
 		ctx.shutdown();
 	    } catch( TomcatException ex ) {

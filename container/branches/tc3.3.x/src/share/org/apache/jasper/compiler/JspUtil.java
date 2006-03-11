@@ -183,12 +183,12 @@ public class JspUtil {
 	/**
 	 * Now check to see if the rest of the attributes are valid too.
 	 */
-   	Enumeration enum = temp.keys ();
+   	Enumeration enumx = temp.keys ();
 	String attribute = null;
 
-	while (enum.hasMoreElements ()) {
+	while (enumx.hasMoreElements ()) {
 	    valid = false;
-	    attribute = (String) enum.nextElement ();
+	    attribute = (String) enumx.nextElement ();
 	    for (int i = 0; i < validAttributes.length; i++) {
 	        if (attribute.equals(validAttributes[i].name)) {
 		    valid = true;

@@ -50,10 +50,10 @@ public class Tomcat3Precompiler extends DefaultJspCompilerAdapter {
         getJspc().log("Using Tomcat 3 precompiler", Project.MSG_VERBOSE);
 
         Vector sources = getJspc().getCompileList();
-        Enumeration enum = sources.elements();
-        while (enum.hasMoreElements()) {
+        Enumeration enumx = sources.elements();
+        while (enumx.hasMoreElements()) {
             CommandlineJava cmd = setupJasperCommand();
-            String source = (String) enum.nextElement();
+            String source = (String) enumx.nextElement();
             String base = getBase(source);
             String classname = base + "_1";
             addArg(cmd, "-c", classname);

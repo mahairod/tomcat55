@@ -89,9 +89,9 @@ public final class Servlet22Interceptor
 	throws TomcatException
     {
 	// shut down and servlets
-	Enumeration enum = ctx.getServletNames();
-	while (enum.hasMoreElements()) {
-	    String key = (String)enum.nextElement();
+	Enumeration enumx = ctx.getServletNames();
+	while (enumx.hasMoreElements()) {
+	    String key = (String)enumx.nextElement();
 	    Handler wrapper = ctx.getServletByName( key );
 	    
 	    if( ! (wrapper instanceof ServletHandler) ) 

@@ -136,9 +136,9 @@ public class LoadOnStartupInterceptor extends BaseInterceptor {
     // Old logic from Context - probably something cleaner can replace it.
 
     void init(Context ctx, Hashtable loadableServlets ) {
-	Enumeration enum=ctx.getServletNames();
-	while(enum.hasMoreElements()) {
-	    String name=(String)enum.nextElement();
+	Enumeration enumx=ctx.getServletNames();
+	while(enumx.hasMoreElements()) {
+	    String name=(String)enumx.nextElement();
 	    Handler h=ctx.getServletByName( name );
 	    if( ! ( h instanceof ServletHandler ) )
 		continue;
