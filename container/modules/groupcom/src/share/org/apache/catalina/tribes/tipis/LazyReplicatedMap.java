@@ -58,6 +58,7 @@ public class LazyReplicatedMap extends LinkedHashMap
     private transient RpcChannel rpcChannel;
     private transient byte[] mapContextName;
     private transient boolean stateTransferred = false;
+    private transient Object stateMutex = new Object();
     
     
 //------------------------------------------------------------------------------    
@@ -184,6 +185,12 @@ public class LazyReplicatedMap extends LinkedHashMap
                     ArrayList list = (ArrayList)msg.getValue();
                     for (int i=0; i<list.size(); i++ ) {
                         MapMessage m = (MapMessage)list.get(i);
+                        
+                        //make sure we don't store that actual object as primary or backup
+                        MapEntry local = (MapEntry)super.get(m.getKey());
+                        if ( local != null && (!local.isProxy() ) ) continue;
+                        
+                        //store the object
                         MapEntry entry = new MapEntry(m.getKey(),m.getValue());
                         entry.setBackup(false);
                         entry.setProxy(true);
@@ -217,18 +224,20 @@ public class LazyReplicatedMap extends LinkedHashMap
         
         //state transfer request
         if ( mapmsg.getMsgType() == mapmsg.MSG_STATE ) {
-            ArrayList list = new ArrayList();
-            Iterator i = super.entrySet().iterator();
-            while (i.hasNext()) {
-                Map.Entry e = (Map.Entry) i.next();
-                MapEntry entry = (MapEntry) e.getValue();
-                MapMessage me = new MapMessage(mapContextName,MapMessage.MSG_PROXY,
-                                               false,(Serializable)entry.getKey(),(Serializable)entry.getValue(),
-                                               null,entry.getBackupNode());
-                list.add(me);
-            }
-            mapmsg.setValue(list);
-            return mapmsg;
+            synchronized (stateMutex) { //make sure we dont do two things at the same time
+                ArrayList list = new ArrayList();
+                Iterator i = super.entrySet().iterator();
+                while (i.hasNext()) {
+                    Map.Entry e = (Map.Entry) i.next();
+                    MapEntry entry = (MapEntry) e.getValue();
+                    MapMessage me = new MapMessage(mapContextName, MapMessage.MSG_PROXY,
+                        false, (Serializable) entry.getKey(), (Serializable) entry.getValue(),
+                        null, entry.getBackupNode());
+                    list.add(me);
+                }
+                mapmsg.setValue(list);
+                return mapmsg;
+            }//synchronized
         }
         
         return null;
@@ -259,6 +268,11 @@ public class LazyReplicatedMap extends LinkedHashMap
             super.put(entry.getKey(),entry);
         }
         
+        if ( mapmsg.getMsgType() == MapMessage.MSG_REMOVE ) {
+            super.remove(mapmsg.getKey());
+        }
+
+
         if ( mapmsg.getMsgType() == MapMessage.MSG_BACKUP ) {
             MapEntry entry = (MapEntry)super.get(mapmsg.getKey());
             if ( entry == null ) {
@@ -268,6 +282,9 @@ public class LazyReplicatedMap extends LinkedHashMap
                 entry.setBackupNode(mapmsg.getBackupNode());
                 super.put(entry.getKey(), entry);
             } else {
+                entry.setBackup(true);
+                entry.setProxy(false);
+                entry.setBackupNode(mapmsg.getBackupNode());
                 if ( entry.getValue() instanceof ReplicatedMapEntry ) {
                     ReplicatedMapEntry diff = (ReplicatedMapEntry)entry.getValue();
                     if ( mapmsg.isDiff() ) {
@@ -295,7 +312,23 @@ public class LazyReplicatedMap extends LinkedHashMap
     }
     
     public void memberAdded(Member member) {
-        //do nothing, we don't care
+        //select a backup node if we don't have one
+        synchronized (stateMutex) {
+            Iterator i = super.entrySet().iterator();
+            while (i.hasNext()) {
+                Map.Entry e = (Map.Entry) i.next();
+                MapEntry entry = (MapEntry) e.getValue();
+                if (entry.isPrimary() && entry.getBackupNode() == null) {
+                    try {
+                        Member backup = publishEntryInfo(entry.getKey(), entry.getValue());
+                        entry.setBackupNode(backup);
+                    } catch (ChannelException x) {
+                        log.error("Unable to select backup node.", x);
+                    }//catch
+                }//end if
+            } //while
+        }//synchronized
+        
     }
     public void memberDisappeared(Member member) {
         //todo move all sessions that are primary here to and have this member as 
@@ -342,6 +375,9 @@ public class LazyReplicatedMap extends LinkedHashMap
     protected Member publishEntryInfo(Object key, Object value) throws ChannelException {
         //select a backup node
         Member backup = getNextBackupNode();
+        
+        if ( backup == null ) return null;
+        
         //publish the data out to all nodes
         MapMessage msg = new MapMessage(this.mapContextName, MapMessage.MSG_PROXY, false,
                                         (Serializable) key, null, null, backup);
@@ -495,6 +531,10 @@ public class LazyReplicatedMap extends LinkedHashMap
             if ( entry.isPrimary() ) set.add(entry.getKey());
         }
         return set;
+    }
+    
+    public int sizeFull() {
+        return super.size();
     }
     
     public int size() {
@@ -658,6 +698,8 @@ public class LazyReplicatedMap extends LinkedHashMap
         private byte[] diffvalue;
         private Member node;
         
+        public MapMessage(){}
+        
         public MapMessage(byte[] mapId,
                           int msgtype, boolean diff, 
                           Serializable key,Serializable value,
@@ -718,9 +760,16 @@ public class LazyReplicatedMap extends LinkedHashMap
                     } else {
                         value = (Serializable)in.readObject();
                     }//endif
+                    byte[] d = new byte[in.readInt()];
+                    in.read(d);
+                    if ( d.length > 0 ) node = McastMember.getMember(d);
                     break;
                 }
-                case MSG_RETRIEVE_BACKUP:
+                case MSG_RETRIEVE_BACKUP: {
+                    key = (Serializable)in.readObject();
+                    value = (Serializable)in.readObject();
+                    break;
+                }
                 case MSG_REMOVE : {
                     key = (Serializable)in.readObject();
                     break;
@@ -729,7 +778,7 @@ public class LazyReplicatedMap extends LinkedHashMap
                     key = (Serializable)in.readObject();
                     byte[] d = new byte[in.readInt()];
                     in.read(d);
-                    node = McastMember.getMember(d);
+                    if ( d.length > 0 ) node = McastMember.getMember(d);
                     break;
                 }
             }//switch
@@ -750,16 +799,23 @@ public class LazyReplicatedMap extends LinkedHashMap
                     } else {
                         out.writeObject(value);
                     }//endif
+                    byte[] d = node!=null?((McastMember)node).getData(false):new byte[0];
+                    out.writeInt(d.length);
+                    out.write(d);
                     break;
                 }
-                case MSG_RETRIEVE_BACKUP:
+                case MSG_RETRIEVE_BACKUP:{
+                    out.writeObject(key);
+                    out.writeObject(value);
+                    break;
+                }
                 case MSG_REMOVE : {
                     out.writeObject(key);
                     break;
                 }
                 case MSG_PROXY: {
                     out.writeObject(key);
-                    byte[] d = ((McastMember)node).getData(false);
+                    byte[] d = node!=null?((McastMember)node).getData(false):new byte[0];
                     out.writeInt(d.length);
                     out.write(d);
                     break;
