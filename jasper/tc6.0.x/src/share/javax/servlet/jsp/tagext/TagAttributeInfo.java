@@ -170,12 +170,16 @@ public class TagAttributeInfo {
      * @return a String representation of this TagAttributeInfo
      */
     public String toString() {
-        StringBuffer b = new StringBuffer();
+        StringBuffer b = new StringBuffer(64);
         b.append("name = " + name + " ");
         b.append("type = " + type + " ");
         b.append("reqTime = " + reqTime + " ");
         b.append("required = " + required + " ");
         b.append("fragment = " + fragment + " ");
+        b.append("deferredValue = " + deferredValue + " ");
+        b.append("expectedTypeName = " + expectedTypeName + " ");
+        b.append("deferredMethod = " + deferredMethod + " ");
+        b.append("methodSignature = " + methodSignature);
         return b.toString();
     }
 
