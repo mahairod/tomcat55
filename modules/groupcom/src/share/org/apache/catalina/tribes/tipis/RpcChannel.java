@@ -97,6 +97,7 @@ public class RpcChannel implements ChannelListener{
     
     public void messageReceived(Serializable msg, Member sender) {
         RpcMessage rmsg = (RpcMessage)msg;
+System.out.println("Received RPC message with message:"+rmsg.message);        
         RpcCollectorKey key = new RpcCollectorKey(rmsg.uuid);
         if ( rmsg.reply ) {
             RpcCollector collector = (RpcCollector)responseMap.get(key);
