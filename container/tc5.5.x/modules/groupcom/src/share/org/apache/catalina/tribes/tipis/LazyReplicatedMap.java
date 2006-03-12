@@ -72,6 +72,8 @@ import org.apache.catalina.tribes.mcast.McastMember;
  * each time the object gets replicated the entire object gets serialized, hence a call to <code>replicate(true)</code>
  * will replicate all objects in this map that are using this node as primary.
  * 
+ * <br><br><b>REMBER TO CALL <code>breakdown()</code> or <code>finalize()</code> when you are done with the map to 
+ * avoid memory leaks.<br><br>
  * @todo implement periodic sync/transfer thread
  * @author Filip Hanik
  * @version 1.0
@@ -95,22 +97,44 @@ public class LazyReplicatedMap extends LinkedHashMap
 //------------------------------------------------------------------------------    
 //              CONSTRUCTORS / DESTRUCTORS
 //------------------------------------------------------------------------------   
+    /**
+     * Creates a new map
+     * @param channel The channel to use for communication
+     * @param timeout long - timeout for RPC messags
+     * @param mapContextName String - unique name for this map, to allow multiple maps per channel
+     * @param initialCapacity int - the size of this map, see HashMap
+     * @param loadFactor float - load factor, see HashMap
+     */
     public LazyReplicatedMap(Channel channel, long timeout, String mapContextName, int initialCapacity, float loadFactor) {
         super(initialCapacity,loadFactor);
         init(channel,mapContextName,timeout);
     }
 
+    /**
+     * Creates a new map
+     * @param channel The channel to use for communication
+     * @param timeout long - timeout for RPC messags
+     * @param mapContextName String - unique name for this map, to allow multiple maps per channel
+     * @param initialCapacity int - the size of this map, see HashMap
+     */
     public LazyReplicatedMap(Channel channel, long timeout, String mapContextName, int initialCapacity) {
         super(initialCapacity);
         init(channel,mapContextName, timeout);
     }
 
+    /**
+     * Creates a new map
+     * @param channel The channel to use for communication
+     * @param timeout long - timeout for RPC messags
+     * @param mapContextName String - unique name for this map, to allow multiple maps per channel
+     */
     public LazyReplicatedMap(Channel channel, long timeout, String mapContextName) {
         super();
         init(channel,mapContextName,timeout);
     }
     
-    void init(Channel channel, String mapContextName, long timeout) {
+    
+    private void init(Channel channel, String mapContextName, long timeout) {
         final String chset = "ISO-8859-1";
         this.channel = channel;
         this.rpcTimeout = timeout;
@@ -120,11 +144,15 @@ public class LazyReplicatedMap extends LinkedHashMap
             log.warn("Unable to encode mapContextName["+mapContextName+"] using getBytes("+chset+") using default getBytes()",x);
             this.mapContextName = mapContextName.getBytes();
         }
+        
+        //create an rpc channel
         this.rpcChannel = new RpcChannel(this.mapContextName, channel, this);
         this.channel.addChannelListener(this);
         this.channel.addMembershipListener(this);
 
+        
         try {
+            //send out a map membership message, only wait for the first reply
             MapMessage msg = new MapMessage(this.mapContextName,MapMessage.MSG_START,
                                             false,null,null,null,channel.getLocalMember());
             Response[] resp = rpcChannel.send(channel.getMembers(),msg,rpcChannel.FIRST_REPLY,timeout);
@@ -132,19 +160,20 @@ public class LazyReplicatedMap extends LinkedHashMap
                 messageReceived(resp[i].getMessage(),resp[i].getSource());
             }
         }catch ( ChannelException x ) {
-            log.warn("Unable to send stop message.");
+            log.warn("Unable to send map start message.");
         }
 
-
+        //transfer state from another map
         transferState();
     }
     
-    public void breakDown() {
+    public void breakdown() {
         finalize();
     }
     
     public void finalize() {
         try {
+            //send a map membership stop message
             MapMessage msg = new MapMessage(this.mapContextName,MapMessage.MSG_STOP,
                                             false,null,null,null,channel.getLocalMember());
             if ( channel!=null) channel.send(channel.getMembers(),msg);
@@ -152,8 +181,9 @@ public class LazyReplicatedMap extends LinkedHashMap
             log.warn("Unable to send stop message.",x);
         }
         
+        //cleanup
         if ( this.rpcChannel!=null ) {
-            this.rpcChannel.breakDown();
+            this.rpcChannel.breakdown();
         }
         if ( this.channel != null ) {
             this.channel.removeChannelListener(this);
@@ -177,13 +207,16 @@ public class LazyReplicatedMap extends LinkedHashMap
         MapEntry entry = (MapEntry) super.get(key);
         if (entry!=null && entry.isPrimary() ) {
             Object value = entry.getValue();
+            //check to see if we need to replicate this object isDirty()||complete
             boolean repl = complete || ((value instanceof ReplicatedMapEntry) && ((ReplicatedMapEntry)value).isDirty());
             if (!repl) return;
 
+            //check to see if the message is diffable
             boolean diff = ((value instanceof ReplicatedMapEntry) && ((ReplicatedMapEntry)value).isDiffable());
             MapMessage msg = null;
             if ( diff ) {
                 try {
+                    //construct a diff message
                     msg = new MapMessage(mapContextName, MapMessage.MSG_BACKUP,
                                          true, (Serializable) entry.getKey(), null,
                                          ( (ReplicatedMapEntry) entry.getValue()).getDiff(),
@@ -193,6 +226,7 @@ public class LazyReplicatedMap extends LinkedHashMap
                 }
             }
             if ( msg == null ) {
+                //construct a complete
                 msg = new MapMessage(mapContextName, MapMessage.MSG_BACKUP,
                                      false, (Serializable) entry.getKey(), 
                                      (Serializable)entry.getValue(),
