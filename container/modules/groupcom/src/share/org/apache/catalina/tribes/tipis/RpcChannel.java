@@ -126,12 +126,12 @@ System.out.println("Received RPC message with message:"+rmsg.message);
         }//end if
     }
     
-    public void breakDown() {
+    public void breakdown() {
         channel.removeChannelListener(this);
     }
     
     public void finalize() {
-        breakDown();
+        breakdown();
     }
     
     public boolean accept(Serializable msg, Member sender) {
