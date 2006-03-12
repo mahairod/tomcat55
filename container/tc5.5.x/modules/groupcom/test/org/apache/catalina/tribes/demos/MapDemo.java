@@ -65,7 +65,6 @@ public class MapDemo implements ChannelListener, MembershipListener{
     }
     
     public void messageReceived(Serializable msg, Member source) {
-        System.out.println("Recieved: "+msg);
         table.dataModel.getValueAt(-1,-1);
     }
     
@@ -135,7 +134,7 @@ public class MapDemo implements ChannelListener, MembershipListener{
 
     public static class SimpleTableDemo
         extends JPanel implements ActionListener{
-        private static int WIDTH = 500;
+        private static int WIDTH = 550;
         
         private LazyReplicatedMap map;
         private boolean DEBUG = false;
@@ -217,7 +216,7 @@ public class MapDemo implements ChannelListener, MembershipListener{
             
             //create a add value button
             JPanel addpanel = new JPanel();
-            addpanel.setPreferredSize(new Dimension(WIDTH,20));
+            addpanel.setPreferredSize(new Dimension(WIDTH,30));
             addpanel.add(createButton("Add","add"));
             addpanel.add(txtAddKey);
             addpanel.add(txtAddValue);
@@ -225,7 +224,7 @@ public class MapDemo implements ChannelListener, MembershipListener{
             
             //create a remove value button
             JPanel removepanel = new JPanel( );
-            removepanel.setPreferredSize(new Dimension(WIDTH,20));
+            removepanel.setPreferredSize(new Dimension(WIDTH,30));
             removepanel.add(createButton("Remove","remove"));
             removepanel.add(txtRemoveKey);
             
@@ -236,7 +235,7 @@ public class MapDemo implements ChannelListener, MembershipListener{
             changepanel.add(createButton("Change","change"));
             changepanel.add(txtChangeKey);
             changepanel.add(txtChangeValue);
-            changepanel.setPreferredSize(new Dimension(WIDTH,20));
+            changepanel.setPreferredSize(new Dimension(WIDTH,30));
 
             add(changepanel);
             
@@ -244,7 +243,7 @@ public class MapDemo implements ChannelListener, MembershipListener{
             JPanel syncpanel = new JPanel( );
             syncpanel.add(createButton("Synchronize","sync"));
             syncpanel.add(createButton("Replicate","replicate"));
-            syncpanel.setPreferredSize(new Dimension(WIDTH,20));
+            syncpanel.setPreferredSize(new Dimension(WIDTH,30));
 
             add(syncpanel);
 
@@ -323,6 +322,7 @@ public class MapDemo implements ChannelListener, MembershipListener{
 
             //Display the window.
             frame.setSize(450,250);
+            newContentPane.setSize(450,300);
             frame.pack();
             frame.setVisible(true);
             return newContentPane;
