@@ -17,15 +17,12 @@
 package org.apache.catalina.tribes.tcp.bio;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Arrays;
 
 import org.apache.catalina.tribes.ChannelException;
-import org.apache.catalina.tribes.ChannelMessage;
-import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.tcp.Constants;
 import org.apache.catalina.tribes.tcp.DataSender;
@@ -41,9 +38,9 @@ import org.apache.catalina.util.StringManager;
  * @version $Revision: 377484 $ $Date: 2006-02-13 15:00:05 -0600 (Mon, 13 Feb 2006) $
  * @since 5.5.16
  */
-public class SinglePointDataSender implements DataSender {
+public class BioSender implements DataSender {
 
-    private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(SinglePointDataSender.class);
+    private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(BioSender.class);
 
     /**
      * The string manager for this package.
@@ -69,11 +66,6 @@ public class SinglePointDataSender implements DataSender {
 
     
     /**
-     * cluster domain
-     */
-    private String domain;
-
-    /**
      * current sender socket
      */
     private Socket socket = null;
@@ -82,11 +74,6 @@ public class SinglePointDataSender implements DataSender {
      * is Socket really connected
      */
     private boolean isSocketConnected = false;
-
-    /**
-     * Message transfer over socket ?
-     */
-    private boolean isMessageTransferStarted = false;
 
     /**
      * sender is in suspect state (last transfer failed)
@@ -147,20 +134,19 @@ public class SinglePointDataSender implements DataSender {
 
     // ------------------------------------------------------------- Constructor
     
-    public SinglePointDataSender(String domain,InetAddress host, int port) {
+    public BioSender(InetAddress host, int port) {
         this.address = host;
         this.port = port;
-        this.domain = domain;
         if (log.isDebugEnabled())
             log.debug(sm.getString("IDataSender.create",address, new Integer(port)));
     }
 
-    public SinglePointDataSender(String domain,InetAddress host, int port, SenderState state) {
-        this(domain,host,port);
+    public BioSender(InetAddress host, int port, SenderState state) {
+        this(host,port);
         if ( state != null ) this.senderState = state;
     }
-    public SinglePointDataSender(String domain,InetAddress host, int port, SenderState state, int rxBufSize, int txBufSize) {
-        this(domain,host,port,state);
+    public BioSender(InetAddress host, int port, SenderState state, int rxBufSize, int txBufSize) {
+        this(host,port,state);
         this.rxBufSize = rxBufSize;
         this.txBufSize = txBufSize;
     }
@@ -173,9 +159,7 @@ public class SinglePointDataSender implements DataSender {
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
      */
     public String getInfo() {
-
         return (info);
-
     }
 
     
@@ -202,37 +186,8 @@ public class SinglePointDataSender implements DataSender {
         return port;
     }
 
-    /**
-     * @return Returns the domain.
-     */
-    public String getDomain() {
-        return domain;
-    }
-    
-    /**
-     * @param domain The domain to set.
-     */
-    public void setDomain(String domain) {
-        this.domain = domain;
-    }
-    
     public boolean isConnected() {
         return isSocketConnected;
-    }
-
-    /**
-     * @return Is DataSender send a message
-     */
-    public boolean isMessageTransferStarted() {
-        return isMessageTransferStarted;
-    }
-    
-    /**
-     * @param isSocketConnected
-     *            The isSocketConnected to set.
-     */
-    protected void setSocketConnected(boolean isSocketConnected) {
-        this.isSocketConnected = isSocketConnected;
     }
 
     public boolean isSuspect() {
@@ -315,12 +270,6 @@ public class SinglePointDataSender implements DataSender {
     public void setResend(boolean resend) {
         this.resend = resend;
     }
-    /**
-     * @return Returns the socket.
-     */
-    public Socket getSocket() {
-        return socket;
-    }
 
     public SenderState getSenderState() {
         return senderState;
@@ -332,13 +281,6 @@ public class SinglePointDataSender implements DataSender {
 
     public int getTxBufSize() {
         return txBufSize;
-    }
-
-    /**
-     * @param socket The socket to set.
-     */
-    public void setSocket(Socket socket) {
-        this.socket = socket;
     }
 
     public void setRxBufSize(int rxBufSize) {
@@ -356,15 +298,11 @@ public class SinglePointDataSender implements DataSender {
      * @see org.apache.catalina.tribes.tcp.IDataSender#connect()
      */
     public synchronized void connect() throws ChannelException {
-        if(!isMessageTransferStarted) {
+        try {
             openSocket();
-            if(isConnected()) {
-                if (log.isDebugEnabled())
-                    log.debug(sm.getString("IDataSender.connect", address.getHostAddress(),new Integer(port),new Long(0)));
-            }
-        } else 
-            if (log.isWarnEnabled())
-               log.warn(sm.getString("IDataSender.message.create", address.getHostAddress(),new Integer(port)));
+        }catch ( Exception x ) {
+            throw new ChannelException(x);
+        }
    }
 
  
@@ -374,16 +312,12 @@ public class SinglePointDataSender implements DataSender {
      * @see IDataSender#disconnect()
      */
     public synchronized void disconnect() {
-        if(!isMessageTransferStarted) {
             boolean connect = isConnected() ;
             closeSocket();
             if(connect) {
                 if (log.isDebugEnabled())
                     log.debug(sm.getString("IDataSender.disconnect", address.getHostAddress(),new Integer(port),new Long(0)));
             }
-        } else 
-            if (log.isWarnEnabled())
-               log.warn(sm.getString("IDataSender.message.disconnect", address.getHostAddress(),new Integer(port)));
         
     }
 
@@ -395,18 +329,15 @@ public class SinglePointDataSender implements DataSender {
      * @return true, is socket close
      * @see DataSender#closeSocket()
      */
-    public synchronized boolean checkKeepAlive() {
+    public synchronized boolean keepalive() {
         boolean isCloseSocket = true ;
-        if(!isMessageTransferStarted) {
-            if(isConnected()) {
-                if ((keepAliveTimeout > -1 && (System.currentTimeMillis() - keepAliveConnectTime) > keepAliveTimeout)
-                    || (keepAliveMaxRequestCount > -1 && keepAliveCount >= keepAliveMaxRequestCount)) {
-                        closeSocket();
-               } else
-                    isCloseSocket = false ;
-            }
-        } else
-            isCloseSocket = false ;
+        if(isConnected()) {
+            if ((keepAliveTimeout > -1 && (System.currentTimeMillis() - keepAliveConnectTime) > keepAliveTimeout)
+                || (keepAliveMaxRequestCount > -1 && keepAliveCount >= keepAliveMaxRequestCount)) {
+                    closeSocket();
+           } else
+                isCloseSocket = false ;
+        }
         
         return isCloseSocket;
     }
@@ -417,14 +348,8 @@ public class SinglePointDataSender implements DataSender {
      * @see org.apache.catalina.tribes.tcp.IDataSender#sendMessage(,
      *      ChannelMessage)
      */
-    public synchronized void sendMessage(ChannelMessage data) throws ChannelException {
-        try {
-            pushMessage(data);
-        }catch ( Exception x ) {
-            ChannelException cx = new ChannelException(x);
-            cx.addFaultyMember(data.getAddress());
-            throw cx;
-        }
+    public synchronized void sendMessage(byte[] data) throws IOException {
+        pushMessage(data);
     }
 
     
@@ -444,7 +369,7 @@ public class SinglePointDataSender implements DataSender {
      * open real socket and set time out when waitForAck is enabled
      * is socket open return directly
      */
-    protected void openSocket() throws ChannelException {
+    protected synchronized void openSocket() throws IOException {
        if(isConnected())
            return ;
        try {
@@ -459,7 +384,7 @@ public class SinglePointDataSender implements DataSender {
           getSenderState().setSuspect();
           if (log.isDebugEnabled())
               log.debug(sm.getString("IDataSender.openSocket.failure",address.getHostAddress(), new Integer(port),new Long(0)), ex1);
-          throw new ChannelException(ex1);
+          throw (ex1);
         }
         
      }
@@ -468,7 +393,7 @@ public class SinglePointDataSender implements DataSender {
      * @throws IOException
      * @throws SocketException
      */
-    protected void createSocket() throws IOException, SocketException {
+    protected synchronized void createSocket() throws IOException, SocketException {
         socket = new Socket(getAddress(), getPort());
         socket.setSendBufferSize(getTxBufSize());
         socket.setReceiveBufferSize(getRxBufSize());
@@ -481,7 +406,7 @@ public class SinglePointDataSender implements DataSender {
      * @see DataSender#disconnect()
      * @see DataSender#closeSocket()
      */
-    protected void closeSocket() {
+    protected synchronized void closeSocket() {
         if(isConnected()) {
              if (socket != null) {
                 try {
@@ -516,28 +441,22 @@ public class SinglePointDataSender implements DataSender {
      * @since 5.5.10
      */
     
-    protected void pushMessage(ChannelMessage data, boolean reconnect) throws ChannelException {
-        synchronized(this) {
-            checkKeepAlive();
-            if ( reconnect ) closeSocket();
-            if (!isConnected()) openSocket();
-            else if(keepAliveTimeout > -1) this.keepAliveConnectTime = System.currentTimeMillis();
-        }
-        try {
-            writeData(data);
-        } catch ( IOException x ) {
-            throw new ChannelException(x);
-        }
+    protected synchronized void pushMessage(byte[] data, boolean reconnect) throws IOException {
+        keepalive();
+        if ( reconnect ) closeSocket();
+        if (!isConnected()) openSocket();
+        else if(keepAliveTimeout > -1) this.keepAliveConnectTime = System.currentTimeMillis();
+        writeData(data);
     }
     
-    protected void pushMessage( ChannelMessage data) throws ChannelException {
+    protected synchronized void pushMessage( byte[] data) throws IOException {
         boolean messageTransfered = false ;
-        ChannelException exception = null;
+        IOException exception = null;
         try {
              // first try with existing connection
              pushMessage(data,false);
              messageTransfered = true ;
-        } catch (ChannelException x) {
+        } catch (IOException x) {
             exception = x;
             //resend
             if (log.isTraceEnabled()) log.trace(sm.getString("IDataSender.send.again", address.getHostAddress(),new Integer(port)),x);
@@ -546,17 +465,17 @@ public class SinglePointDataSender implements DataSender {
                 pushMessage(data,true);                    
                 messageTransfered = true;
                 exception = null;
-            } catch (ChannelException xx) {
+            } catch (IOException xx) {
                 exception = xx;
                 closeSocket();
             }
         } finally {
             this.keepAliveCount++;
-            checkKeepAlive();
+            keepalive();
             if(messageTransfered) {
-                if (log.isTraceEnabled()) log.trace(sm.getString("IDataSender.send.message", address.getHostAddress(),new Integer(port), data.getUniqueId(), new Long(data.getMessage().getLength())));
+                
             } else {
-                if ( exception != null ) throw new ChannelException(exception);
+                if ( exception != null ) throw exception;
             }
         }
     }
@@ -568,19 +487,10 @@ public class SinglePointDataSender implements DataSender {
      * @throws IOException
      * @since 5.5.10
      */
-    protected void writeData(ChannelMessage data) throws IOException { 
-        synchronized(this) {
-            isMessageTransferStarted = true ;
-        }
-        try {
-            socket.getOutputStream().write(XByteBuffer.createDataPackage((ClusterData)data));
-            socket.getOutputStream().flush();
-            if (getWaitForAck()) waitForAck();
-        } finally {
-            synchronized(this) {
-                isMessageTransferStarted = false ;
-            }
-        }
+    protected synchronized void writeData(byte[] data) throws IOException { 
+        socket.getOutputStream().write(data);
+        socket.getOutputStream().flush();
+        if (getWaitForAck()) waitForAck();
     }
 
     /**

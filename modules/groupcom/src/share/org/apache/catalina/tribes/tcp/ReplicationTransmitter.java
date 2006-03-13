@@ -128,18 +128,8 @@ public class ReplicationTransmitter implements ChannelSender {
      */
 
     public void heartbeat() {
-        checkKeepAlive();
+        
     }
-
-    /**
-     * Check all DataSender Socket to close socket at keepAlive mode
-     * @see DataSender#checkKeepAlive()
-     */
-    public void checkKeepAlive() {
-        getTransport().checkKeepAlive();
-    }
-
-    
 
     /**
      * add new cluster member and create sender ( s. replicationMode) transfer
