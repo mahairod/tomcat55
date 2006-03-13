@@ -1,40 +1,30 @@
 package org.apache.catalina.tribes.demos;
 
 import java.io.Serializable;
+import java.util.Map;
 
-import org.apache.catalina.tribes.Member;
-import org.apache.catalina.tribes.tipis.RpcCallback;
-import org.apache.catalina.tribes.Channel;
-import org.apache.catalina.tribes.ManagedChannel;
-import org.apache.catalina.tribes.tipis.RpcChannel;
-import org.apache.catalina.tribes.tipis.Response;
-
+import java.awt.ComponentOrientation;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.JButton;
 import javax.swing.JTextField;
-import java.awt.Panel;
-import javax.swing.BoxLayout;
-import java.awt.ComponentOrientation;
-import javax.swing.table.TableModel;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.TableColumn;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import org.apache.catalina.tribes.tipis.LazyReplicatedMap;
-import org.apache.catalina.tribes.MessageListener;
+import javax.swing.table.TableModel;
+
+import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelListener;
+import org.apache.catalina.tribes.ManagedChannel;
+import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
-import java.util.Map;
-import java.awt.BorderLayout;
+import org.apache.catalina.tribes.tipis.LazyReplicatedMap;
 
 /**
  * <p>Title: </p>
@@ -269,6 +259,11 @@ public class MapDemo implements ChannelListener, MembershipListener{
                 if ( buf!=null ) {
                     buf.delete(0,buf.length());
                     buf.append(txtChangeValue.getText());
+                    map.replicate(txtChangeKey.getText(),true);
+                } else {
+                    buf = new StringBuffer();
+                    buf.append(txtChangeValue.getText());
+                    map.put(txtChangeKey.getText(),buf);
                 }
             }
             if ( "remove".equals(e.getActionCommand()) ) {

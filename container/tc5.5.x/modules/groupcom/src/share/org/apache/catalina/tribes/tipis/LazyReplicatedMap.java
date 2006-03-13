@@ -521,14 +521,22 @@ public class LazyReplicatedMap extends LinkedHashMap
                 msg = (MapMessage) resp[0].getMessage();
                 
                 Member backup = entry.getBackupNode();
+
                 if (entry.isBackup()) {
                     //select a new backup node
                     backup = publishEntryInfo(key, msg.getValue());
+                } else if ( entry.isProxy() ) {
+                    //invalidate the previous primary
+                    msg = new MapMessage(mapContextName,MapMessage.MSG_PROXY,false,(Serializable)key,null,null,backup);
+                    channel.send(new Member[] {backup},msg);
                 }
+
                 entry.setBackupNode(backup);
                 entry.setBackup(false);
                 entry.setProxy(false);
                 entry.setValue(msg.getValue());
+                
+                
             } catch (ChannelException x) {
                 log.error("Unable to replicate out data for a LazyReplicatedMap.get operation", x);
                 return null;
@@ -560,7 +568,6 @@ public class LazyReplicatedMap extends LinkedHashMap
         } catch (ChannelException x) {
             log.error("Unable to replicate out data for a LazyReplicatedMap.put operation", x);
         }
-        System.out.println("adding key="+key+" entry="+entry);
         super.put(key,entry);
         return old;
     }

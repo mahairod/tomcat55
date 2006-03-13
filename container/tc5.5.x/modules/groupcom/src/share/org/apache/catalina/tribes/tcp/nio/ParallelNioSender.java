@@ -279,8 +279,8 @@ public class ParallelNioSender implements MultiPointSender {
         Map.Entry[] entries = (Map.Entry[])nioSenders.entrySet().toArray(new Map.Entry[nioSenders.size()]);
         for ( int i=0; i<entries.length; i++ ) {
             NioSender sender = (NioSender)entries[i].getValue();
-            if ( sender.checkKeepAlive() ) {
-                nioSenders.remove(sender.getDestination());
+            if ( sender.keepalive() ) {
+                nioSenders.remove(entries[i].getKey());
             }
         }
         return result;

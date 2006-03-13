@@ -197,9 +197,6 @@ public class NioReceiver implements Runnable, ChannelReceiver, ListenCallback {
                             (ServerSocketChannel) key.channel();
                         SocketChannel channel = server.accept();
 
-//System.out.println("DEFAULT CHANNEL RX="+channel.socket().getReceiveBufferSize() +" our="+rxBufSize);
-//System.out.println("DEFAULT CHANNEL TX="+channel.socket().getSendBufferSize() +" our="+txBufSize);
-
                         channel.socket().setReceiveBufferSize(rxBufSize);
                         channel.socket().setSendBufferSize(txBufSize);
                         Object attach = new ObjectReader(channel, selector,this);
