@@ -180,7 +180,7 @@ public class MultiSocketSender extends PooledSender implements DataSender {
     }
 
     public String toString() {
-        StringBuffer buf = new StringBuffer("PooledSocketSender[");
+        StringBuffer buf = new StringBuffer("MultiSocketSender[");
         buf.append(getHost()).append(":").append(getPort()).append("]");
         return buf.toString();
     }
