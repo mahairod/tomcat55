@@ -23,6 +23,7 @@ import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.tcp.DataSender;
 import org.apache.catalina.tribes.tcp.PooledSender;
 import org.apache.catalina.tribes.tcp.SenderState;
+import java.io.IOException;
 
 /**
  * Send cluster messages with a pool of sockets (25).
@@ -158,14 +159,14 @@ public class MultiSocketSender extends PooledSender implements DataSender {
      * @param data Message data
      * @throws java.io.IOException
      */
-    public void sendMessage(ChannelMessage data) throws ChannelException {
+    public void sendMessage(byte[] data) throws IOException, ChannelException {
         //get a socket sender from the pool
         if(!isConnected()) {
             synchronized(this) {
                 if(!isConnected()) connect();
             }
         }
-        SinglePointDataSender sender = (SinglePointDataSender)getSender();
+        BioSender sender = (BioSender)getSender();
         if (sender == null) {
             log.warn("Sender queue is empty. Can not send any messages.");
             return;
@@ -187,7 +188,7 @@ public class MultiSocketSender extends PooledSender implements DataSender {
 
     public DataSender getNewDataSender() {
         //new DataSender(
-            SinglePointDataSender sender = new SinglePointDataSender(getDomain(),
+            BioSender sender = new BioSender(
                                                getHost(),
                                                getPort(),
                                                getSenderState() );

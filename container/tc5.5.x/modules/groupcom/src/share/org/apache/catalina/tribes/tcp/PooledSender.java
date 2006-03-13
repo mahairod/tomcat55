@@ -52,7 +52,7 @@ public abstract class PooledSender implements DataSender {
     }
     
     public void returnSender(DataSender sender) {
-        sender.checkKeepAlive();
+        sender.keepalive();
         queue.returnSender(sender);
     }
     
@@ -125,7 +125,7 @@ public abstract class PooledSender implements DataSender {
         return poolSize;
     }
 
-    public boolean checkKeepAlive() {
+    public boolean keepalive() {
         //do nothing, the pool checks on every return
         return false;
     }
