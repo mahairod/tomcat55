@@ -316,7 +316,7 @@
                                autoConnect="true"
                                poolSize="25"/>
                     <!--
-                    <transport className="org.apache.catalina.tribes.tcp.bio.MultipointBioSender"
+                    <transport className="org.apache.catalina.tribes.tcp.bio.PooledMultiSender"
                                maxRetryAttempts="2"
                                timeout="15000"
                                waitForAck="true"
