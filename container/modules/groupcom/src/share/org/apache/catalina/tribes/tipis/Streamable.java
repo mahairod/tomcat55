@@ -46,5 +46,15 @@ public interface Streamable {
      * @return int - the number of bytes written into the data buffer
      */
     public int write(byte[] data, int offset) throws IOException;
+    
+    /**
+     * read data into the byte array starting at offset
+     * @param data byte[] - the array to read data into
+     * @param offset int - start position for writing data
+     * @param length - the desired read length
+     * @return int - the number of bytes read from the data buffer
+     */
+    public int read(byte[] data, int offset, int length) throws IOException;
+
    
 }

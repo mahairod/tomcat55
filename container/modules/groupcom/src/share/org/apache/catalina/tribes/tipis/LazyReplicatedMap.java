@@ -1000,6 +1000,10 @@ public class LazyReplicatedMap extends LinkedHashMap
             return length;
         }
         
+        public synchronized int read(byte[] data, int offset, int length) throws IOException {
+            return -1;
+        }
+
         public DirectByteArrayOutputStream getBuf() {
             return buf;
         }
