@@ -294,7 +294,7 @@
                     mcastDropTime="3000"/>
 
                 <Receiver 
-                    className="org.apache.catalina.tribes.tcp.ReplicationListener"
+                    className="org.apache.catalina.tribes.tcp.nio.NioReceiver"
                     tcpListenAddress="auto"
                     tcpListenPort="4001"
                     tcpSelectorTimeout="100"
@@ -316,7 +316,7 @@
                                autoConnect="true"
                                poolSize="25"/>
                     <!--
-                    <transport className="org.apache.catalina.tribes.tcp.bio.PooledBioSender"
+                    <transport className="org.apache.catalina.tribes.tcp.bio.MultipointBioSender"
                                maxRetryAttempts="2"
                                timeout="15000"
                                waitForAck="true"
