@@ -77,7 +77,6 @@ public class SinglePointDataSender implements DataSender {
      * current sender socket
      */
     private Socket socket = null;
-    private OutputStream socketout = null;
 
     /**
      * is Socket really connected
@@ -474,7 +473,6 @@ public class SinglePointDataSender implements DataSender {
         socket.setSendBufferSize(getTxBufSize());
         socket.setReceiveBufferSize(getRxBufSize());
         socket.setSoTimeout((int)timeout);
-        this.socketout = socket.getOutputStream();
     }
 
     /**
@@ -575,8 +573,8 @@ public class SinglePointDataSender implements DataSender {
             isMessageTransferStarted = true ;
         }
         try {
-            socketout.write(XByteBuffer.createDataPackage((ClusterData)data));
-            socketout.flush();
+            socket.getOutputStream().write(XByteBuffer.createDataPackage((ClusterData)data));
+            socket.getOutputStream().flush();
             if (getWaitForAck()) waitForAck();
         } finally {
             synchronized(this) {
