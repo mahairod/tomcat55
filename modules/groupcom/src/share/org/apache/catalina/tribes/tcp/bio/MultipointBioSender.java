@@ -11,7 +11,6 @@ import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.tcp.MultiPointSender;
 import org.apache.catalina.tribes.tcp.SenderState;
-import org.apache.catalina.tribes.tcp.nio.NioSender;
 
 /**
  * <p>Title: </p>
@@ -96,7 +95,7 @@ public class MultipointBioSender implements MultiPointSender {
         for (int i=0; i<members.length; i++ ) {
             Member mbr = (Member)members[i];
             try {
-                NioSender sender = (NioSender)bioSenders.get(mbr);
+                BioSender sender = (BioSender)bioSenders.get(mbr);
                 sender.disconnect();
             }catch ( Exception e ) {
                 if ( x == null ) x = new ChannelException(e);
@@ -113,7 +112,7 @@ public class MultipointBioSender implements MultiPointSender {
 
     public void memberRemoved(Member member) {
         //disconnect senders
-        NioSender sender = (NioSender)bioSenders.remove(member);
+        BioSender sender = (BioSender)bioSenders.remove(member);
         if ( sender != null ) sender.disconnect();
     }
 
@@ -176,13 +175,13 @@ public class MultipointBioSender implements MultiPointSender {
     }
 
     public boolean keepalive() {
-        //throw new UnsupportedOperationException("Method ParallelNioSender.checkKeepAlive() not implemented");
+        //throw new UnsupportedOperationException("Method ParallelBioSender.checkKeepAlive() not implemented");
         boolean result = false;
         Map.Entry[] entries = (Map.Entry[])bioSenders.entrySet().toArray(new Map.Entry[bioSenders.size()]);
         for ( int i=0; i<entries.length; i++ ) {
-            NioSender sender = (NioSender)entries[i].getValue();
-            if ( sender.checkKeepAlive() ) {
-                bioSenders.remove(sender.getDestination());
+            BioSender sender = (BioSender)entries[i].getValue();
+            if ( sender.keepalive() ) {
+                bioSenders.remove(entries[i].getKey());
             }
         }
         return result;
