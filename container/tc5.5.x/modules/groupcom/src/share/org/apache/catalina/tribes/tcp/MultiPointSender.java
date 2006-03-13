@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,5 +34,8 @@ public interface MultiPointSender extends DataSender
     public void setUseDirectBuffer(boolean directBuf);
     public void setSuspect(boolean suspect);
     public boolean getSuspect();
+    public void memberAdded(Member member);
+    public void memberRemoved(Member member);
+    public void setAutoConnect(boolean auto);
 
 }

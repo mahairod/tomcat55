@@ -1,11 +1,23 @@
+/*
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.catalina.tribes.tcp;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.catalina.tribes.ChannelException;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.List;
 
 /**
  * <p>Title: </p>
@@ -27,9 +39,10 @@ public abstract class PooledSender implements DataSender {
     private int txBufSize;
     private boolean waitForAck;
     private long timeout;
+    private int poolSize = 25;
 
-    public PooledSender(int queueSize) {
-        queue = new SenderQueue(this,queueSize);
+    public PooledSender() {
+        queue = new SenderQueue(this,poolSize);
     }
     
     public abstract DataSender getNewDataSender();
@@ -83,6 +96,11 @@ public abstract class PooledSender implements DataSender {
         this.timeout = timeout;
     }
 
+    public void setPoolSize(int poolSize) {
+        this.poolSize = poolSize;
+        queue.setLimit(poolSize);
+    }
+
     public boolean isConnected() {
         return connected;
     }
@@ -101,6 +119,10 @@ public abstract class PooledSender implements DataSender {
 
     public long getTimeout() {
         return timeout;
+    }
+
+    public int getPoolSize() {
+        return poolSize;
     }
 
     public boolean checkKeepAlive() {
@@ -187,7 +209,9 @@ public abstract class PooledSender implements DataSender {
             }
             //to do
             inuse.remove(sender);
-            notinuse.add(sender);
+            //just in case the limit has changed
+            if ( notinuse.size() < this.getLimit() ) notinuse.add(sender);
+            else try {sender.disconnect(); } catch ( Exception ignore){}
             notify();
         }
 

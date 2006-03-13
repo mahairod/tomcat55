@@ -21,14 +21,16 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Arrays;
 
+import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
+import org.apache.catalina.tribes.tcp.Constants;
+import org.apache.catalina.tribes.tcp.DataSender;
+import org.apache.catalina.tribes.tcp.SenderState;
 import org.apache.catalina.util.StringManager;
-import java.util.Arrays;
-import org.apache.catalina.tribes.tcp.*;
-import org.apache.catalina.tribes.ChannelException;
 
 /**
  * Send cluster messages with only one socket. Ack and keep Alive Handling is
@@ -39,7 +41,7 @@ import org.apache.catalina.tribes.ChannelException;
  * @version $Revision: 377484 $ $Date: 2006-02-13 15:00:05 -0600 (Mon, 13 Feb 2006) $
  * @since 5.5.16
  */
-public class SinglePointDataSender implements SinglePointSender {
+public class SinglePointDataSender implements DataSender {
 
     private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(SinglePointDataSender.class);
 
