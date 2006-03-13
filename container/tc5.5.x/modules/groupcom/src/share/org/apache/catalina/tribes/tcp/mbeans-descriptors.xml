@@ -744,8 +744,8 @@
 				 
   </mbean>
 
-  <mbean         name="PooledSocketSender"
-          description="Pooled Cluster Sender"
+  <mbean         name="MultiSocketSender"
+          description="Multi Socket Sender, more than one socket per member"
                domain="Catalina"
                 group="IDataSender"
                  type="org.apache.catalina.cluster.tcp.PooledSocketSender">
