@@ -268,7 +268,7 @@ public class NioSender  {
      * @return boolean
      * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
      */
-    public boolean checkKeepAlive() {
+    public boolean keepalive() {
         return false;
     }
     /**
