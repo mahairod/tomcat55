@@ -1377,7 +1377,6 @@
     <mkdir  dir="${tomcat.dist}/src/${catalina.project}"/>
     <mkdir  dir="${tomcat.dist}/src/${jtc.project}"/>
     <mkdir  dir="${tomcat.dist}/src/${jasper.project}"/>
-    <mkdir  dir="${tomcat.dist}/src/${jasper.project}/jasper2"/>
 
     <!-- Main build file -->
     <copy todir="${tomcat.dist}/src">
@@ -1419,7 +1418,7 @@
     </copy>
 
     <!-- tomcat jasper source -->
-    <copy todir="${tomcat.dist}/src/${jasper.project}/jasper2">
+    <copy todir="${tomcat.dist}/src/${jasper.project}">
       <fileset dir="${jasper.home}">
         <exclude name="**/build/**"/>
         <exclude name="**/dist/**"/>
