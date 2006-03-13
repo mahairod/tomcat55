@@ -88,8 +88,6 @@
     	  tofile="${catalina.build}/classes/org/apache/catalina/tribes/LocalStrings.properties"/>
     <copy file="${basedir}/src/share/org/apache/catalina/tribes/tcp/LocalStrings.properties"
     	  tofile="${catalina.build}/classes/org/apache/catalina/tribes/tcp/LocalStrings.properties"/>
-    <copy file="${basedir}/src/share/org/apache/catalina/tribes/tcp/DataSenders.properties"
-    	  tofile="${catalina.build}/classes/org/apache/catalina/tribes/tcp/DataSenders.properties"/>
     <copy file="${basedir}/src/share/org/apache/catalina/tribes/tcp/mbeans-descriptors.xml"
     	  tofile="${catalina.build}/classes/org/apache/catalina/tribes/tcp/mbeans-descriptors.xml"/>
     <copy file="${basedir}/src/share/org/apache/catalina/tribes/mcast/LocalStrings.properties"
