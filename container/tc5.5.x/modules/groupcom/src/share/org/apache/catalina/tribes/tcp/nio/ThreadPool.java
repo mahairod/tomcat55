@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.apache.catalina.tribes.tcp;
-import java.util.List;
+package org.apache.catalina.tribes.tcp.nio;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author not attributable

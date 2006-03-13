@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.catalina.tribes.tcp;
+package org.apache.catalina.tribes.tcp.nio;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -31,15 +31,14 @@ import org.apache.catalina.tribes.ChannelReceiver;
 import org.apache.catalina.tribes.MessageListener;
 import org.apache.catalina.tribes.io.ListenCallback;
 import org.apache.catalina.tribes.io.ObjectReader;
-import org.apache.catalina.tribes.tcp.nio.TcpReplicationThread;
+import org.apache.catalina.tribes.tcp.Constants;
 import org.apache.catalina.util.StringManager;
 
 /**
  * @author Filip Hanik
- * @author Peter Rossbach
  * @version $Revision: 379904 $ $Date: 2006-02-22 15:16:25 -0600 (Wed, 22 Feb 2006) $
  */
-public class ReplicationListener implements Runnable, ChannelReceiver, ListenCallback {
+public class NioReceiver implements Runnable, ChannelReceiver, ListenCallback {
     /**
      * @todo make this configurable
      */
@@ -49,7 +48,7 @@ public class ReplicationListener implements Runnable, ChannelReceiver, ListenCal
      */
     protected int txBufSize = 25188;
 
-    protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(ReplicationListener.class);
+    protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(NioReceiver.class);
 
     /**
      * The string manager for this package.
@@ -59,7 +58,7 @@ public class ReplicationListener implements Runnable, ChannelReceiver, ListenCal
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "ReplicationListener/1.3";
+    private static final String info = "NioReceiver/1.0";
 
     private ThreadPool pool = null;
     private int tcpThreadCount;
@@ -78,7 +77,7 @@ public class ReplicationListener implements Runnable, ChannelReceiver, ListenCal
     private MessageListener listener = null;
     private boolean sync;
     private boolean direct;
-    public ReplicationListener() {
+    public NioReceiver() {
     }
 
     /**
@@ -136,7 +135,7 @@ public class ReplicationListener implements Runnable, ChannelReceiver, ListenCal
         }
         try {
             getBind();
-            Thread t = new Thread(this, "ReplicationListener");
+            Thread t = new Thread(this, "NioReceiver");
             t.setDaemon(true);
             t.start();
         } catch (Exception x) {
@@ -225,7 +224,7 @@ public class ReplicationListener implements Runnable, ChannelReceiver, ListenCal
                 log.warn(
                     "Replication client disconnected, error when polling key. Ignoring client.");
             } catch (Exception x) {
-                log.error("Unable to process request in ReplicationListener", x);
+                log.error("Unable to process request in NioReceiver", x);
             }
 
         }
