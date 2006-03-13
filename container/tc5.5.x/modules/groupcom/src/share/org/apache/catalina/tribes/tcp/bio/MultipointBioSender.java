@@ -1,20 +1,17 @@
 package org.apache.catalina.tribes.tcp.bio;
 
+import java.net.InetAddress;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.Member;
-import org.apache.catalina.tribes.tcp.MultiPointSender;
-import org.apache.catalina.tribes.io.XByteBuffer;
-import java.nio.channels.Selector;
-import java.io.IOException;
-import java.nio.channels.SelectionKey;
-import java.util.Map;
-import java.util.HashMap;
-import org.apache.catalina.tribes.tcp.nio.NioSender;
-import java.util.Iterator;
 import org.apache.catalina.tribes.io.ClusterData;
-import java.net.InetAddress;
+import org.apache.catalina.tribes.io.XByteBuffer;
+import org.apache.catalina.tribes.tcp.MultiPointSender;
 import org.apache.catalina.tribes.tcp.SenderState;
+import org.apache.catalina.tribes.tcp.nio.NioSender;
 
 /**
  * <p>Title: </p>

@@ -15,20 +15,20 @@
  */
 package org.apache.catalina.tribes.demos;
 
+import java.util.Iterator;
+import java.util.Properties;
+
 import org.apache.catalina.tribes.Channel;
-import org.apache.catalina.tribes.tcp.ReplicationListener;
-import org.apache.catalina.tribes.tcp.ReplicationTransmitter;
 import org.apache.catalina.tribes.ManagedChannel;
 import org.apache.catalina.tribes.group.GroupChannel;
-import org.apache.catalina.tribes.mcast.McastService;
+import org.apache.catalina.tribes.group.interceptors.FragmentationInterceptor;
 import org.apache.catalina.tribes.group.interceptors.GzipInterceptor;
 import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
-import org.apache.catalina.tribes.group.interceptors.FragmentationInterceptor;
-import java.util.Properties;
-import java.util.Iterator;
+import org.apache.catalina.tribes.mcast.McastService;
 import org.apache.catalina.tribes.tcp.MultiPointSender;
+import org.apache.catalina.tribes.tcp.ReplicationTransmitter;
+import org.apache.catalina.tribes.tcp.nio.NioReceiver;
 import org.apache.tomcat.util.IntrospectionUtils;
-import org.apache.catalina.tribes.tcp.nio.PooledParallelSender;
 
 /**
  * <p>Title: </p>
@@ -139,7 +139,7 @@ public class ChannelCreator {
             }
         }
 
-        ReplicationListener rl = new ReplicationListener();
+        NioReceiver rl = new NioReceiver();
         rl.setTcpListenAddress(bind);
         rl.setTcpListenPort(port);
         rl.setTcpSelectorTimeout(tcpseltimeout);
@@ -150,6 +150,7 @@ public class ChannelCreator {
 
         
         ReplicationTransmitter ps = new ReplicationTransmitter();
+        System.out.println("Creating transport class="+transport);
         MultiPointSender sender = (MultiPointSender)Class.forName(transport,true,ChannelCreator.class.getClassLoader()).newInstance();
         sender.setTimeout(acktimeout);
         sender.setAutoConnect(autoconnect);
