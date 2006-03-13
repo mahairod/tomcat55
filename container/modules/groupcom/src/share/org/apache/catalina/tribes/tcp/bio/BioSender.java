@@ -28,6 +28,7 @@ import org.apache.catalina.tribes.tcp.Constants;
 import org.apache.catalina.tribes.tcp.DataSender;
 import org.apache.catalina.tribes.tcp.SenderState;
 import org.apache.catalina.util.StringManager;
+import java.net.InetSocketAddress;
 
 /**
  * Send cluster messages with only one socket. Ack and keep Alive Handling is
@@ -73,7 +74,7 @@ public class BioSender implements DataSender {
     /**
      * is Socket really connected
      */
-    private boolean isSocketConnected = false;
+    private boolean connected = false;
 
     /**
      * sender is in suspect state (last transfer failed)
@@ -187,7 +188,7 @@ public class BioSender implements DataSender {
     }
 
     public boolean isConnected() {
-        return isSocketConnected;
+        return connected;
     }
 
     public boolean isSuspect() {
@@ -312,12 +313,12 @@ public class BioSender implements DataSender {
      * @see IDataSender#disconnect()
      */
     public synchronized void disconnect() {
-            boolean connect = isConnected() ;
-            closeSocket();
-            if(connect) {
-                if (log.isDebugEnabled())
-                    log.debug(sm.getString("IDataSender.disconnect", address.getHostAddress(),new Integer(port),new Long(0)));
-            }
+        boolean connect = isConnected();
+        closeSocket();
+        if (connect) {
+            if (log.isDebugEnabled())
+                log.debug(sm.getString("IDataSender.disconnect", address.getHostAddress(), new Integer(port), new Long(0)));
+        }
         
     }
 
@@ -370,16 +371,19 @@ public class BioSender implements DataSender {
      * is socket open return directly
      */
     protected synchronized void openSocket() throws IOException {
-       if(isConnected())
-           return ;
+       if(isConnected()) return ;
        try {
-            createSocket();
-            if (getWaitForAck()) socket.setSoTimeout((int) timeout);
-            isSocketConnected = true;
-            this.keepAliveCount = 0;
-            this.keepAliveConnectTime = System.currentTimeMillis();
-            if (log.isDebugEnabled())
-                log.debug(sm.getString("IDataSender.openSocket", address.getHostAddress(), new Integer(port),new Long(0)));
+           socket = new Socket();
+           InetSocketAddress sockaddr = new InetSocketAddress(getAddress(), getPort());
+           socket.connect(sockaddr,(int)timeout);
+           socket.setSendBufferSize(getTxBufSize());
+           socket.setReceiveBufferSize(getRxBufSize());
+           socket.setSoTimeout( (int) timeout);
+           connected = true;
+           this.keepAliveCount = 0;
+           this.keepAliveConnectTime = System.currentTimeMillis();
+           if (log.isDebugEnabled())
+               log.debug(sm.getString("IDataSender.openSocket", address.getHostAddress(), new Integer(port), new Long(0)));
       } catch (IOException ex1) {
           getSenderState().setSuspect();
           if (log.isDebugEnabled())
@@ -388,17 +392,6 @@ public class BioSender implements DataSender {
         }
         
      }
-
-    /**
-     * @throws IOException
-     * @throws SocketException
-     */
-    protected synchronized void createSocket() throws IOException, SocketException {
-        socket = new Socket(getAddress(), getPort());
-        socket.setSendBufferSize(getTxBufSize());
-        socket.setReceiveBufferSize(getRxBufSize());
-        socket.setSoTimeout((int)timeout);
-    }
 
     /**
      * close socket
@@ -417,7 +410,7 @@ public class BioSender implements DataSender {
                 }
             }
             this.keepAliveCount = 0;
-            isSocketConnected = false;
+            connected = false;
             if (log.isDebugEnabled())
                 log.debug(sm.getString("IDataSender.closeSocket",address.getHostAddress(), new Integer(port),new Long(0)));
        }
