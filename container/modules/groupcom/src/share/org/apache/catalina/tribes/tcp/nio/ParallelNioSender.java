@@ -54,20 +54,10 @@ public class ParallelNioSender implements MultiPointSender {
     protected int txBufSize = 25188;
     protected boolean suspect = false;
     private boolean connected;
+    private boolean autoConnect;
 
-    public ParallelNioSender(long timeout, 
-                             boolean waitForAck,
-                             int retryAttempts,
-                             boolean directBuf,
-                             int rxBufSize,
-                             int txBufSize) throws IOException {
-        this.timeout = timeout;
-        this.waitForAck = waitForAck;
-        this.retryAttempts = retryAttempts;
+    public ParallelNioSender() throws IOException {
         selector = Selector.open();
-        this.directBuf = directBuf;
-        this.rxBufSize = rxBufSize;
-        this.txBufSize = txBufSize;
     }
     
     
@@ -214,6 +204,15 @@ public class ParallelNioSender implements MultiPointSender {
         if ( x != null ) throw x;
     }
     
+    public void memberAdded(Member member) {
+        
+    }
+    
+    public void memberRemoved(Member member) {
+        //disconnect senders
+    }
+
+    
     public synchronized void disconnect() {
         try {close(); }catch (Exception x){}
         setConnected(false);
@@ -229,6 +228,10 @@ public class ParallelNioSender implements MultiPointSender {
 
     public boolean isConnected() {
         return connected;
+    }
+
+    public boolean isAutoConnect() {
+        return autoConnect;
     }
 
     public void setSuspect(boolean suspect) {
@@ -262,7 +265,11 @@ public class ParallelNioSender implements MultiPointSender {
     public void setConnected(boolean connected) {
         this.connected = connected;
     }
-    
+
+    public void setAutoConnect(boolean autoConnect) {
+        this.autoConnect = autoConnect;
+    }
+
     public boolean checkKeepAlive() {
         //throw new UnsupportedOperationException("Method ParallelNioSender.checkKeepAlive() not implemented");
         return false;

@@ -1,12 +1,28 @@
+/*
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.catalina.tribes.tcp.nio;
 
-import org.apache.catalina.tribes.tcp.PooledSender;
-import org.apache.catalina.tribes.tcp.DataSender;
-import org.apache.catalina.tribes.tcp.MultiPointSender;
-import org.apache.catalina.tribes.Member;
+import java.io.IOException;
+
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelMessage;
-import java.io.IOException;
+import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.tcp.AbstractPooledSender;
+import org.apache.catalina.tribes.tcp.DataSender;
+import org.apache.catalina.tribes.tcp.MultiPointSender;
 
 /**
  * <p>Title: </p>
@@ -20,14 +36,11 @@ import java.io.IOException;
  * @author not attributable
  * @version 1.0
  */
-public class PooledParallelSender extends PooledSender implements MultiPointSender{
-    private boolean suspect;
-    private boolean useDirectBuffer;
-    private int maxRetryAttempts;
-
+public class PooledParallelSender extends AbstractPooledSender implements MultiPointSender {
     public PooledParallelSender() {
-        super(25);
+        super();
     }
+    
     public void sendMessage(Member[] destination, ChannelMessage message) throws ChannelException {
         ParallelNioSender sender = (ParallelNioSender)getSender();
         try {
@@ -39,40 +52,24 @@ public class PooledParallelSender extends PooledSender implements MultiPointSend
 
     public DataSender getNewDataSender() {
         try {
-            ParallelNioSender sender = 
-                new ParallelNioSender(getTimeout(), 
-                                      getWaitForAck(), 
-                                      getMaxRetryAttempts(), 
-                                      useDirectBuffer,
-                                      getRxBufSize(), 
-                                      getTxBufSize());
+            ParallelNioSender sender = new ParallelNioSender();
+            sender.setTimeout(getTimeout());
+            sender.setWaitForAck(getWaitForAck());
+            sender.setMaxRetryAttempts(getMaxRetryAttempts()); 
+            sender.setUseDirectBuffer(getUseDirectBuffer());
+            sender.setRxBufSize(getRxBufSize());
+            sender.setTxBufSize(getTxBufSize());
             return sender;
         } catch ( IOException x ) {
             throw new IllegalStateException("Unable to open NIO selector.",x);
         }
     }
 
-    public void setSuspect(boolean suspect) {
-        this.suspect = suspect;
+    public void memberAdded(Member member) {
+    
     }
-
-    public void setUseDirectBuffer(boolean useDirectBuffer) {
-        this.useDirectBuffer = useDirectBuffer;
-    }
-
-    public void setMaxRetryAttempts(int maxRetryAttempts) {
-        this.maxRetryAttempts = maxRetryAttempts;
-    }
-
-    public boolean getSuspect() {
-        return suspect;
-    }
-
-    public boolean getUseDirectBuffer() {
-        return useDirectBuffer;
-    }
-
-    public int getMaxRetryAttempts() {
-        return maxRetryAttempts;
-    }
+    
+    public void memberRemoved(Member member) {
+        //disconnect senders
+    }    
 }

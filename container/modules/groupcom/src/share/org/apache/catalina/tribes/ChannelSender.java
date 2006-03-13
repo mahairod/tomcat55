@@ -25,21 +25,10 @@ package org.apache.catalina.tribes;
  */    
 public interface ChannelSender
 {
-
     public void add(Member member);
-
     public void remove(Member member);
-
     public void start() throws java.io.IOException;
-
     public void stop();
-
     public void heartbeat() ;
-
     public void sendMessage(ChannelMessage message, Member[] destination) throws ChannelException;
-
-    public boolean getWaitForAck();
-    public void setWaitForAck(boolean isWaitForAck);
-    
-    public boolean isParallel();
 }

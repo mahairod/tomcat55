@@ -24,6 +24,11 @@ import org.apache.catalina.tribes.mcast.McastService;
 import org.apache.catalina.tribes.group.interceptors.GzipInterceptor;
 import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
 import org.apache.catalina.tribes.group.interceptors.FragmentationInterceptor;
+import java.util.Properties;
+import java.util.Iterator;
+import org.apache.catalina.tribes.tcp.MultiPointSender;
+import org.apache.tomcat.util.IntrospectionUtils;
+import org.apache.catalina.tribes.tcp.nio.PooledParallelSender;
 
 /**
  * <p>Title: </p>
@@ -40,8 +45,7 @@ public class ChannelCreator {
 
     public static StringBuffer usage() {
         StringBuffer buf = new StringBuffer();
-        buf.append("\n\t\t[-sender pooled|fastasyncqueue]")
-           .append("\n\t\t[-bind tcpbindaddress]")
+        buf.append("\n\t\t[-bind tcpbindaddress]")
            .append("\n\t\t[-tcpselto tcpselectortimeout]") 
            .append("\n\t\t[-tcpthreads tcpthreadcount]") 
            .append("\n\t\t[-port tcplistenport]")
@@ -49,6 +53,8 @@ public class ChannelCreator {
            .append("\n\t\t[-ackto acktimeout]") 
            .append("\n\t\t[-autoconnect true|false]")
            .append("\n\t\t[-sync true|false]")
+           .append("\n\t\t[-transport org.apache.catalina.tribes.tcp.nio.ParallelNioSender]")
+           .append("\n\t\t[-transport.xxx transport specific property]")
            .append("\n\t\t[-maddr multicastaddr]")
            .append("\n\t\t[-mport multicastport]")
            .append("\n\t\t[-mbind multicastbindaddr]")
@@ -63,14 +69,13 @@ public class ChannelCreator {
 
     }
 
-    public static Channel createChannel(String[] args) {
+    public static Channel createChannel(String[] args) throws Exception {
         String bind = "auto";
         int port = 4001;
         String mbind = null;
         boolean ack = false;
         boolean sync = false;
         boolean gzip = false;
-        String sender = "pooled";
         int tcpseltimeout = 100;
         int tcpthreadcount = 4;
         int acktimeout = 15000;
@@ -83,12 +88,12 @@ public class ChannelCreator {
         int ordersize = Integer.MAX_VALUE;
         boolean frag = false;
         int fragsize = 1024;
+        Properties transportProperties = new Properties();
+        String transport = "org.apache.catalina.tribes.tcp.nio.PooledParallelSender";
         
         for (int i = 0; i < args.length; i++) {
             if ("-bind".equals(args[i])) {
                 bind = args[++i];
-            } else if ("-sender".equals(args[i])) {
-                sender = args[++i];
             } else if ("-port".equals(args[i])) {
                 port = Integer.parseInt(args[++i]);
             } else if ("-tcpselto".equals(args[i])) {
@@ -115,6 +120,12 @@ public class ChannelCreator {
                 sync = Boolean.parseBoolean(args[++i]);
             } else if ("-autoconnect".equals(args[i])) {
                 autoconnect = Boolean.parseBoolean(args[++i]);
+            } else if ("-transport".equals(args[i])) {
+                transport = args[++i];
+            } else if (args[i]!=null && args[i].startsWith("transport.")) {
+                String key = args[i];
+                String val = args[++i];
+                transportProperties.setProperty(key,val);
             } else if ("-maddr".equals(args[i])) {
                 mcastaddr = args[++i];
             } else if ("-mport".equals(args[i])) {
@@ -137,11 +148,22 @@ public class ChannelCreator {
         rl.setSendAck(ack);
         rl.setSynchronized(sync);
 
+        
         ReplicationTransmitter ps = new ReplicationTransmitter();
-        ps.setReplicationMode(sender);
-        ps.setAckTimeout(acktimeout);
-        ps.setAutoConnect(autoconnect);
-        ps.setWaitForAck(ack);
+        MultiPointSender sender = (MultiPointSender)Class.forName(transport,true,ChannelCreator.class.getClassLoader()).newInstance();
+        sender.setTimeout(acktimeout);
+        sender.setAutoConnect(autoconnect);
+        sender.setWaitForAck(ack);
+        sender.setMaxRetryAttempts(2);
+        sender.setRxBufSize(43800);
+        sender.setTxBufSize(25188);
+
+        Iterator i = transportProperties.keySet().iterator();
+        while ( i.hasNext() ) {
+            String key = (String)i.next();
+            IntrospectionUtils.setProperty(sender,key,transportProperties.getProperty(key));
+        }
+        ps.setTransport(sender);
 
         McastService service = new McastService();
         service.setMcastAddr(mcastaddr);

@@ -16,39 +16,29 @@
 
 package org.apache.catalina.tribes.tcp.bio;
 
-import java.io.IOException;
 import java.net.InetAddress;
-import java.util.LinkedList;
 
-import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.ChannelException;
-import org.apache.catalina.tribes.tcp.PooledSender;
+import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.tcp.DataSender;
+import org.apache.catalina.tribes.tcp.PooledSender;
 import org.apache.catalina.tribes.tcp.SenderState;
-import org.apache.catalina.tribes.tcp.SinglePointSender;
-import java.net.Inet4Address;
 
 /**
  * Send cluster messages with a pool of sockets (25).
  * 
  * @author Filip Hanik
- * @author Peter Rossbach
  * @version 1.2
  */
 
-public class PooledSocketSender extends PooledSender implements SinglePointSender {
+public class MultiSocketSender extends PooledSender implements DataSender {
 
-    private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
-            .getLog(org.apache.catalina.tribes.tcp.bio.PooledSocketSender.class);
+    private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(org.apache.catalina.tribes.tcp.bio.MultiSocketSender.class);
 
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "PooledSocketSender/2.0";
-
-    // ----------------------------------------------------- Instance Variables
-
-    private int maxPoolSocketLimit = 25;
+    private static final String info = "MultiSocketSender/2.0";
     private String domain;
     private InetAddress host;
     private int port;
@@ -66,16 +56,12 @@ public class PooledSocketSender extends PooledSender implements SinglePointSende
     * @param host replication node tcp address
     * @param port replication node tcp port
     */
-   public PooledSocketSender(String domain,InetAddress host, int port) {
-       this(domain,host,port,25);
-   }
-
-    public PooledSocketSender(String domain,InetAddress host, int port, int poolSize) {
-        super(poolSize);
+    public MultiSocketSender(String domain,InetAddress host, int port, int poolSize) {
+        super();
+        super.setPoolSize(poolSize);
         this.host = host;
         this.domain = domain;
         this.port = port;
-        this.maxPoolSocketLimit = poolSize;
     }
    
     //  ----------------------------------------------------- Public Properties
@@ -86,9 +72,7 @@ public class PooledSocketSender extends PooledSender implements SinglePointSende
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
      */
     public String getInfo() {
-
         return (info);
-
     }
 
     public void setDomain(String domain) {
