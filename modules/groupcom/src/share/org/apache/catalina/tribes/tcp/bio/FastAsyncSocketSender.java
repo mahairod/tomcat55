@@ -51,8 +51,7 @@ public class FastAsyncSocketSender extends SinglePointDataSender {
 
     private static int threadCounter = 1;
 
-    private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
-            .getLog(FastAsyncSocketSender.class);
+    private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(FastAsyncSocketSender.class);
 
     /**
      * The descriptive information about this implementation.
@@ -157,31 +156,7 @@ public class FastAsyncSocketSender extends SinglePointDataSender {
     public void setQueueCheckLock(boolean checkLock) {
         queue.setCheckLock(checkLock);
     }
-    /**
-     * @return Returns the doStats.
-     */
-    public boolean isQueueDoStats() {
-        return queue.isDoStats();
-    }
-    /**
-     * @param doStats The doStats to set.
-     */
-    public void setQueueDoStats(boolean doStats) {
-        queue.setDoStats(doStats);
-    }
-    /**
-     * @return Returns the timeWait.
-     */
-    public boolean isQueueTimeWait() {
-        return queue.isTimeWait();
-    }
-    /**
-     * @param timeWait The timeWait to set.
-     */
-    public void setQueueTimeWait(boolean timeWait) {
-        queue.setTimeWait(timeWait);
-    }
-        
+    
     /**
      * @return Returns the inQueueCounter.
      */
@@ -194,20 +169,6 @@ public class FastAsyncSocketSender extends SinglePointDataSender {
      */
     public void setMaxQueueLength(int length) {
         queue.setMaxQueueLength(length);
-    }
-
-    /**
-     * @return Returns the add wait times.
-     */
-    public long getQueueAddWaitTime() {
-        return queue.getAddWait();
-    }
-
-    /**
-     * @return Returns the add wait times.
-     */
-    public long getQueueRemoveWaitTime() {
-        return queue.getRemoveWait();
     }
 
     /**
