@@ -28,6 +28,7 @@ import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.tcp.MultiPointSender;
+import java.util.Map;
 
 /**
  * <p>Title: </p>
@@ -210,6 +211,8 @@ public class ParallelNioSender implements MultiPointSender {
     
     public void memberRemoved(Member member) {
         //disconnect senders
+        NioSender sender = (NioSender)nioSenders.remove(member);
+        if ( sender != null ) sender.disconnect();
     }
 
     
@@ -272,7 +275,15 @@ public class ParallelNioSender implements MultiPointSender {
 
     public boolean checkKeepAlive() {
         //throw new UnsupportedOperationException("Method ParallelNioSender.checkKeepAlive() not implemented");
-        return false;
+        boolean result = false;
+        Map.Entry[] entries = (Map.Entry[])nioSenders.entrySet().toArray(new Map.Entry[nioSenders.size()]);
+        for ( int i=0; i<entries.length; i++ ) {
+            NioSender sender = (NioSender)entries[i].getValue();
+            if ( sender.checkKeepAlive() ) {
+                nioSenders.remove(sender.getDestination());
+            }
+        }
+        return result;
     }
 
 }
