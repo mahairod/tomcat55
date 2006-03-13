@@ -21,7 +21,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
 import org.apache.catalina.tribes.io.ObjectReader;
-import org.apache.catalina.tribes.tcp.*;
+import org.apache.catalina.tribes.tcp.Constants;
 
 /**
  * A worker thread class which can drain channels and echo-back the input. Each

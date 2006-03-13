@@ -87,7 +87,7 @@
   </mbean>
 
   <mbean         name="ClusterReceiverBase"
-           description="Tcp Cluster ReplicationListener implementation"
+           description="Tcp Cluster NioReceiver implementation"
                domain="Catalina"
                 group="Cluster"
                  type="org.apache.catalina.cluster.tcp.ClusterReceiverBase">
