@@ -16,10 +16,6 @@
 
 package org.apache.catalina.tribes.tcp.nio;
 
-
-
-
-
 /**
  * @author Filip Hanik
  * @version $Revision: 366253 $ $Date: 2006-01-05 13:30:42 -0600 (Thu, 05 Jan 2006) $

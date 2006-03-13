@@ -43,8 +43,7 @@ public class TcpReplicationThread extends WorkerThread {
     public static final int OPTION_DIRECT_BUFFER = 0x0004;
 
     
-    private static org.apache.commons.logging.Log log =
-        org.apache.commons.logging.LogFactory.getLog( TcpReplicationThread.class );
+    private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog( TcpReplicationThread.class );
     private ByteBuffer buffer = null;
     private SelectionKey key;
     private int rxBufSize;
