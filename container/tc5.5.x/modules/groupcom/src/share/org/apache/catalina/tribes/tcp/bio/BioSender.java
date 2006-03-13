@@ -298,7 +298,7 @@ public class BioSender implements DataSender {
      * Connect other cluster member receiver 
      * @see org.apache.catalina.tribes.tcp.IDataSender#connect()
      */
-    public synchronized void connect() throws ChannelException {
+    public  void connect() throws ChannelException {
         try {
             openSocket();
         }catch ( Exception x ) {
@@ -312,7 +312,7 @@ public class BioSender implements DataSender {
      * 
      * @see IDataSender#disconnect()
      */
-    public synchronized void disconnect() {
+    public  void disconnect() {
         boolean connect = isConnected();
         closeSocket();
         if (connect) {
@@ -330,7 +330,7 @@ public class BioSender implements DataSender {
      * @return true, is socket close
      * @see DataSender#closeSocket()
      */
-    public synchronized boolean keepalive() {
+    public  boolean keepalive() {
         boolean isCloseSocket = true ;
         if(isConnected()) {
             if ((keepAliveTimeout > -1 && (System.currentTimeMillis() - keepAliveConnectTime) > keepAliveTimeout)
@@ -349,7 +349,7 @@ public class BioSender implements DataSender {
      * @see org.apache.catalina.tribes.tcp.IDataSender#sendMessage(,
      *      ChannelMessage)
      */
-    public synchronized void sendMessage(byte[] data) throws IOException {
+    public  void sendMessage(byte[] data) throws IOException {
         pushMessage(data);
     }
 
@@ -370,7 +370,7 @@ public class BioSender implements DataSender {
      * open real socket and set time out when waitForAck is enabled
      * is socket open return directly
      */
-    protected synchronized void openSocket() throws IOException {
+    protected  void openSocket() throws IOException {
        if(isConnected()) return ;
        try {
            socket = new Socket();
@@ -399,7 +399,7 @@ public class BioSender implements DataSender {
      * @see DataSender#disconnect()
      * @see DataSender#closeSocket()
      */
-    protected synchronized void closeSocket() {
+    protected  void closeSocket() {
         if(isConnected()) {
              if (socket != null) {
                 try {
@@ -434,7 +434,7 @@ public class BioSender implements DataSender {
      * @since 5.5.10
      */
     
-    protected synchronized void pushMessage(byte[] data, boolean reconnect) throws IOException {
+    protected  void pushMessage(byte[] data, boolean reconnect) throws IOException {
         keepalive();
         if ( reconnect ) closeSocket();
         if (!isConnected()) openSocket();
@@ -442,7 +442,7 @@ public class BioSender implements DataSender {
         writeData(data);
     }
     
-    protected synchronized void pushMessage( byte[] data) throws IOException {
+    protected  void pushMessage( byte[] data) throws IOException {
         boolean messageTransfered = false ;
         IOException exception = null;
         try {
@@ -480,7 +480,7 @@ public class BioSender implements DataSender {
      * @throws IOException
      * @since 5.5.10
      */
-    protected synchronized void writeData(byte[] data) throws IOException { 
+    protected  void writeData(byte[] data) throws IOException { 
         socket.getOutputStream().write(data);
         socket.getOutputStream().flush();
         if (getWaitForAck()) waitForAck();
@@ -493,7 +493,7 @@ public class BioSender implements DataSender {
      * @throws java.io.IOException
      * @throws java.net.SocketTimeoutException
      */
-    protected synchronized void waitForAck() throws java.io.IOException {
+    protected  void waitForAck() throws java.io.IOException {
         try {
             boolean ackReceived = false;
             ackbuf.clear();
