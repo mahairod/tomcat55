@@ -29,8 +29,7 @@ package org.apache.catalina.tribes.tcp.bio.util;
  */
 public class FastQueue implements IQueue {
 
-    private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
-            .getLog(FastQueue.class);
+    private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(FastQueue.class);
 
     /**
      * This is the actual queue
@@ -62,11 +61,6 @@ public class FastQueue implements IQueue {
      */
     private boolean timeWait = false;
 
-    /**
-     * calc stats data
-     */
-    private boolean doStats = false;
-
     private boolean inAdd = false;
 
     private boolean inRemove = false;
@@ -95,48 +89,9 @@ public class FastQueue implements IQueue {
     private boolean enabled = true;
 
     /**
-     * calc all add objects
-     */
-    private long addCounter = 0;
-
-    /**
-     * calc all add objetcs in error state ( see limit queue length)
-     */
-    private long addErrorCounter = 0;
-
-    /**
-     * calc all remove objects
-     */
-    private long removeCounter = 0;
-
-    /**
-     * calc all remove objects failures (hupps probleme detection)
-     */
-    private long removeErrorCounter = 0;
-
-    /**
-     * Calc wait time thread
-     */
-    private long addWait = 0;
-
-    /**
-     * Calc remove time threads
-     */
-    private long removeWait = 0;
-
-    /**
      *  max queue size
      */
     private int maxSize = 0;
-
-    /**
-     * avg queue size
-     */
-    private long avgSize = 0;
-
-    private int maxSizeSample = 0;
-
-    private long avgSizeSample = 0;
 
     /**
      *  avg size sample interval
@@ -231,90 +186,7 @@ public class FastQueue implements IQueue {
         this.checkLock = checkLock;
     }
 
-    /**
-     * @return Returns the doStats.
-     */
-    public boolean isDoStats() {
-        return doStats;
-    }
-
-    /**
-     * @param doStats The doStats to set.
-     */
-    public void setDoStats(boolean doStats) {
-        this.doStats = doStats;
-    }
-
-    /**
-     * @return Returns the timeWait.
-     */
-    public boolean isTimeWait() {
-        return timeWait;
-    }
-
-    /**
-     * @param timeWait The timeWait to set.
-     */
-    public void setTimeWait(boolean timeWait) {
-        this.timeWait = timeWait;
-    }
-
-    public int getSampleInterval() {
-        return sampleInterval;
-    }
-
-    public void setSampleInterval(int interval) {
-        sampleInterval = interval;
-    }
-
-    public long getAddCounter() {
-        return addCounter;
-    }
-
-    public void setAddCounter(long counter) {
-        addCounter = counter;
-    }
-
-    public long getAddErrorCounter() {
-        return addErrorCounter;
-    }
-
-    public void setAddErrorCounter(long counter) {
-        addErrorCounter = counter;
-    }
-
-    public long getRemoveCounter() {
-        return removeCounter;
-    }
-
-    public void setRemoveCounter(long counter) {
-        removeCounter = counter;
-    }
-
-    public long getRemoveErrorCounter() {
-        return removeErrorCounter;
-    }
-
-    public void setRemoveErrorCounter(long counter) {
-        removeErrorCounter = counter;
-    }
-
-    public long getAddWait() {
-        return addWait;
-    }
-
-    public void setAddWait(long wait) {
-        addWait = wait;
-    }
-
-    public long getRemoveWait() {
-        return removeWait;
-    }
-
-    public void setRemoveWait(long wait) {
-        removeWait = wait;
-    }
-
+    
     /**
      * @return The max size
      */
@@ -330,32 +202,6 @@ public class FastQueue implements IQueue {
     }
 
     
-    /**
-     * Avg queue size
-     * @return The average queue size
-     */
-    public long getAvgSize() {
-        if (addCounter > 0) {
-            return avgSize / addCounter;
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * reset all stats data 
-     */
-    public void resetStatistics() {
-        addCounter = 0;
-        addErrorCounter = 0;
-        removeCounter = 0;
-        removeErrorCounter = 0;
-        avgSize = 0;
-        maxSize = 0;
-        addWait = 0;
-        removeWait = 0;
-    }
-
     /**
      * unlock queue for next add 
      */
@@ -384,33 +230,8 @@ public class FastQueue implements IQueue {
         setEnabled(false);
     }
 
-    public long getSample() {
-        return addCounter % sampleInterval;
-    }
-
-    public int getMaxSizeSample() {
-        return maxSizeSample;
-    }
-
-    public void setMaxSizeSample(int size) {
-        maxSizeSample = size;
-    }
-
-    public long getAvgSizeSample() {
-        long sample = addCounter % sampleInterval;
-        if (sample > 0) {
-            return avgSizeSample / sample;
-        } else if (addCounter > 0) {
-            return avgSizeSample / sampleInterval;
-        } else {
-            return 0;
-        }
-    }
-
     public int getSize() {
-        int sz;
-        sz = size;
-        return sz;
+        return size;
     }
 
     /**
@@ -433,10 +254,6 @@ public class FastQueue implements IQueue {
         }
         lock.lockAdd();
         try {
-            if (timeWait) {
-                addWait += (System.currentTimeMillis() - time);
-            }
-
             if (log.isTraceEnabled()) {
                 log.trace("FastQueue.add: starting with size " + size);
             }
@@ -452,10 +269,8 @@ public class FastQueue implements IQueue {
             if ((maxQueueLength > 0) && (size >= maxQueueLength)) {
                 ok = false;
                 if (log.isTraceEnabled()) {
-                    log.trace("FastQueue.add: Could not add, since queue is full ("
-                            + size + ">=" + maxQueueLength + ")");
+                    log.trace("FastQueue.add: Could not add, since queue is full (" + size + ">=" + maxQueueLength + ")");
                 }
-
             } else {
                 LinkObject element = new LinkObject(key, data);
                 if (size == 0) {
@@ -464,67 +279,32 @@ public class FastQueue implements IQueue {
                 } else {
                     if (last == null) {
                         ok = false;
-                        log
-                                .error("FastQueue.add: Could not add, since last is null although size is "
-                                        + size + " (>0)");
+                        log.error("FastQueue.add: Could not add, since last is null although size is "+ size + " (>0)");
                     } else {
                         last.append(element);
                         last = element;
                         size++;
                     }
                 }
-
-            }
-
-            if (doStats) {
-                if (ok) {
-                    if (addCounter % sampleInterval == 0) {
-                        maxSizeSample = 0;
-                        avgSizeSample = 0;
-                    }
-                    addCounter++;
-                    if (size > maxSize) {
-                        maxSize = size;
-                    }
-                    if (size > maxSizeSample) {
-                        maxSizeSample = size;
-                    }
-                    avgSize += size;
-                    avgSizeSample += size;
-                } else {
-                    addErrorCounter++;
-                }
             }
 
             if (first == null) {
-                log.error("FastQueue.add: first is null, size is " + size
-                        + " at end of add");
+                log.error("FastQueue.add: first is null, size is " + size + " at end of add");
             }
             if (last == null) {
-                log.error("FastQueue.add: last is null, size is " + size
-                        + " at end of add");
+                log.error("FastQueue.add: last is null, size is " + size+ " at end of add");
             }
 
             if (checkLock) {
-                if (!inMutex)
-                    log.warn("FastQueue.add: Cancelled by other mutex in add");
+                if (!inMutex) log.warn("FastQueue.add: Cancelled by other mutex in add");
                 inMutex = false;
-                if (!inAdd)
-                    log.warn("FastQueue.add: Cancelled by other add");
+                if (!inAdd) log.warn("FastQueue.add: Cancelled by other add");
                 inAdd = false;
             }
-            if (log.isTraceEnabled()) {
-                log.trace("FastQueue.add: add ending with size " + size);
-            }
+            if (log.isTraceEnabled()) log.trace("FastQueue.add: add ending with size " + size);
 
-            if (timeWait) {
-                time = System.currentTimeMillis();
-            }
         } finally {
             lock.unlockAdd(true);
-        }
-        if (timeWait) {
-            addWait += (System.currentTimeMillis() - time);
         }
         return ok;
     }
@@ -553,12 +333,6 @@ public class FastQueue implements IQueue {
 
             if (!gotLock) {
                 if (enabled) {
-                    if (timeWait) {
-                        removeWait += (System.currentTimeMillis() - time);
-                    }
-                    if (doStats) {
-                        removeErrorCounter++;
-                    }
                     if (log.isInfoEnabled())
                         log.info("FastQueue.remove: Remove aborted although queue enabled");
                 } else {
@@ -566,10 +340,6 @@ public class FastQueue implements IQueue {
                         log.info("FastQueue.remove: queue disabled, remove aborted");
                 }
                 return null;
-            }
-
-            if (timeWait) {
-                removeWait += (System.currentTimeMillis() - time);
             }
 
             if (log.isTraceEnabled()) {
@@ -585,17 +355,6 @@ public class FastQueue implements IQueue {
             }
 
             element = first;
-
-            if (doStats) {
-                if (element != null) {
-                    removeCounter++;
-                } else {
-                    removeErrorCounter++;
-                    log
-                            .error("FastQueue.remove: Could not remove, since first is null although size is "
-                                    + size + " (>0)");
-                }
-            }
 
             first = last = null;
             size = 0;
@@ -617,9 +376,6 @@ public class FastQueue implements IQueue {
             }
         } finally {
             lock.unlockRemove();
-        }
-        if (timeWait) {
-            removeWait += (System.currentTimeMillis() - time);
         }
         return element;
     }
