@@ -305,12 +305,30 @@
                     txBufSize="25188"/>
 
                 <Sender
-                    className="org.apache.catalina.tribes.tcp.ReplicationTransmitter"
-                    replicationMode="pooled"
-                    ackTimeout="15000"
-                    waitForAck="true"
-                    rxBufSize="43800"
-                    txBufSize="25188"/>
+                    className="org.apache.catalina.tribes.tcp.ReplicationTransmitter">
+                    <transport className="org.apache.catalina.tribes.tcp.nio.PooledParallelSender"
+                               maxRetryAttempts="2"
+                               timeout="15000"
+                               waitForAck="true"
+                               ackTimeout="15000"
+                               rxBufSize="43800"
+                               txBufSize="25188"
+                               autoConnect="true"
+                               poolSize="25"/>
+                    <!--
+                    <transport className="org.apache.catalina.tribes.tcp.bio.PooledBioSender"
+                               maxRetryAttempts="2"
+                               timeout="15000"
+                               waitForAck="true"
+                               ackTimeout="15000"
+                               rxBufSize="43800"
+                               txBufSize="25188"
+                               autoConnect="true"
+                               poolSize="25"/>
+                    -->
+
+                </Sender>
+
                     
                 <!--
                 <Interceptor className="org.apache.catalina.tribes.group.interceptors.GzipInterceptor"/>
