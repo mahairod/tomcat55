@@ -273,7 +273,7 @@ public class ParallelNioSender implements MultiPointSender {
         this.autoConnect = autoConnect;
     }
 
-    public boolean checkKeepAlive() {
+    public boolean keepalive() {
         //throw new UnsupportedOperationException("Method ParallelNioSender.checkKeepAlive() not implemented");
         boolean result = false;
         Map.Entry[] entries = (Map.Entry[])nioSenders.entrySet().toArray(new Map.Entry[nioSenders.size()]);
