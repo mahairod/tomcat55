@@ -110,7 +110,7 @@ public class NioSender implements DataSender{
                 else {
                     //do a health check, we have no way of verify a disconnected
                     //socket since we don't register for OP_READ on waitForAck=false
-                    read(key);
+                    read(key);//this causes overhead.
                     return true;
                 }
             } else {
@@ -209,17 +209,17 @@ public class NioSender implements DataSender{
             this.connected = false;
             if ( socketChannel != null ) {
                 Socket socket = socketChannel.socket();
-                socket.shutdownOutput();
-                socket.shutdownInput();
-                socket.close();
-                socketChannel.close();
+                //error free close, all the way
+                try {socket.shutdownOutput();}catch ( Exception x){}
+                try {socket.shutdownInput();}catch ( Exception x){}
+                try {socket.close();}catch ( Exception x){}
+                try {socketChannel.close();}catch ( Exception x){}
                 socket = null;
                 socketChannel = null;
             }
         } catch ( Exception x ) {
-            log.error("Unable to disconnect. msg="+x.getMessage());
-            if ( log.isDebugEnabled() ) 
-                log.debug("Unable to disconnect. msg="+x.getMessage(),x);
+            log.error("Unable to disconnect NioSender. msg="+x.getMessage());
+            if ( log.isDebugEnabled() ) log.debug("Unable to disconnect NioSender. msg="+x.getMessage(),x);
         } finally {
             reset();
         }

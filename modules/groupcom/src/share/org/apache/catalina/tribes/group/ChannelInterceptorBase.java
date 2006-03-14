@@ -119,8 +119,8 @@ public abstract class ChannelInterceptorBase
      *
      * @return Member
      */
-    public Member getLocalMember() {
-        if ( getNext()!=null ) return getNext().getLocalMember();
+    public Member getLocalMember(boolean incAlive) {
+        if ( getNext()!=null ) return getNext().getLocalMember(incAlive);
         else return null;
     }
 

@@ -80,7 +80,7 @@ public interface MembershipService {
     /**
      * Returns the member object that defines this member
      */
-    public Member getLocalMember();
+    public Member getLocalMember(boolean incAliveTime);
 
     /**
      * Return all members by name

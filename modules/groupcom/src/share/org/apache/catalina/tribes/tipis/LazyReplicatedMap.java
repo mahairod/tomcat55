@@ -154,7 +154,7 @@ public class LazyReplicatedMap extends LinkedHashMap
         try {
             //send out a map membership message, only wait for the first reply
             MapMessage msg = new MapMessage(this.mapContextName,MapMessage.MSG_START,
-                                            false,null,null,null,channel.getLocalMember());
+                                            false,null,null,null,channel.getLocalMember(false));
             Response[] resp = rpcChannel.send(channel.getMembers(),msg,rpcChannel.FIRST_REPLY,timeout);
             for ( int i=0; i<resp.length; i++ ) {
                 messageReceived(resp[i].getMessage(),resp[i].getSource());
@@ -175,7 +175,7 @@ public class LazyReplicatedMap extends LinkedHashMap
         try {
             //send a map membership stop message
             MapMessage msg = new MapMessage(this.mapContextName,MapMessage.MSG_STOP,
-                                            false,null,null,null,channel.getLocalMember());
+                                            false,null,null,null,channel.getLocalMember(false));
             if ( channel!=null) channel.send(channel.getMembers(),msg);
         }catch ( ChannelException x ) {
             log.warn("Unable to send stop message.",x);
@@ -304,7 +304,7 @@ public class LazyReplicatedMap extends LinkedHashMap
         //map start request
         if ( mapmsg.getMsgType() == mapmsg.MSG_START ) {
             mapMemberAdded(sender);
-            mapmsg.setBackUpNode(channel.getLocalMember());
+            mapmsg.setBackUpNode(channel.getLocalMember(false));
             return mapmsg;
         }
 

@@ -104,7 +104,7 @@ public interface Channel {
      * 
      * @return Member
      */
-    public Member getLocalMember() ;
+    public Member getLocalMember(boolean incAlive) ;
     
     /**
      * 
