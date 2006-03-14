@@ -33,20 +33,13 @@ import org.apache.catalina.tribes.io.ListenCallback;
 import org.apache.catalina.tribes.io.ObjectReader;
 import org.apache.catalina.tribes.tcp.Constants;
 import org.apache.catalina.util.StringManager;
+import org.apache.catalina.tribes.tcp.ReceiverBase;
 
 /**
  * @author Filip Hanik
  * @version $Revision: 379904 $ $Date: 2006-02-22 15:16:25 -0600 (Wed, 22 Feb 2006) $
  */
-public class NioReceiver implements Runnable, ChannelReceiver, ListenCallback {
-    /**
-     * @todo make this configurable
-     */
-    protected int rxBufSize = 43800;
-    /**
-     * We are only sending acks
-     */
-    protected int txBufSize = 25188;
+public class NioReceiver extends ReceiverBase implements Runnable, ChannelReceiver, ListenCallback {
 
     protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(NioReceiver.class);
 
@@ -60,24 +53,12 @@ public class NioReceiver implements Runnable, ChannelReceiver, ListenCallback {
      */
     private static final String info = "NioReceiver/1.0";
 
-    private ThreadPool pool = null;
-    private int tcpThreadCount;
-    private long tcpSelectorTimeout;
     private Selector selector = null;
     private ServerSocketChannel serverChannel = null;
 
-    private java.net.InetAddress bind;
-    private String tcpListenAddress;
-    private int tcpListenPort;
-    private boolean sendAck;
-    protected boolean doListen = false;
-    
-
 
     private Object interestOpsMutex = new Object();
-    private MessageListener listener = null;
-    private boolean sync;
-    private boolean direct;
+
     public NioReceiver() {
     }
 
@@ -87,25 +68,7 @@ public class NioReceiver implements Runnable, ChannelReceiver, ListenCallback {
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
      */
     public String getInfo() {
-
         return (info);
-
-    }
-
-    public long getTcpSelectorTimeout() {
-        return tcpSelectorTimeout;
-    }
-
-    public void setTcpSelectorTimeout(long tcpSelectorTimeout) {
-        this.tcpSelectorTimeout = tcpSelectorTimeout;
-    }
-
-    public int getTcpThreadCount() {
-        return tcpThreadCount;
-    }
-
-    public void setTcpThreadCount(int tcpThreadCount) {
-        this.tcpThreadCount = tcpThreadCount;
     }
 
     public Object getInterestOpsMutex() {
@@ -145,31 +108,7 @@ public class NioReceiver implements Runnable, ChannelReceiver, ListenCallback {
         }
     }
     
-    /**
-     * recursive bind to find the next available port
-     * @param socket ServerSocket
-     * @param portstart int
-     * @param retries int
-     * @return int
-     * @throws IOException
-     */
-    protected int bind(ServerSocket socket, int portstart, int retries) throws IOException {
-        while ( retries > 0 ) {
-            try {
-                InetSocketAddress addr = new InetSocketAddress(getBind(), portstart);
-                socket.bind(addr);
-                setTcpListenPort(portstart);
-                log.info("Nio Server Socket bound to:"+addr);
-                return 0;
-            }catch ( IOException x) {
-                retries--;
-                if ( retries <= 0 ) throw x;
-                portstart++;
-                retries = bind(socket,portstart,retries);
-            }
-        }
-        return retries;
-    }
+    
     
     protected void bind() throws IOException {
         // allocate an unbound server socket channel
@@ -195,7 +134,7 @@ public class NioReceiver implements Runnable, ChannelReceiver, ListenCallback {
      */
     protected void listen() throws Exception {
         if (doListen) {
-            log.warn("ServerSocketChannel allready started");
+            log.warn("ServerSocketChannel already started");
             return;
         }
         
@@ -206,7 +145,7 @@ public class NioReceiver implements Runnable, ChannelReceiver, ListenCallback {
             // selected set contains keys of the ready channels
             try {
 
-                int n = selector.select(tcpSelectorTimeout);
+                int n = selector.select(getTcpSelectorTimeout());
                 if (n == 0) {
                     //there is a good chance that we got here
                     //because the TcpReplicationThread called
@@ -339,139 +278,5 @@ public class NioReceiver implements Runnable, ChannelReceiver, ListenCallback {
         }
     }
 
-    public void messageDataReceived(ChannelMessage data) {
-        if ( this.listener != null ) {
-            listener.messageReceived(data);
-        }
-    }
-
-    /**
-     * @return Returns the bind.
-     */
-    public java.net.InetAddress getBind() {
-        if (bind == null) {
-            try {
-                if ("auto".equals(tcpListenAddress)) {
-                    tcpListenAddress = java.net.InetAddress.getLocalHost()
-                                       .getHostAddress();
-                }
-                if (log.isDebugEnabled())
-                    log.debug("Starting replication listener on address:"+ tcpListenAddress);
-                bind = java.net.InetAddress.getByName(tcpListenAddress);
-            } catch (IOException ioe) {
-                log.error("Failed bind replication listener on address:"+ tcpListenAddress, ioe);
-            }
-        }
-        return bind;
-    }
-
-    /**
-     * @param bind The bind to set.
-     */
-    public void setBind(java.net.InetAddress bind) {
-        this.bind = bind;
-    }
-
-    /**
-     * Send ACK to sender
-     *
-     * @return True if sending ACK
-     */
-    public boolean getSendAck() {
-        return sendAck;
-    }
-
-    /**
-     * set ack mode or not!
-     *
-     * @param sendAck
-     */
-    public void setSendAck(boolean sendAck) {
-        this.sendAck = sendAck;
-    }
-
-    public String getTcpListenAddress() {
-        return tcpListenAddress;
-    }
-
-    public void setTcpListenAddress(String tcpListenAddress) {
-        this.tcpListenAddress = tcpListenAddress;
-    }
-
-    public int getTcpListenPort() {
-        return tcpListenPort;
-    }
-
-    public boolean isSync() {
-        return sync;
-    }
-
-    public boolean getDirect() {
-        return direct;
-    }
-
-    public int getRxBufSize() {
-        return rxBufSize;
-    }
-
-    public int getTxBufSize() {
-        return txBufSize;
-    }
-
-    public MessageListener getMessageListener() {
-        return listener;
-    }
-
-    public void setTcpListenPort(int tcpListenPort) {
-        this.tcpListenPort = tcpListenPort;
-    }
-
-    public void setDirect(boolean direct) {
-        this.direct = direct;
-    }
-
-    public void setRxBufSize(int rxBufSize) {
-        this.rxBufSize = rxBufSize;
-    }
-
-    public void setTxBufSize(int txBufSize) {
-        this.txBufSize = txBufSize;
-    }
-
-    public void setSynchronized(boolean sync) {
-        this.sync = sync;
-    }
-
-    public boolean getSynchronized() {
-        return this.sync;
-    }
-    
-    public int getWorkerThreadOptions() {
-        int options = 0;
-        if ( getSynchronized() ) options = options |TcpReplicationThread.OPTION_SYNCHRONIZED;
-        if ( getSendAck() ) options = options |TcpReplicationThread.OPTION_SEND_ACK;
-        if ( getDirect() ) options = options | TcpReplicationThread.OPTION_DIRECT_BUFFER;
-        return options;
-    }
-
-    public void setMessageListener(MessageListener listener) {
-        this.listener = listener;
-    }
-
-    public String getHost() {
-        getBind();
-        return getTcpListenAddress();
-    }
-
-    public int getPort() {
-        return getTcpListenPort();
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.catalina.tribes.io.ListenCallback#sendAck()
-     */
-    public void sendAck() throws IOException {
-        // do nothing
-    }
 
 }

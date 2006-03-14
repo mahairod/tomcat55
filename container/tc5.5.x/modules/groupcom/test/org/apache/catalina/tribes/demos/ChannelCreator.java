@@ -28,7 +28,9 @@ import org.apache.catalina.tribes.mcast.McastService;
 import org.apache.catalina.tribes.tcp.MultiPointSender;
 import org.apache.catalina.tribes.tcp.ReplicationTransmitter;
 import org.apache.catalina.tribes.tcp.nio.NioReceiver;
+import org.apache.catalina.tribes.tcp.bio.BioReceiver;
 import org.apache.tomcat.util.IntrospectionUtils;
+import org.apache.catalina.tribes.tcp.ReceiverBase;
 
 /**
  * <p>Title: </p>
@@ -53,7 +55,8 @@ public class ChannelCreator {
            .append("\n\t\t[-ackto acktimeout]") 
            .append("\n\t\t[-autoconnect true|false]")
            .append("\n\t\t[-sync true|false]")
-           .append("\n\t\t[-transport org.apache.catalina.tribes.tcp.nio.ParallelNioSender]")
+           .append("\n\t\t[-receiver org.apache.catalina.tribes.tcp.nio.NioReceiver|org.apache.catalina.tribes.tcp.bio.BioReceiver|]")
+           .append("\n\t\t[-transport org.apache.catalina.tribes.tcp.nio.PooledParallelSender|org.apache.catalina.tribes.tcp.bio.PooledMultipointSender]")
            .append("\n\t\t[-transport.xxx transport specific property]")
            .append("\n\t\t[-maddr multicastaddr]")
            .append("\n\t\t[-mport multicastport]")
@@ -90,6 +93,7 @@ public class ChannelCreator {
         int fragsize = 1024;
         Properties transportProperties = new Properties();
         String transport = "org.apache.catalina.tribes.tcp.nio.PooledParallelSender";
+        String receiver = "org.apache.catalina.tribes.tcp.nio.NioReceiver";
         
         for (int i = 0; i < args.length; i++) {
             if ("-bind".equals(args[i])) {
@@ -126,6 +130,8 @@ public class ChannelCreator {
                 String key = args[i];
                 String val = args[++i];
                 transportProperties.setProperty(key,val);
+            } else if ("-receiver".equals(args[i])) {
+                receiver = args[++i];
             } else if ("-maddr".equals(args[i])) {
                 mcastaddr = args[++i];
             } else if ("-mport".equals(args[i])) {
@@ -138,15 +144,19 @@ public class ChannelCreator {
                 mbind = args[++i];
             }
         }
-
-        NioReceiver rl = new NioReceiver();
-        rl.setTcpListenAddress(bind);
-        rl.setTcpListenPort(port);
-        rl.setTcpSelectorTimeout(tcpseltimeout);
-        rl.setTcpThreadCount(tcpthreadcount);
-        rl.getBind();
-        rl.setSendAck(ack);
-        rl.setSynchronized(sync);
+        
+        System.out.println("Creating receiver class="+receiver);
+        Class cl = Class.forName(receiver,true,ChannelCreator.class.getClassLoader());
+        ReceiverBase rx = (ReceiverBase)cl.newInstance();
+        rx.setTcpListenAddress(bind);
+        rx.setTcpListenPort(port);
+        rx.setTcpSelectorTimeout(tcpseltimeout);
+        rx.setTcpThreadCount(tcpthreadcount);
+        rx.getBind();
+        rx.setSendAck(ack);
+        rx.setSynchronized(sync);
+        rx.setRxBufSize(43800);
+        rx.setTxBufSize(25188);
 
         
         ReplicationTransmitter ps = new ReplicationTransmitter();
@@ -174,7 +184,7 @@ public class ChannelCreator {
         service.setMcastPort(mcastport);
 
         ManagedChannel channel = new GroupChannel();
-        channel.setChannelReceiver(rl);
+        channel.setChannelReceiver(rx);
         channel.setChannelSender(ps);
         channel.setMembershipService(service);
 
