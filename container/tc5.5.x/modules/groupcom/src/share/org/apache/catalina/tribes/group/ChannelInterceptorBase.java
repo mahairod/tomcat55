@@ -24,6 +24,7 @@ import org.apache.catalina.tribes.ChannelInterceptor;
 import org.apache.catalina.tribes.InterceptorPayload;
 import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.ChannelException;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  * Abstract class for the interceptor base class.

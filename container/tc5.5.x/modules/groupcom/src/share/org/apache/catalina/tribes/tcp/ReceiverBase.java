@@ -24,7 +24,7 @@ import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.ChannelReceiver;
 import org.apache.catalina.tribes.MessageListener;
 import org.apache.catalina.tribes.io.ListenCallback;
-import org.apache.catalina.tribes.tcp.nio.ThreadPool;
+
 
 /**
  * <p>Title: </p>

@@ -16,6 +16,7 @@
 package org.apache.catalina.tribes.tipis;
 
 import java.io.IOException;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  * Example usage:

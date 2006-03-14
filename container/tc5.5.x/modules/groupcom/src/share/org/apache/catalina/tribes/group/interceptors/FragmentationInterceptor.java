@@ -27,6 +27,7 @@ import org.apache.catalina.tribes.io.XByteBuffer;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Set;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  *

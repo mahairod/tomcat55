@@ -17,6 +17,8 @@
 
 package org.apache.catalina.tribes.mcast;
 
+import org.apache.catalina.tribes.tcp.*;
+
 /**
  * Manifest constants for the <code>org.apache.catalina.tribes.mcast</code>
  * package.

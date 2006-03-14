@@ -29,6 +29,7 @@ import org.apache.catalina.tribes.MembershipService;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.modeler.Registry;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  * A <b>membership</b> implementation using simple multicast.

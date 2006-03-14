@@ -27,6 +27,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.Arrays;
 import org.apache.catalina.tribes.ChannelException;
+import org.apache.catalina.tribes.tcp.*;
 
 
 
