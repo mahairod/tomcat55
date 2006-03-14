@@ -153,8 +153,8 @@ public class McastService implements MembershipService,MembershipListener {
     /**
      * Return the local member
      */
-    public Member getLocalMember() {
-        localMember.setMemberAliveTime(System.currentTimeMillis()-impl.getServiceStartTime());
+    public Member getLocalMember(boolean alive) {
+        if ( alive ) localMember.setMemberAliveTime(System.currentTimeMillis()-impl.getServiceStartTime());
         return localMember;
     }
     

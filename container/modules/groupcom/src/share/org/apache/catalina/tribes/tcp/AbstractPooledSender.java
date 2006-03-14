@@ -31,7 +31,7 @@ package org.apache.catalina.tribes.tcp;
  */
 public abstract class AbstractPooledSender extends PooledSender implements MultiPointSender{
     protected boolean suspect;
-    protected boolean useDirectBuffer;
+    protected boolean useDirectBuffer = true;
     protected int maxRetryAttempts;
     protected boolean autoConnect;
     protected int keepAliveCount;

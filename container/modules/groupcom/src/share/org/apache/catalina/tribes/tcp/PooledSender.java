@@ -48,7 +48,7 @@ public abstract class PooledSender implements MultiPointSender {
     public abstract DataSender getNewDataSender();
     
     public DataSender getSender() {
-        return queue.getSender(0);
+        return queue.getSender(timeout);
     }
     
     public void returnSender(DataSender sender) {

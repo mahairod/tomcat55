@@ -110,6 +110,7 @@ public class ReplicationTransmitter implements ChannelSender {
      * @see org.apache.catalina.tribes.ClusterSender#start()
      */
     public void start() throws java.io.IOException {
+        getTransport().connect();
     }
 
     /*

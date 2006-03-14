@@ -97,7 +97,7 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
             if ( destination.length == 0 ) return;
             int options = 0;
             ClusterData data = new ClusterData();//generates a unique Id
-            data.setAddress(getLocalMember());
+            data.setAddress(getLocalMember(false));
             data.setTimestamp(System.currentTimeMillis());
             byte[] b = null;
             if ( msg instanceof ByteMessage ){

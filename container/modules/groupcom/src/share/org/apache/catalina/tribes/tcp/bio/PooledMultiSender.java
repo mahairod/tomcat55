@@ -36,9 +36,20 @@ public class PooledMultiSender extends PooledSender {
     }
     
     public void sendMessage(Member[] destination, ChannelMessage msg) throws ChannelException {
-        MultiPointSender sender = (MultiPointSender)getSender();
-        sender.sendMessage(destination,msg);
-        
+        MultiPointSender sender = null;
+        try {
+            sender = (MultiPointSender)getSender();
+            if (sender == null) {
+                ChannelException cx = new ChannelException("Unable to retrieve a data sender, time out error.");
+                for (int i = 0; i < destination.length; i++) cx.addFaultyMember(destination[i]);
+                throw cx;
+            } else {
+                sender.sendMessage(destination, msg);
+            }
+            sender.keepalive();
+        }finally {
+            if ( sender != null ) returnSender(sender);
+        }
     }
 
     /**
