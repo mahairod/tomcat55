@@ -207,7 +207,7 @@ public class McastMember implements Member, java.io.Externalizable {
        int dlen = XByteBuffer.toInt(dlend, 0);
        byte[] domaind = new byte[dlen];
        System.arraycopy(data, 20, domaind, 0, domaind.length);
-       member.setDomain(new String(domaind));
+       member.domain = domaind;
        member.setHost(addr);
        member.setPort(XByteBuffer.toInt(portd, 0));
        member.setMemberAliveTime(XByteBuffer.toLong(alived, 0));

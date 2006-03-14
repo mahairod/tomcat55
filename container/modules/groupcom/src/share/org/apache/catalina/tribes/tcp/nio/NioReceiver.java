@@ -64,6 +64,7 @@ public class NioReceiver implements Runnable, ChannelReceiver, ListenCallback {
     private int tcpThreadCount;
     private long tcpSelectorTimeout;
     private Selector selector = null;
+    private ServerSocketChannel serverChannel = null;
 
     private java.net.InetAddress bind;
     private String tcpListenAddress;
@@ -135,6 +136,7 @@ public class NioReceiver implements Runnable, ChannelReceiver, ListenCallback {
         }
         try {
             getBind();
+            this.bind();
             Thread t = new Thread(this, "NioReceiver");
             t.setDaemon(true);
             t.start();
@@ -142,7 +144,49 @@ public class NioReceiver implements Runnable, ChannelReceiver, ListenCallback {
             log.fatal("Unable to start cluster receiver", x);
         }
     }
-
+    
+    /**
+     * recursive bind to find the next available port
+     * @param socket ServerSocket
+     * @param portstart int
+     * @param retries int
+     * @return int
+     * @throws IOException
+     */
+    protected int bind(ServerSocket socket, int portstart, int retries) throws IOException {
+        while ( retries > 0 ) {
+            try {
+                InetSocketAddress addr = new InetSocketAddress(getBind(), portstart);
+                socket.bind(addr);
+                setTcpListenPort(portstart);
+                log.info("Nio Server Socket bound to:"+addr);
+                return 0;
+            }catch ( IOException x) {
+                retries--;
+                if ( retries <= 0 ) throw x;
+                portstart++;
+                retries = bind(socket,portstart,retries);
+            }
+        }
+        return retries;
+    }
+    
+    protected void bind() throws IOException {
+        // allocate an unbound server socket channel
+        serverChannel = ServerSocketChannel.open();
+        // Get the associated ServerSocket to bind it with
+        ServerSocket serverSocket = serverChannel.socket();
+        // create a new Selector for use below
+        selector = Selector.open();
+        // set the port the server channel will listen to
+        //serverSocket.bind(new InetSocketAddress(getBind(), getTcpListenPort()));
+        bind(serverSocket,getTcpListenPort(),10);
+        // set non-blocking mode for the listening socket
+        serverChannel.configureBlocking(false);
+        // register the ServerSocketChannel with the Selector
+        serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+        
+    }
     /**
      * get data from channel and store in byte array
      * send it to cluster
@@ -154,19 +198,9 @@ public class NioReceiver implements Runnable, ChannelReceiver, ListenCallback {
             log.warn("ServerSocketChannel allready started");
             return;
         }
+        
         doListen = true;
-        // allocate an unbound server socket channel
-        ServerSocketChannel serverChannel = ServerSocketChannel.open();
-        // Get the associated ServerSocket to bind it with
-        ServerSocket serverSocket = serverChannel.socket();
-        // create a new Selector for use below
-        selector = Selector.open();
-        // set the port the server channel will listen to
-        serverSocket.bind(new InetSocketAddress(getBind(), getTcpListenPort()));
-        // set non-blocking mode for the listening socket
-        serverChannel.configureBlocking(false);
-        // register the ServerSocketChannel with the Selector
-        serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+
         while (doListen && selector != null) {
             // this may block for a long time, upon return the
             // selected set contains keys of the ready channels

@@ -60,12 +60,14 @@ public class OrderInterceptor extends ChannelInterceptorBase {
 
     public void sendMessage(Member[] destination, ChannelMessage msg, InterceptorPayload payload) throws ChannelException {
         for ( int i=0; i<destination.length; i++ ) {
-            ChannelMessage tmp = msg.clone();
             int nr = incCounter(destination[i]);
             //reduce byte copy
-            //tmp.getMessage().append(XByteBuffer.toBytes(nr),0,4);
-            tmp.getMessage().append(nr);
-            getNext().sendMessage(new Member[] {destination[i]}, tmp, payload);
+            msg.getMessage().append(nr);
+            try {
+                getNext().sendMessage(new Member[] {destination[i]}, msg, payload);
+            }finally {
+                msg.getMessage().trim(4);
+            }
         }
     }
 

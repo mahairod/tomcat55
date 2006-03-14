@@ -173,7 +173,7 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
      * @throws ChannelException if a startup error occurs or the service is already started.
      */
     public void start(int svc) throws ChannelException {
-        coordinator.start(svc);
+        coordinator.start();
     }
 
     /**
@@ -188,7 +188,7 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
      * @throws ChannelException if a startup error occurs or the service is already started.
      */
     public void stop(int svc) throws ChannelException {
-        coordinator.stop(svc);
+        coordinator.stop();
     }
 
     public ChannelReceiver getChannelReceiver() {
