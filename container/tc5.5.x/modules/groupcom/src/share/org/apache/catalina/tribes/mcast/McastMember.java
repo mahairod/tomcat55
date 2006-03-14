@@ -140,6 +140,11 @@ public class McastMember implements Member, java.io.Externalizable {
     public byte[] getData()  {
         return getData(true);
     }
+    /**
+     * Highly optimized version of serializing a member into a byte array
+     * @param getalive boolean
+     * @return byte[]
+     */
     public byte[] getData(boolean getalive)  {
         //look in cache first
         if ( dataPkg!=null ) {
@@ -165,18 +170,12 @@ public class McastMember implements Member, java.io.Externalizable {
         long alive=System.currentTimeMillis()-getServiceStartTime();
         
         
-        //reduce byte copying
-        //System.arraycopy(XByteBuffer.toBytes((long)alive),0,data,0,8);
         XByteBuffer.toBytes((long)alive,data,0);
 
-        //reduce byte copying
-        //System.arraycopy(XByteBuffer.toBytes(port),0,data,8,4);
         XByteBuffer.toBytes(port,data,8);
         
         System.arraycopy(addr,0,data,12,addr.length);
 
-        //reduce byte copying
-        //System.arraycopy(XByteBuffer.toBytes(domaind.length),0,data,16,4);
         XByteBuffer.toBytes(domaind.length,data,16);
         
         System.arraycopy(domaind,0,data,20,domaind.length);
