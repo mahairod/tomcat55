@@ -29,6 +29,9 @@
       <fix>
         <bug>27617</bug>: Sync existing mime types with httpd. (keith)
       </fix>
+      <fix>
+        <bug>38761</bug>: Handle relative symlinks to shell scripts as suggested by Adam Murray (keith)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
