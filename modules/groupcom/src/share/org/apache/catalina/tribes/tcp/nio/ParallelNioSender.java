@@ -75,6 +75,7 @@ public class ParallelNioSender implements MultiPointSender {
             long delta = System.currentTimeMillis() - start;
             while ( (remaining>0) && (delta<timeout) ) {
                 remaining -= doLoop(selectTimeout,retryAttempts);
+                delta = System.currentTimeMillis() - start;
             }
             if ( remaining > 0 ) {
                 //timeout has occured

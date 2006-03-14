@@ -180,7 +180,7 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
                 InetSocketAddress addr = new InetSocketAddress(getBind(), portstart);
                 socket.bind(addr);
                 setTcpListenPort(portstart);
-                log.info("Nio Server Socket bound to:"+addr);
+                log.info("Receiver Server Socket bound to:"+addr);
                 return 0;
             }catch ( IOException x) {
                 retries--;

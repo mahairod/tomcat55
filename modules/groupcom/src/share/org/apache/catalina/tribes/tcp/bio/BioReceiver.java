@@ -16,18 +16,14 @@
 package org.apache.catalina.tribes.tcp.bio;
 
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 import org.apache.catalina.tribes.ChannelReceiver;
-import org.apache.catalina.tribes.MessageListener;
-import java.net.InetAddress;
-import org.apache.catalina.tribes.tcp.nio.ThreadPool;
-import java.net.ServerSocket;
-import java.net.InetSocketAddress;
 import org.apache.catalina.tribes.io.ListenCallback;
-import org.apache.catalina.tribes.ChannelMessage;
-import java.net.Socket;
 import org.apache.catalina.tribes.io.ObjectReader;
 import org.apache.catalina.tribes.tcp.ReceiverBase;
+import org.apache.catalina.tribes.tcp.nio.ThreadPool;
 
 /**
  * <p>Title: </p>
@@ -113,7 +109,6 @@ public class BioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
         } catch (Exception x) {
             log.error("Unable to run replication listener.", x);
         }
-
     }
     
     public void listen() throws Exception {
@@ -125,6 +120,12 @@ public class BioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
 
         while ( doListen ) {
             Socket socket = null;
+            if ( pool.available() < 1 ) {
+                if ( log.isWarnEnabled() )
+                    log.warn("All BIO server replication threads are busy, unable to handle more requests until a thread is freed up.");
+            }
+            TcpReplicationThread thread = (TcpReplicationThread)pool.getWorker();
+            if ( thread == null ) continue; //should never happen
             try {
                 socket = serverSocket.accept();
             }catch ( Exception x ) {
@@ -134,18 +135,8 @@ public class BioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
             if ( socket == null ) continue;
             socket.setReceiveBufferSize(rxBufSize);
             socket.setSendBufferSize(txBufSize);
-            TcpReplicationThread thread = (TcpReplicationThread)pool.getWorker();
             ObjectReader reader = new ObjectReader(socket,this);
-
-            if ( thread == null ) {
-                //we are out of workers, process the request on the listening thread
-                thread = getReplicationThread();
-                thread.socket = socket;
-                thread.reader = reader;
-                thread.run();
-            } else { 
-                thread.serviceSocket(socket,reader);
-            }//end if
+            thread.serviceSocket(socket,reader);
         }//while
     }
     

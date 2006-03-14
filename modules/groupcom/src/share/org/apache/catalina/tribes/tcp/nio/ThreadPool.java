@@ -94,6 +94,10 @@ public class ThreadPool
 
         return (worker);
     }
+    
+    public int available() {
+        return idle.size();
+    }
 
     /**
      * Called by the worker thread to return itself to the
