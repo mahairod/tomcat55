@@ -60,7 +60,7 @@ public interface ChannelInterceptor extends MembershipListener {
      * 
      * @return Member
      */
-    public Member getLocalMember() ;
+    public Member getLocalMember(boolean incAliveTime) ;
 
     /**
      * 

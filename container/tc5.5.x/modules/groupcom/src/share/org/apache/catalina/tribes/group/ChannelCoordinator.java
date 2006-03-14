@@ -195,8 +195,8 @@ public class ChannelCoordinator extends ChannelInterceptorBase implements Messag
      *
      * @return Member
      */
-    public Member getLocalMember() {
-        return this.getMembershipService().getLocalMember();
+    public Member getLocalMember(boolean incAlive) {
+        return this.getMembershipService().getLocalMember(incAlive);
     }
 
    

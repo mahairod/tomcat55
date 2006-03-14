@@ -282,11 +282,11 @@ public class ParallelNioSender implements MultiPointSender {
     public boolean keepalive() {
         //throw new UnsupportedOperationException("Method ParallelNioSender.checkKeepAlive() not implemented");
         boolean result = false;
-        Map.Entry[] entries = (Map.Entry[])nioSenders.entrySet().toArray(new Map.Entry[nioSenders.size()]);
-        for ( int i=0; i<entries.length; i++ ) {
-            NioSender sender = (NioSender)entries[i].getValue();
+        for ( Iterator i = nioSenders.entrySet().iterator(); i.hasNext();  ) {
+            Map.Entry entry = (Map.Entry)i.next();
+            NioSender sender = (NioSender)entry.getValue();
             if ( sender.keepalive() ) {
-                nioSenders.remove(entries[i].getKey());
+                nioSenders.remove(entry.getKey());
             }
         }
         return result;

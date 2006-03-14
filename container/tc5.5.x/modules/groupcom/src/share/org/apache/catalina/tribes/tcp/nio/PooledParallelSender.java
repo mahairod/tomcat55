@@ -37,11 +37,13 @@ import org.apache.catalina.tribes.tcp.MultiPointSender;
  * @version 1.0
  */
 public class PooledParallelSender extends AbstractPooledSender implements MultiPointSender {
+    protected boolean connected = false;
     public PooledParallelSender() {
         super();
     }
     
     public void sendMessage(Member[] destination, ChannelMessage message) throws ChannelException {
+        if ( !connected ) throw new ChannelException("Sender not connected.");
         ParallelNioSender sender = (ParallelNioSender)getSender();
         try {
             sender.sendMessage(destination, message);
@@ -63,6 +65,16 @@ public class PooledParallelSender extends AbstractPooledSender implements MultiP
         } catch ( IOException x ) {
             throw new IllegalStateException("Unable to open NIO selector.",x);
         }
+    }
+    
+    public synchronized void disconnect() {
+        this.connected = false;
+        super.disconnect();
+    }
+
+    public synchronized void connect() throws IOException {
+        this.connected = true;
+        super.connect();
     }
 
     public void memberAdded(Member member) {

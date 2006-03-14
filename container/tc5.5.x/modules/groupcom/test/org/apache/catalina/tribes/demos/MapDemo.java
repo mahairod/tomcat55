@@ -45,7 +45,7 @@ public class MapDemo implements ChannelListener, MembershipListener{
     
     public MapDemo(Channel channel ) {
         map = new LazyReplicatedMap(channel,5000, "MapDemo");
-        table = SimpleTableDemo.createAndShowGUI(map,channel.getLocalMember().getName());
+        table = SimpleTableDemo.createAndShowGUI(map,channel.getLocalMember(false).getName());
         channel.addChannelListener(this);
         channel.addMembershipListener(this);
     }

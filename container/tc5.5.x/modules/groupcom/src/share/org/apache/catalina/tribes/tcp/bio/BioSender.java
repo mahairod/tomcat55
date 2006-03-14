@@ -22,12 +22,13 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Arrays;
 
-import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.tcp.Constants;
 import org.apache.catalina.tribes.tcp.DataSender;
 import org.apache.catalina.tribes.tcp.SenderState;
 import org.apache.catalina.util.StringManager;
+import java.io.OutputStream;
+import java.io.InputStream;
 
 /**
  * Send cluster messages with only one socket. Ack and keep Alive Handling is
@@ -69,6 +70,8 @@ public class BioSender implements DataSender {
      * current sender socket
      */
     private Socket socket = null;
+    private OutputStream soOut = null;
+    private InputStream soIn = null;
 
     /**
      * is Socket really connected
@@ -375,6 +378,8 @@ public class BioSender implements DataSender {
            socket.setReceiveBufferSize(getRxBufSize());
            socket.setSoTimeout( (int) timeout);
            connected = true;
+           soOut = socket.getOutputStream();
+           soIn  = socket.getInputStream();
            this.requestCount = 0;
            this.keepAliveConnectTime = System.currentTimeMillis();
            if (log.isDebugEnabled())
@@ -402,6 +407,8 @@ public class BioSender implements DataSender {
                 } catch (IOException x) {
                 } finally {
                     socket = null;
+                    soOut = null;
+                    soIn = null;
                 }
             }
             this.requestCount = 0;
@@ -476,8 +483,8 @@ public class BioSender implements DataSender {
      * @since 5.5.10
      */
     protected  void writeData(byte[] data) throws IOException { 
-        socket.getOutputStream().write(data);
-        socket.getOutputStream().flush();
+        soOut.write(data);
+        soOut.flush();
         if (getWaitForAck()) waitForAck();
     }
 
@@ -493,7 +500,7 @@ public class BioSender implements DataSender {
             boolean ackReceived = false;
             ackbuf.clear();
             int bytesRead = 0;
-            int i = socket.getInputStream().read();
+            int i = soIn.read();
             while ((i != -1) && (bytesRead < Constants.ACK_COMMAND.length)) {
                 bytesRead++;
                 byte d = (byte)i;
@@ -502,7 +509,7 @@ public class BioSender implements DataSender {
                     ackReceived = Arrays.equals(ackbuf.extractDataPackage(true),Constants.ACK_DATA);
                     break;
                 }
-                i = socket.getInputStream().read();
+                i = soIn.read();
             }
             if (!ackReceived) {
                 if (i == -1) throw new IOException(sm.getString("IDataSender.ack.eof",getAddress(), new Integer(socket.getLocalPort())));
