@@ -44,7 +44,7 @@ public interface ChannelReceiver {
      * set ack mode
      * @param isSendAck
      */
-    public void setSendAck(boolean isSendAck);
+    public void setSendAck(boolean sendack);
     
     /**
      * get the listing ip interface
