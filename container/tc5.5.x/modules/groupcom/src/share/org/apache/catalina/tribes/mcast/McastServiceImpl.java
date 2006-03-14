@@ -210,6 +210,7 @@ public class McastServiceImpl
         McastMember m = McastMember.getMember(data);
         if(log.isDebugEnabled())
             log.debug("Mcast receive ping from member " + m);
+
         if ( membership.memberAlive(m) ) {
             if(log.isDebugEnabled())
                 log.debug("Mcast add member " + m);

@@ -37,6 +37,7 @@ public class ChannelCoordinator extends ChannelInterceptorBase implements Messag
     private ChannelReceiver clusterReceiver;
     private ChannelSender clusterSender;
     private MembershipService membershipService;
+    private boolean started = false;
 
     public ChannelCoordinator() {
         
@@ -75,15 +76,18 @@ public class ChannelCoordinator extends ChannelInterceptorBase implements Messag
      * SND_RX_SEQ - starts the replication receiver<BR>
      * @throws ChannelException if a startup error occurs or the service is already started.
      */
-    public void start(int svc) throws ChannelException {
+    public synchronized void start() throws ChannelException {
         try {
+            if (started) return;
+            //must start the receiver first so that we can coordinate the port it
+            //listens to with the local membership settings
+            clusterReceiver.start();
+            clusterSender.start();
             //synchronize, big time FIXME
             membershipService.setLocalMemberProperties(getClusterReceiver().getHost(), getClusterReceiver().getPort());
-            //end FIXME
-            if ( (svc & Channel.SND_RX_SEQ) == Channel.SND_RX_SEQ) clusterReceiver.start();
-            if ( (svc & Channel.SND_TX_SEQ) == Channel.SND_TX_SEQ) clusterSender.start();
-            if ( (svc & Channel.MBR_RX_SEQ) == Channel.MBR_RX_SEQ) membershipService.start(MembershipService.MBR_RX);
-            if ( (svc & Channel.MBR_TX_SEQ) == Channel.MBR_TX_SEQ) membershipService.start(MembershipService.MBR_TX);
+            membershipService.start(MembershipService.MBR_RX);
+            membershipService.start(MembershipService.MBR_TX);
+            this.started = true;
         }catch ( ChannelException cx ) {
             throw cx;
         }catch ( Exception x ) {
@@ -102,14 +106,16 @@ public class ChannelCoordinator extends ChannelInterceptorBase implements Messag
      * SND_RX_SEQ - starts the replication receiver<BR>
      * @throws ChannelException if a startup error occurs or the service is already started.
      */
-    public void stop(int svc) throws ChannelException {
+    public void stop() throws ChannelException {
         try {
-            if ( (svc & Channel.MBR_RX_SEQ) == Channel.MBR_RX_SEQ) membershipService.stop();
-            if ( (svc & Channel.SND_RX_SEQ) == Channel.SND_RX_SEQ) clusterReceiver.stop();
-            if ( (svc & Channel.SND_TX_SEQ) == Channel.SND_TX_SEQ) clusterSender.stop();
-            if ( (svc & Channel.MBR_TX_SEQ) == Channel.MBR_RX_SEQ) membershipService.stop();
+            membershipService.stop();
+            clusterReceiver.stop();
+            clusterSender.stop();
+            membershipService.stop();
         }catch ( Exception x ) {
             throw new ChannelException(x);
+        } finally {
+            started = false;
         }
 
     }
