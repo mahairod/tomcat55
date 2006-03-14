@@ -15,14 +15,7 @@
  */
 package org.apache.catalina.tribes.tcp;
 
-import java.io.IOException;
 
-import org.apache.catalina.tribes.ChannelException;
-import org.apache.catalina.tribes.ChannelMessage;
-import org.apache.catalina.tribes.Member;
-import org.apache.catalina.tribes.tcp.DataSender;
-import org.apache.catalina.tribes.tcp.MultiPointSender;
-import org.apache.catalina.tribes.tcp.PooledSender;
 
 /**
  * <p>Title: </p>
@@ -41,6 +34,7 @@ public abstract class AbstractPooledSender extends PooledSender implements Multi
     protected boolean useDirectBuffer;
     protected int maxRetryAttempts;
     protected boolean autoConnect;
+    protected int keepAliveCount;
     public AbstractPooledSender() {
         super();
     }
@@ -61,6 +55,10 @@ public abstract class AbstractPooledSender extends PooledSender implements Multi
         this.autoConnect = autoConnect;
     }
 
+    public void setKeepAliveCount(int keepAliveCount) {
+        this.keepAliveCount = keepAliveCount;
+    }
+
     public boolean getSuspect() {
         return suspect;
     }
@@ -75,5 +73,9 @@ public abstract class AbstractPooledSender extends PooledSender implements Multi
 
     public boolean isAutoConnect() {
         return autoConnect;
+    }
+
+    public int getKeepAliveCount() {
+        return keepAliveCount;
     }
 }

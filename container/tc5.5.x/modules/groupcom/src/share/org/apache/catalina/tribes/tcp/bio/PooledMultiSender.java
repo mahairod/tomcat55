@@ -2,6 +2,10 @@ package org.apache.catalina.tribes.tcp.bio;
 
 import org.apache.catalina.tribes.tcp.DataSender;
 import org.apache.catalina.tribes.tcp.PooledSender;
+import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.ChannelException;
+import org.apache.catalina.tribes.tcp.MultiPointSender;
+import org.apache.catalina.tribes.ChannelMessage;
 
 /**
  * <p>Title: </p>
@@ -26,9 +30,15 @@ public class PooledMultiSender extends PooledSender {
     protected int txBufSize = 25188;
     protected boolean suspect = false;
     private boolean autoConnect;
+    private boolean useDirectBuffer;
 
-    
     public PooledMultiSender() {
+    }
+    
+    public void sendMessage(Member[] destination, ChannelMessage msg) throws ChannelException {
+        MultiPointSender sender = (MultiPointSender)getSender();
+        sender.sendMessage(destination,msg);
+        
     }
 
     /**
@@ -61,11 +71,32 @@ public class PooledMultiSender extends PooledSender {
         this.keepAliveCount = keepAliveCount;
     }
 
-    public void setRetryAttempts(int retryAttempts) {
+    public void setMaxRetryAttempts(int retryAttempts) {
         this.retryAttempts = retryAttempts;
     }
 
     public void setSuspect(boolean suspect) {
         this.suspect = suspect;
     }
+
+    public void setUseDirectBuffer(boolean useDirectBuffer) {
+        this.useDirectBuffer = useDirectBuffer;
+    }
+
+    public boolean getSuspect() {
+        return suspect;
+    }
+
+    public boolean isUseDirectBuffer() {
+        return useDirectBuffer;
+    }
+
+    public void memberAdded(Member member) {
+
+    }
+
+    public void memberDisappeared(Member member) {
+        //disconnect senders
+    } 
+
 }
