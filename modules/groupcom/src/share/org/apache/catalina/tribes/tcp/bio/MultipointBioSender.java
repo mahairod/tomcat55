@@ -11,6 +11,7 @@ import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.tcp.MultiPointSender;
 import org.apache.catalina.tribes.tcp.SenderState;
+import java.io.IOException;
 
 /**
  * <p>Title: </p>
@@ -59,7 +60,7 @@ public class MultipointBioSender implements MultiPointSender {
 
 
 
-    private BioSender[] setupForSend(Member[] destination) throws ChannelException {
+    protected BioSender[] setupForSend(Member[] destination) throws ChannelException {
         ChannelException cx = null;
         BioSender[] result = new BioSender[destination.length];
         for ( int i=0; i<destination.length; i++ ) {
@@ -68,6 +69,10 @@ public class MultipointBioSender implements MultiPointSender {
                 if (sender == null) {
                     InetAddress dest = InetAddress.getByAddress(destination[i].getHost());
                     sender = new BioSender(dest, destination[i].getPort(), new SenderState(), rxBufSize, txBufSize);
+                    sender.setKeepAliveCount(keepAliveCount);
+                    sender.setTimeout(timeout);
+                    //sender.setResend();
+                    //sender.setKeepAliveTimeout();
                     bioSenders.put(destination[i], sender);
                 }
                 sender.setWaitForAck(waitForAck);
@@ -83,7 +88,7 @@ public class MultipointBioSender implements MultiPointSender {
         else return result;
     }
 
-    public void connect() {
+    public void connect() throws IOException {
         //do nothing, we connect on demand
         setConnected(true);
     }
@@ -110,7 +115,7 @@ public class MultipointBioSender implements MultiPointSender {
 
     }
 
-    public void memberRemoved(Member member) {
+    public void memberDisappeared(Member member) {
         //disconnect senders
         BioSender sender = (BioSender)bioSenders.remove(member);
         if ( sender != null ) sender.disconnect();
@@ -172,6 +177,10 @@ public class MultipointBioSender implements MultiPointSender {
 
     public void setAutoConnect(boolean autoConnect) {
         this.autoConnect = autoConnect;
+    }
+
+    public void setKeepAliveCount(int keepAliveCount) {
+        this.keepAliveCount = keepAliveCount;
     }
 
     public boolean keepalive() {

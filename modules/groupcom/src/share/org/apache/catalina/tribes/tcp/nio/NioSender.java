@@ -28,6 +28,7 @@ import java.util.Arrays;
 
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.io.XByteBuffer;
+import org.apache.catalina.tribes.tcp.DataSender;
 
 /**
  * This class is NOT thread safe and should never be used with more than one thread at a time
@@ -43,7 +44,7 @@ import org.apache.catalina.tribes.io.XByteBuffer;
  * @author Filip Hanik
  * @version 1.0
  */
-public class NioSender  {
+public class NioSender implements DataSender{
 
     protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(NioSender.class);
 
@@ -67,8 +68,10 @@ public class NioSender  {
     protected int curPos=0;
     protected XByteBuffer ackbuf = new XByteBuffer(128,true);
     protected int remaining = 0;
-    private boolean complete;
-    private int attempt;
+    protected boolean complete;
+    protected int attempt;
+    protected int keepAliveCount;
+    protected long timeout;
 
     public NioSender(Member destination) {
         this.destination = destination;
@@ -90,6 +93,7 @@ public class NioSender  {
                 connected = true;
                 socketChannel.socket().setSendBufferSize(txBufSize);
                 socketChannel.socket().setReceiveBufferSize(rxBufSize);
+                socketChannel.socket().setSoTimeout((int)timeout);
                 if ( current != null ) key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
                 return false;
             } else  { 
@@ -190,6 +194,7 @@ public class NioSender  {
         socketChannel = SocketChannel.open();
         socketChannel.configureBlocking(false);
         socketChannel.connect(addr);
+        
         socketChannel.register(getSelector(),SelectionKey.OP_CONNECT,this);
     }
     
@@ -321,6 +326,10 @@ public class NioSender  {
         return attempt;
     }
 
+    public long getTimeout() {
+        return timeout;
+    }
+
     /**
      * setRxBufSize
      *
@@ -375,5 +384,13 @@ public class NioSender  {
 
     public void setAttempt(int attempt) {
         this.attempt = attempt;
+    }
+
+    public void setKeepAliveCount(int keepAliveCount) {
+        this.keepAliveCount = keepAliveCount;
+    }
+
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
     }
 }

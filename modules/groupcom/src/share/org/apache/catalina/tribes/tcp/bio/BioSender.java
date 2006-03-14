@@ -18,8 +18,8 @@ package org.apache.catalina.tribes.tcp.bio;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.Arrays;
 
 import org.apache.catalina.tribes.ChannelException;
@@ -28,7 +28,6 @@ import org.apache.catalina.tribes.tcp.Constants;
 import org.apache.catalina.tribes.tcp.DataSender;
 import org.apache.catalina.tribes.tcp.SenderState;
 import org.apache.catalina.util.StringManager;
-import java.net.InetSocketAddress;
 
 /**
  * Send cluster messages with only one socket. Ack and keep Alive Handling is
@@ -100,7 +99,7 @@ public class BioSender implements DataSender {
     /**
      * max requests before reconnecting (default -1 unlimited)
      */
-    private int keepAliveMaxRequestCount = -1;
+    private int keepAliveCount = -1;
 
     /**
      * Last connect timestamp
@@ -110,7 +109,7 @@ public class BioSender implements DataSender {
     /**
      * keepalive counter
      */
-    protected int keepAliveCount = 0;
+    protected int requestCount = 0;
 
     /**
      * wait for receiver Ack
@@ -222,12 +221,12 @@ public class BioSender implements DataSender {
         this.keepAliveTimeout = keepAliveTimeout;
     }
 
-    public int getKeepAliveMaxRequestCount() {
-        return keepAliveMaxRequestCount;
+    public int getKeepAliveCount() {
+        return keepAliveCount;
     }
 
-    public void setKeepAliveMaxRequestCount(int keepAliveMaxRequestCount) {
-        this.keepAliveMaxRequestCount = keepAliveMaxRequestCount;
+    public void setKeepAliveCount(int keepAliveMaxRequestCount) {
+        this.keepAliveCount = keepAliveMaxRequestCount;
     }
 
     /**
@@ -240,8 +239,8 @@ public class BioSender implements DataSender {
     /**
      * @return Returns the keepAliveCount.
      */
-    public int getKeepAliveCount() {
-        return keepAliveCount;
+    public int getRequestCount() {
+        return requestCount;
     }
 
     /**
@@ -298,12 +297,8 @@ public class BioSender implements DataSender {
      * Connect other cluster member receiver 
      * @see org.apache.catalina.tribes.tcp.IDataSender#connect()
      */
-    public  void connect() throws ChannelException {
-        try {
-            openSocket();
-        }catch ( Exception x ) {
-            throw new ChannelException(x);
-        }
+    public  void connect() throws IOException {
+        openSocket();
    }
 
  
@@ -334,7 +329,7 @@ public class BioSender implements DataSender {
         boolean isCloseSocket = true ;
         if(isConnected()) {
             if ((keepAliveTimeout > -1 && (System.currentTimeMillis() - keepAliveConnectTime) > keepAliveTimeout)
-                || (keepAliveMaxRequestCount > -1 && keepAliveCount >= keepAliveMaxRequestCount)) {
+                || (keepAliveCount > -1 && requestCount >= keepAliveCount)) {
                     closeSocket();
            } else
                 isCloseSocket = false ;
@@ -380,7 +375,7 @@ public class BioSender implements DataSender {
            socket.setReceiveBufferSize(getRxBufSize());
            socket.setSoTimeout( (int) timeout);
            connected = true;
-           this.keepAliveCount = 0;
+           this.requestCount = 0;
            this.keepAliveConnectTime = System.currentTimeMillis();
            if (log.isDebugEnabled())
                log.debug(sm.getString("IDataSender.openSocket", address.getHostAddress(), new Integer(port), new Long(0)));
@@ -409,7 +404,7 @@ public class BioSender implements DataSender {
                     socket = null;
                 }
             }
-            this.keepAliveCount = 0;
+            this.requestCount = 0;
             connected = false;
             if (log.isDebugEnabled())
                 log.debug(sm.getString("IDataSender.closeSocket",address.getHostAddress(), new Integer(port),new Long(0)));
@@ -463,7 +458,7 @@ public class BioSender implements DataSender {
                 closeSocket();
             }
         } finally {
-            this.keepAliveCount++;
+            this.requestCount++;
             keepalive();
             if(messageTransfered) {
                 
