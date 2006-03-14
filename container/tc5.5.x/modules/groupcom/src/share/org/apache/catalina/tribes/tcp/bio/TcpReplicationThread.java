@@ -23,6 +23,7 @@ import org.apache.catalina.tribes.tcp.nio.WorkerThread;
 import java.net.Socket;
 import java.io.InputStream;
 import org.apache.catalina.tribes.tcp.ReceiverBase;
+import java.io.OutputStream;
 
 /**
  * A worker thread class which can drain channels and echo-back the input. Each
@@ -72,8 +73,8 @@ public class TcpReplicationThread extends WorkerThread {
                 } catch ( Exception x ) {
                     log.error("Unable to service bio socket");
                 }finally {
-                    try {reader.close();}catch ( Exception x){}
-                    try {socket.close();}catch ( Exception x){}
+                    try {socket.close();}catch ( Exception ignore){}
+                    try {reader.close();}catch ( Exception ignore){}
                     reader = null;
                     socket = null;
                 }
@@ -137,8 +138,7 @@ public class TcpReplicationThread extends WorkerThread {
         while ( length >= 0 ) {
             int count = reader.append(buf,0,length,true);
             if ( count > 0 ) execute(reader);
-            if ( in.available() == 0 && reader.bufferSize() == 0 ) length = -1;
-            else length = in.read(buf);
+            length = in.read(buf);
         }
     }
 
@@ -163,12 +163,23 @@ public class TcpReplicationThread extends WorkerThread {
      */
     protected void sendAck() {
         try {
-            this.socket.getOutputStream().write(Constants.ACK_COMMAND);
+            OutputStream out = socket.getOutputStream();
+            out.write(Constants.ACK_COMMAND);
+            out.flush();
             if (log.isTraceEnabled()) {
                 log.trace("ACK sent to " + socket.getPort());
             }
         } catch ( java.io.IOException x ) {
             log.warn("Unable to send ACK back through channel, channel disconnected?: "+x.getMessage());
         }
+    }
+    
+    public void close() {
+        doRun = false;
+        try {socket.close();}catch ( Exception ignore){}
+        try {reader.close();}catch ( Exception ignore){}
+        reader = null;
+        socket = null;
+        super.close();
     }
 }

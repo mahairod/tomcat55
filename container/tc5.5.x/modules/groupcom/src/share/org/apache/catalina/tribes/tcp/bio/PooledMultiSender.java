@@ -22,13 +22,9 @@ import org.apache.catalina.tribes.ChannelMessage;
 public class PooledMultiSender extends PooledSender {
     
     protected long timeout = 15000;
-    protected boolean waitForAck = false;
     protected int retryAttempts=0;
     protected int keepAliveCount = Integer.MAX_VALUE;
     protected boolean directBuf = false;
-    protected int rxBufSize = 43800;
-    protected int txBufSize = 25188;
-    protected boolean suspect = false;
     private boolean autoConnect;
     private boolean useDirectBuffer;
 
@@ -63,10 +59,10 @@ public class PooledMultiSender extends PooledSender {
         MultipointBioSender sender = new MultipointBioSender();
         sender.setAutoConnect(autoConnect);
         sender.setTimeout(timeout);
-        sender.setWaitForAck(waitForAck);
+        sender.setWaitForAck(getWaitForAck());
         sender.setMaxRetryAttempts(retryAttempts);
-        sender.setRxBufSize(rxBufSize);
-        sender.setTxBufSize(txBufSize);
+        sender.setRxBufSize(getRxBufSize());
+        sender.setTxBufSize(getTxBufSize());
         return sender;
     }
 
@@ -86,16 +82,9 @@ public class PooledMultiSender extends PooledSender {
         this.retryAttempts = retryAttempts;
     }
 
-    public void setSuspect(boolean suspect) {
-        this.suspect = suspect;
-    }
 
     public void setUseDirectBuffer(boolean useDirectBuffer) {
         this.useDirectBuffer = useDirectBuffer;
-    }
-
-    public boolean getSuspect() {
-        return suspect;
     }
 
     public boolean isUseDirectBuffer() {

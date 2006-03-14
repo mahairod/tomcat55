@@ -348,7 +348,35 @@ public class BioSender implements DataSender {
      *      ChannelMessage)
      */
     public  void sendMessage(byte[] data) throws IOException {
-        pushMessage(data);
+        boolean messageTransfered = false ;
+        IOException exception = null;
+        try {
+             // first try with existing connection
+             pushMessage(data,false);
+             messageTransfered = true ;
+        } catch (IOException x) {
+            exception = x;
+            //resend
+            if (log.isTraceEnabled()) log.trace(sm.getString("IDataSender.send.again", address.getHostAddress(),new Integer(port)),x);
+            try {
+                // second try with fresh connection
+                pushMessage(data,true);                    
+                messageTransfered = true;
+                exception = null;
+            } catch (IOException xx) {
+                exception = xx;
+                closeSocket();
+            }
+        } finally {
+            this.requestCount++;
+            keepalive();
+            if(messageTransfered) {
+
+            } else {
+                if ( exception != null ) throw exception;
+            }
+        }
+
     }
 
     
@@ -444,37 +472,6 @@ public class BioSender implements DataSender {
         writeData(data);
     }
     
-    protected  void pushMessage( byte[] data) throws IOException {
-        boolean messageTransfered = false ;
-        IOException exception = null;
-        try {
-             // first try with existing connection
-             pushMessage(data,false);
-             messageTransfered = true ;
-        } catch (IOException x) {
-            exception = x;
-            //resend
-            if (log.isTraceEnabled()) log.trace(sm.getString("IDataSender.send.again", address.getHostAddress(),new Integer(port)),x);
-            try {
-                // second try with fresh connection
-                pushMessage(data,true);                    
-                messageTransfered = true;
-                exception = null;
-            } catch (IOException xx) {
-                exception = xx;
-                closeSocket();
-            }
-        } finally {
-            this.requestCount++;
-            keepalive();
-            if(messageTransfered) {
-                
-            } else {
-                if ( exception != null ) throw exception;
-            }
-        }
-    }
-
     /**
      * Sent real cluster Message to socket stream
      * FIXME send compress
