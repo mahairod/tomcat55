@@ -26,6 +26,9 @@
       <fix>
         Add missing REQUEST_URI environment variable to CGI environment. (markt)
       </fix>
+      <fix>
+        <bug>27617</bug>: Sync existing mime types with httpd. (keith)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">

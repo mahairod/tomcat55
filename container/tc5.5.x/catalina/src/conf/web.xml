@@ -537,7 +537,7 @@
     </mime-mapping>
     <mime-mapping>
         <extension>cdf</extension>
-        <mime-type>application/x-cdf</mime-type>
+        <mime-type>application/x-netcdf</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>cer</extension>
@@ -608,10 +608,6 @@
         <mime-type>application/x-hdf</mime-type>
     </mime-mapping>
     <mime-mapping>
-        <extension>hqx</extension>
-        <mime-type>application/mac-binhex40</mime-type>
-    </mime-mapping>
-    <mime-mapping>
         <extension>htc</extension>
         <mime-type>text/x-component</mime-type>
     </mime-mapping>
@@ -626,6 +622,10 @@
     <mime-mapping>
         <extension>hqx</extension>
         <mime-type>application/mac-binhex40</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>ico</extension>
+        <mime-type>image/x-icon</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>ief</extension>
@@ -673,7 +673,7 @@
     </mime-mapping>
     <mime-mapping>
         <extension>kar</extension>
-        <mime-type>audio/x-midi</mime-type>
+        <mime-type>audio/midi</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>latex</extension>
@@ -701,15 +701,15 @@
     </mime-mapping>
     <mime-mapping>
         <extension>mid</extension>
-        <mime-type>audio/x-midi</mime-type>
+        <mime-type>audio/midi</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>midi</extension>
-        <mime-type>audio/x-midi</mime-type>
+        <mime-type>audio/midi</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>mif</extension>
-        <mime-type>application/x-mif</mime-type>
+        <mime-type>application/vnd.mif</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>mov</extension>
@@ -725,11 +725,11 @@
     </mime-mapping>
     <mime-mapping>
         <extension>mp2</extension>
-        <mime-type>audio/x-mpeg</mime-type>
+        <mime-type>audio/mpeg</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>mp3</extension>
-        <mime-type>audio/x-mpeg</mime-type>
+        <mime-type>audio/mpeg</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>mpa</extension>
@@ -757,7 +757,7 @@
     </mime-mapping>
     <mime-mapping>
         <extension>ms</extension>
-        <mime-type>application/x-wais-source</mime-type>
+        <mime-type>application/x-troff-ms</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>nc</extension>
@@ -816,8 +816,12 @@
         <mime-type>image/x-portable-pixmap</mime-type>
     </mime-mapping>
     <mime-mapping>
+        <extension>pps</extension>
+        <mime-type>application/vnd.ms-powerpoint</mime-type>
+    </mime-mapping>
+    <mime-mapping>
         <extension>ppt</extension>
-        <mime-type>application/powerpoint</mime-type>
+        <mime-type>application/vnd.ms-powerpoint</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>ps</extension>
@@ -861,7 +865,7 @@
     </mime-mapping>
     <mime-mapping>
         <extension>rtf</extension>
-        <mime-type>application/rtf</mime-type>
+        <mime-type>text/rtf</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>rtx</extension>
@@ -906,6 +910,10 @@
     <mime-mapping>
         <extension>svg</extension>
         <mime-type>image/svg+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>svgz</extension>
+        <mime-type>image/svg</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>swf</extension>
@@ -964,60 +972,20 @@
         <mime-type>application/x-ustar</mime-type>
     </mime-mapping>
     <mime-mapping>
-        <extension>vxml</extension>
-        <mime-type>application/voicexml+xml</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>xbm</extension>
-        <mime-type>image/x-xbitmap</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>xht</extension>
-        <mime-type>application/xhtml+xml</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>xhtml</extension>
-        <mime-type>application/xhtml+xml</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>xml</extension>
-        <mime-type>application/xml</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>xpm</extension>
-        <mime-type>image/x-xpixmap</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>xsl</extension>
-        <mime-type>application/xml</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>xslt</extension>
-        <mime-type>application/xslt+xml</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>xul</extension>
-        <mime-type>application/vnd.mozilla.xul+xml</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>xwd</extension>
-        <mime-type>image/x-xwindowdump</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>wav</extension>
-        <mime-type>audio/x-wav</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>svg</extension>
-        <mime-type>image/svg</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>svgz</extension>
-        <mime-type>image/svg</mime-type>
+        <extension>vrml</extension>
+        <mime-type>model/vrml</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>vsd</extension>
         <mime-type>application/x-visio</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>vxml</extension>
+        <mime-type>application/voicexml+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>wav</extension>
+        <mime-type>audio/x-wav</mime-type>
     </mime-mapping>
     <mime-mapping>
         <!-- Wireless Bitmap -->
@@ -1046,7 +1014,47 @@
     </mime-mapping>
     <mime-mapping>
         <extension>wrl</extension>
-        <mime-type>x-world/x-vrml</mime-type>
+        <mime-type>model/vrml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>xbm</extension>
+        <mime-type>image/x-xbitmap</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>xht</extension>
+        <mime-type>application/xhtml+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>xhtml</extension>
+        <mime-type>application/xhtml+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>xls</extension>
+        <mime-type>application/vnd.ms-excel</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>xml</extension>
+        <mime-type>application/xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>xpm</extension>
+        <mime-type>image/x-xpixmap</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>xsl</extension>
+        <mime-type>application/xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>xslt</extension>
+        <mime-type>application/xslt+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>xul</extension>
+        <mime-type>application/vnd.mozilla.xul+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>xwd</extension>
+        <mime-type>image/x-xwindowdump</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>Z</extension>
@@ -1059,18 +1067,6 @@
     <mime-mapping>
         <extension>zip</extension>
         <mime-type>application/zip</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>xls</extension>
-        <mime-type>application/vnd.ms-excel</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>doc</extension>
-        <mime-type>application/vnd.ms-word</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>ppt</extension>
-        <mime-type>application/vnd.ms-powerpoint</mime-type>
     </mime-mapping>
 
   <!-- ==================== Default Welcome File List ===================== -->
