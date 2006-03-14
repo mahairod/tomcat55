@@ -33,7 +33,7 @@ public class MultipointBioSender implements MultiPointSender {
     protected long selectTimeout = 1000; 
     protected boolean waitForAck = false;
     protected int retryAttempts=0;
-    protected int keepAliveCount = Integer.MAX_VALUE;
+    protected int keepAliveCount = -1;
     protected HashMap bioSenders = new HashMap();
     protected boolean directBuf = false;
     protected int rxBufSize = 43800;

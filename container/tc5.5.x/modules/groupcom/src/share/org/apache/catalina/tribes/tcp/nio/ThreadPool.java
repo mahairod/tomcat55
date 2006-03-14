@@ -17,6 +17,7 @@
 package org.apache.catalina.tribes.tcp.nio;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Iterator;
 
 /**
  * @author not attributable
@@ -34,6 +35,7 @@ public class ThreadPool
     List idle = new LinkedList();
     Object mutex = new Object();
     Object interestOpsMutex = null;
+    boolean running = true;
 
     public ThreadPool (Object interestOpsMutex, WorkerThread[] threads) throws Exception {
         // fill up the pool with worker threads
@@ -98,12 +100,29 @@ public class ThreadPool
      * idle pool.
      */
     public void returnWorker (WorkerThread worker) {
-        synchronized (mutex) {
-            idle.add (worker);
-            mutex.notify();
+        if ( running ) {
+            synchronized (mutex) {
+                idle.add(worker);
+                mutex.notify();
+            }
+        }else {
+            worker.doRun = false;
+            synchronized (worker){worker.notify();}
         }
     }
     public Object getInterestOpsMutex() {
         return interestOpsMutex;
+    }
+    
+    public void stop() {
+        running = false;
+        synchronized (mutex) {
+            Iterator i = idle.iterator();
+            while ( i.hasNext() ) {
+                WorkerThread worker = (WorkerThread)i.next();
+                returnWorker(worker);
+                i.remove();
+            }
+        }
     }
 }
