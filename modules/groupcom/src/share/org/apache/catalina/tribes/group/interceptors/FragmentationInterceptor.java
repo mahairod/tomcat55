@@ -54,10 +54,7 @@ public class FragmentationInterceptor extends ChannelInterceptorBase {
         boolean frag = (size>maxSize);
         if ( frag ) {
             frag(destination, msg, payload);
-        }
-        else {
-            //byte[] flag = XByteBuffer.toBytes(frag);
-            //msg.getMessage().append(flag,0,flag.length);
+        } else {
             msg.getMessage().append(frag);
             super.sendMessage(destination, msg, payload);
         }
