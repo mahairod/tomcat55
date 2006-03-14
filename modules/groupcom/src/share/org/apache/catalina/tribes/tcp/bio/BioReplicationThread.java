@@ -19,7 +19,7 @@ import java.io.IOException;
 
 import org.apache.catalina.tribes.io.ObjectReader;
 import org.apache.catalina.tribes.tcp.Constants;
-import org.apache.catalina.tribes.tcp.nio.WorkerThread;
+import org.apache.catalina.tribes.tcp.WorkerThread;
 import java.net.Socket;
 import java.io.InputStream;
 import org.apache.catalina.tribes.tcp.ReceiverBase;
@@ -39,18 +39,15 @@ import java.io.OutputStream;
  * 
  * @version $Revision: 378050 $, $Date: 2006-02-15 12:30:02 -0600 (Wed, 15 Feb 2006) $
  */
-public class TcpReplicationThread extends WorkerThread {
-    public static final int OPTION_SEND_ACK = ReceiverBase.OPTION_SEND_ACK;
-    public static final int OPTION_SYNCHRONIZED = ReceiverBase.OPTION_SYNCHRONIZED;
-    public static final int OPTION_DIRECT_BUFFER = ReceiverBase.OPTION_DIRECT_BUFFER;
+public class BioReplicationThread extends WorkerThread {
 
 
-    protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog( TcpReplicationThread.class );
+    protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog( BioReplicationThread.class );
     
     protected Socket socket;
     protected ObjectReader reader;
     
-    public TcpReplicationThread ()
+    public BioReplicationThread ()
     {
     }
 
@@ -143,17 +140,6 @@ public class TcpReplicationThread extends WorkerThread {
     }
 
 
-    public boolean sendAckSync() {
-        int options = getOptions();
-        return ((OPTION_SEND_ACK & options) == OPTION_SEND_ACK) &&
-               ((OPTION_SYNCHRONIZED & options) == OPTION_SYNCHRONIZED);
-    }
-
-    public boolean sendAckAsync() {
-        int options = getOptions();
-        return ((OPTION_SEND_ACK & options) == OPTION_SEND_ACK) &&
-               ((OPTION_SYNCHRONIZED & options) != OPTION_SYNCHRONIZED);
-    }
 
 
     /**

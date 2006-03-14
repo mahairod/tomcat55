@@ -18,6 +18,7 @@ package org.apache.catalina.tribes.tipis;
 import java.io.Serializable;
 
 import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  * A response object holds a message from a responding partner.

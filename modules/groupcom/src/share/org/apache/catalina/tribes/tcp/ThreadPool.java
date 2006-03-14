@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.apache.catalina.tribes.tcp.nio;
+package org.apache.catalina.tribes.tcp;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Iterator;
+import org.apache.catalina.tribes.tcp.nio.*;
 
 /**
  * @author not attributable

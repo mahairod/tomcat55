@@ -17,6 +17,7 @@
 package org.apache.catalina.tribes.io;
 
 import org.apache.catalina.tribes.ChannelMessage;
+import org.apache.catalina.tribes.tcp.*;
 
 
 

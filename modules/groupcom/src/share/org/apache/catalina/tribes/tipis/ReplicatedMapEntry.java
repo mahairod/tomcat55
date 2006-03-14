@@ -17,6 +17,7 @@ package org.apache.catalina.tribes.tipis;
 
 import java.io.Serializable;
 import java.io.IOException;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  * 

@@ -29,6 +29,7 @@ import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelListener;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.util.UUIDGenerator;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  * A channel to handle RPC messaging

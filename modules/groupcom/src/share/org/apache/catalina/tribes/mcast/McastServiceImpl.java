@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.InetAddress ;
 import java.net.DatagramPacket;
 import org.apache.catalina.tribes.MembershipListener;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  * A <b>membership</b> implementation using simple multicast.
