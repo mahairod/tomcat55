@@ -212,9 +212,20 @@ public class ClusterData implements ChannelMessage {
         } else return false;
     }
     
+    /**
+     * Create a shallow clone, only the data gets recreated
+     * @return ClusterData
+     */
     public ClusterData clone() {
-        byte[] d = this.getDataPackage();
-        return ClusterData.getDataFromPackage(d);
+//        byte[] d = this.getDataPackage();
+//        return ClusterData.getDataFromPackage(d);
+        ClusterData clone = new ClusterData(false);
+        clone.options = this.options;
+        clone.message = new XByteBuffer(this.message.getBytesDirect(),false);
+        clone.timestamp = this.timestamp;
+        clone.uniqueId = this.uniqueId;
+        clone.address = this.address;
+        return clone;
     }
     
 }
