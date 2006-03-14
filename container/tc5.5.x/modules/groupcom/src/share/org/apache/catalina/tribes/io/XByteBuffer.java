@@ -346,7 +346,6 @@ public class XByteBuffer
             throw new ArrayIndexOutOfBoundsException("Unable to create data package, buffer is too small.");
         }
         System.arraycopy(START_DATA, 0, buffer, bufoff, START_DATA.length);
-        //System.arraycopy(toBytes(data.length), 0, buffer, bufoff+START_DATA.length, 4);
         toBytes(data.length,buffer, bufoff+START_DATA.length);
         System.arraycopy(data, doff, buffer, bufoff+START_DATA.length + 4, dlength);
         System.arraycopy(END_DATA, 0, buffer, bufoff+START_DATA.length + 4 + data.length, END_DATA.length);
