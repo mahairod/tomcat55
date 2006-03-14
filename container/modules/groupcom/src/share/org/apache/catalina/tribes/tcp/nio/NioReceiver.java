@@ -136,7 +136,7 @@ public class NioReceiver implements Runnable, ChannelReceiver, ListenCallback {
         }
         try {
             getBind();
-            this.bind();
+            bind();
             Thread t = new Thread(this, "NioReceiver");
             t.setDaemon(true);
             t.start();
@@ -310,7 +310,7 @@ public class NioReceiver implements Runnable, ChannelReceiver, ListenCallback {
         try {
             listen();
         } catch (Exception x) {
-            log.error("Unable to start replication listener.", x);
+            log.error("Unable to run replication listener.", x);
         }
     }
 

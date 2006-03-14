@@ -20,6 +20,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import org.apache.catalina.tribes.ChannelMessage;
 import java.io.IOException;
+import java.net.Socket;
 
 
 
@@ -61,6 +62,16 @@ public class ObjectReader {
             log.warn("Unable to retrieve the socket channel receiver buffer size, setting to default 43800 bytes.");
             this.buffer = new XByteBuffer(43800,true);
         }
+    }
+    public ObjectReader(Socket socket, ListenCallback callback) {
+        try{
+            this.buffer = new XByteBuffer(socket.getReceiveBufferSize(), true);
+        }catch ( IOException x ) {
+            //unable to get buffer size
+            log.warn("Unable to retrieve the socket receiver buffer size, setting to default 43800 bytes.");
+            this.buffer = new XByteBuffer(43800,true);
+        }
+        this.callback = callback;
     }
 
     /**
@@ -125,6 +136,10 @@ public class ObjectReader {
         return pkgCnt;
     }
     
+    public int bufferSize() {
+        return buffer.getLength();
+    }
+    
     /**
      * Returns the number of packages that the reader has read
      * @return int
@@ -141,6 +156,12 @@ public class ObjectReader {
      */
     public int write(ByteBuffer buf) throws java.io.IOException {
         return getChannel().write(buf);
+    }
+    
+    public void close() {
+        this.callback = null;
+        this.channel = null;
+        this.buffer = null;
     }
 
 }
