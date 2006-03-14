@@ -26,11 +26,9 @@ import org.apache.catalina.tribes.group.interceptors.GzipInterceptor;
 import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
 import org.apache.catalina.tribes.mcast.McastService;
 import org.apache.catalina.tribes.tcp.MultiPointSender;
-import org.apache.catalina.tribes.tcp.ReplicationTransmitter;
-import org.apache.catalina.tribes.tcp.nio.NioReceiver;
-import org.apache.catalina.tribes.tcp.bio.BioReceiver;
-import org.apache.tomcat.util.IntrospectionUtils;
 import org.apache.catalina.tribes.tcp.ReceiverBase;
+import org.apache.catalina.tribes.tcp.ReplicationTransmitter;
+import org.apache.tomcat.util.IntrospectionUtils;
 
 /**
  * <p>Title: </p>
@@ -56,7 +54,7 @@ public class ChannelCreator {
            .append("\n\t\t[-autoconnect true|false]")
            .append("\n\t\t[-sync true|false]")
            .append("\n\t\t[-receiver org.apache.catalina.tribes.tcp.nio.NioReceiver|org.apache.catalina.tribes.tcp.bio.BioReceiver|]")
-           .append("\n\t\t[-transport org.apache.catalina.tribes.tcp.nio.PooledParallelSender|org.apache.catalina.tribes.tcp.bio.PooledMultipointSender]")
+           .append("\n\t\t[-transport org.apache.catalina.tribes.tcp.nio.PooledParallelSender|org.apache.catalina.tribes.tcp.bio.PooledMultiSender]")
            .append("\n\t\t[-transport.xxx transport specific property]")
            .append("\n\t\t[-maddr multicastaddr]")
            .append("\n\t\t[-mport multicastport]")

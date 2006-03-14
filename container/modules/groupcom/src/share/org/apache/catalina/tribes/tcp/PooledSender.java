@@ -101,8 +101,12 @@ public abstract class PooledSender implements MultiPointSender {
         queue.setLimit(poolSize);
     }
 
-    public void setSuspect(Boolean suspect) {
+    public void setSuspect(boolean suspect) {
         this.suspect = suspect;
+    }
+    
+    public boolean getSuspect() {
+        return suspect;
     }
 
     public boolean isConnected() {
@@ -244,15 +248,4 @@ public abstract class PooledSender implements MultiPointSender {
             notify();
         }
     }
-    
-    public static void printArr(Object[] arr) {
-        System.out.print("[");
-        for (int i=0; i<arr.length; i++ ) {
-            System.out.print(arr[i]);
-            if ( (i+1)<arr.length )System.out.print(", ");
-        }
-        System.out.println("]");
-    }
-
-    
 }
