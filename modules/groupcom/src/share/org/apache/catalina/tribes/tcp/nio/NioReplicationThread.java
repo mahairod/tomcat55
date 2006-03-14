@@ -22,7 +22,6 @@ import java.nio.channels.SocketChannel;
 
 import org.apache.catalina.tribes.io.ObjectReader;
 import org.apache.catalina.tribes.tcp.Constants;
-import org.apache.catalina.tribes.tcp.ReceiverBase;
 import org.apache.catalina.tribes.tcp.WorkerThread;
 
 /**
