@@ -27,6 +27,7 @@ import org.apache.catalina.tribes.io.ListenCallback;
 import org.apache.catalina.tribes.ChannelMessage;
 import java.net.Socket;
 import org.apache.catalina.tribes.io.ObjectReader;
+import org.apache.catalina.tribes.tcp.ReceiverBase;
 
 /**
  * <p>Title: </p>
@@ -40,95 +41,13 @@ import org.apache.catalina.tribes.io.ObjectReader;
  * @author not attributable
  * @version 1.0
  */
-public class BioReceiver implements Runnable, ChannelReceiver, ListenCallback {
+public class BioReceiver extends ReceiverBase implements Runnable, ChannelReceiver, ListenCallback {
 
     protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(BioReceiver.class);
 
-
-    protected MessageListener listener;
-    protected String host;
-    protected InetAddress bind;
-    protected int port;
-    protected boolean sendack;
-    protected boolean sync;
-    protected int rxBufSize = 43800;
-    protected int txBufSize = 25188;    
-    protected int tcpThreadCount;
     protected ServerSocket serverSocket;
-    protected boolean doRun = true;
-    
-    protected ThreadPool pool;
 
     public BioReceiver() {
-    }
-
-    /**
-     *
-     * @return The host
-     * @todo Implement this org.apache.catalina.tribes.ChannelReceiver method
-     */
-    public String getHost() {
-        return host;
-    }
-
-    /**
-     * getMessageListener
-     *
-     * @return MessageListener
-     * @todo Implement this org.apache.catalina.tribes.ChannelReceiver method
-     */
-    public MessageListener getMessageListener() {
-        return listener;
-    }
-
-    /**
-     *
-     * @return The port
-     * @todo Implement this org.apache.catalina.tribes.ChannelReceiver method
-     */
-    public int getPort() {
-        return port;
-    }
-
-    public int getRxBufSize() {
-        return rxBufSize;
-    }
-
-    public int getTxBufSize() {
-        return txBufSize;
-    }
-
-    public int getTcpThreadCount() {
-        return tcpThreadCount;
-    }
-
-    /**
-     *
-     * @return boolean
-     * @todo Implement this org.apache.catalina.tribes.ChannelReceiver method
-     */
-    public boolean getSendAck() {
-        return sendack;
-    }
-
-    /**
-     * setMessageListener
-     *
-     * @param listener MessageListener
-     * @todo Implement this org.apache.catalina.tribes.ChannelReceiver method
-     */
-    public void setMessageListener(MessageListener listener) {
-        this.listener = listener;
-    }
-    
-
-    /**
-     *
-     * @param isSendAck boolean
-     * @todo Implement this org.apache.catalina.tribes.ChannelReceiver method
-     */
-    public void setSendAck(boolean sendAck) {
-        this.sendack = sendAck;
     }
 
     /**
@@ -137,7 +56,6 @@ public class BioReceiver implements Runnable, ChannelReceiver, ListenCallback {
      * @todo Implement this org.apache.catalina.tribes.ChannelReceiver method
      */
     public void start() throws IOException {
-        this.doRun = true;
         try {
             TcpReplicationThread[] receivers = new TcpReplicationThread[tcpThreadCount];
             for ( int i=0; i<receivers.length; i++ ) {
@@ -170,78 +88,14 @@ public class BioReceiver implements Runnable, ChannelReceiver, ListenCallback {
      * @todo Implement this org.apache.catalina.tribes.ChannelReceiver method
      */
     public void stop() {
-        this.doRun = false;
+        this.doListen = false;
         try {
             this.serverSocket.close();
         }catch ( Exception x ) {}
     }
 
-    public void setTcpListenPort(int tcpListenPort) {
-        this.port = tcpListenPort;
-    }
-
-    public void setTcpListenAddress(String tcpListenHost) {
-        this.host = tcpListenHost;
-    }
-
-    public void setSynchronized(boolean sync) {
-        this.sync = sync;
-    }
-
-    public void setRxBufSize(int rxBufSize) {
-        this.rxBufSize = rxBufSize;
-    }
-
-    public void setTxBufSize(int txBufSize) {
-        this.txBufSize = txBufSize;
-    }
-
-    public void setTcpThreadCount(int tcpThreadCount) {
-        this.tcpThreadCount = tcpThreadCount;
-    }
     
-    public void setTcpSelectorTimeout(long timeout) {
-        //do nothing
-    }
     
-    /**
-     * @return Returns the bind.
-     */
-    public InetAddress getBind() {
-        if (bind == null) {
-            try {
-                if ("auto".equals(host)) {
-                    host = java.net.InetAddress.getLocalHost().getHostAddress();
-                }
-                if (log.isDebugEnabled())
-                    log.debug("Starting replication listener on address:"+ host);
-                bind = java.net.InetAddress.getByName(host);
-            } catch (IOException ioe) {
-                log.error("Failed bind replication listener on address:"+ host, ioe);
-            }
-        }
-        return bind;
-    }
-    
-    protected int bind(ServerSocket socket, int portstart, int retries) throws IOException {
-        while ( retries > 0 ) {
-            try {
-                InetSocketAddress addr = new InetSocketAddress(getBind(), portstart);
-                socket.bind(addr);
-                setTcpListenPort(portstart);
-                log.info("Bio Server Socket bound to:"+addr);
-                return 0;
-            }catch ( IOException x) {
-                retries--;
-                if ( retries <= 0 ) throw x;
-                portstart++;
-                retries = bind(socket,portstart,retries);
-            }
-        }
-        return retries;
-    }
-
-
     
     protected void bind() throws IOException {
         // allocate an unbound server socket channel
@@ -251,11 +105,7 @@ public class BioReceiver implements Runnable, ChannelReceiver, ListenCallback {
         bind(serverSocket,getPort(),10);
     }
     
-    public void messageDataReceived(ChannelMessage data) {
-        if ( this.listener != null ) {
-            listener.messageReceived(data);
-        }
-    }
+    
     
     public void run() {
         try {
@@ -267,14 +117,20 @@ public class BioReceiver implements Runnable, ChannelReceiver, ListenCallback {
     }
     
     public void listen() throws Exception {
-        while ( doRun ) {
+        if (doListen) {
+            log.warn("ServerSocket already started");
+            return;
+        }
+        doListen = true;
+
+        while ( doListen ) {
             Socket socket = null;
             try {
                 socket = serverSocket.accept();
             }catch ( Exception x ) {
-                if ( doRun ) throw x;
+                if ( doListen ) throw x;
             }
-            if ( !doRun ) break;
+            if ( !doListen ) break; //regular shutdown
             if ( socket == null ) continue;
             socket.setReceiveBufferSize(rxBufSize);
             socket.setSendBufferSize(txBufSize);
@@ -293,14 +149,5 @@ public class BioReceiver implements Runnable, ChannelReceiver, ListenCallback {
         }//while
     }
     
-    public int getWorkerThreadOptions() {
-        int options = 0;
-        if ( sync ) options = options |TcpReplicationThread.OPTION_SYNCHRONIZED;
-        if ( getSendAck() ) options = options |TcpReplicationThread.OPTION_SEND_ACK;
-        return options;
-    }
-
-
-
 
 }

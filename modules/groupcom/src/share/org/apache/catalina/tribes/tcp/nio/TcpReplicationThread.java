@@ -22,6 +22,7 @@ import java.nio.channels.SocketChannel;
 
 import org.apache.catalina.tribes.io.ObjectReader;
 import org.apache.catalina.tribes.tcp.Constants;
+import org.apache.catalina.tribes.tcp.ReceiverBase;
 
 /**
  * A worker thread class which can drain channels and echo-back the input. Each
@@ -38,9 +39,10 @@ import org.apache.catalina.tribes.tcp.Constants;
  * @version $Revision: 378050 $, $Date: 2006-02-15 12:30:02 -0600 (Wed, 15 Feb 2006) $
  */
 public class TcpReplicationThread extends WorkerThread {
-    public static final int OPTION_SEND_ACK = 0x0001;
-    public static final int OPTION_SYNCHRONIZED = 0x0002;
-    public static final int OPTION_DIRECT_BUFFER = 0x0004;
+    public static final int OPTION_SEND_ACK = ReceiverBase.OPTION_SEND_ACK;
+    public static final int OPTION_SYNCHRONIZED = ReceiverBase.OPTION_SYNCHRONIZED;
+    public static final int OPTION_DIRECT_BUFFER = ReceiverBase.OPTION_DIRECT_BUFFER;
+
 
     
     private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog( TcpReplicationThread.class );
