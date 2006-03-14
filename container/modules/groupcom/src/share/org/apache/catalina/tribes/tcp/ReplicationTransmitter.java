@@ -147,7 +147,7 @@ public class ReplicationTransmitter implements ChannelSender {
      * @see org.apache.catalina.tribes.ClusterSender#remove(org.apache.catalina.tribes.Member)
      */
     public synchronized void remove(Member member) {
-        getTransport().memberRemoved(member);
+        getTransport().memberDisappeared(member);
     }
 
     // ------------------------------------------------------------- protected

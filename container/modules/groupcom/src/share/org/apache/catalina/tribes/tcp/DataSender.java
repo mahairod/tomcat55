@@ -15,7 +15,7 @@
  */
 package org.apache.catalina.tribes.tcp;
 
-import org.apache.catalina.tribes.ChannelException;
+import java.io.IOException;
 
 /**
  * <p>Title: </p>
@@ -30,7 +30,7 @@ import org.apache.catalina.tribes.ChannelException;
  * @version 1.0
  */
 public interface DataSender {
-    public void connect() throws ChannelException;
+    public void connect() throws IOException;
     public void disconnect();
     public boolean isConnected();
     public void setRxBufSize(int size);
@@ -38,4 +38,5 @@ public interface DataSender {
     public boolean keepalive();
     public void setTimeout(long timeout);
     public void setWaitForAck(boolean isWaitForAck);
+    public void setKeepAliveCount(int maxRequests);
 }

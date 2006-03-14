@@ -47,7 +47,7 @@ public class ParallelNioSender implements MultiPointSender {
     protected long selectTimeout = 1000; 
     protected boolean waitForAck = false;
     protected int retryAttempts=0;
-    protected int keepAliveCount = Integer.MAX_VALUE;
+    protected int keepAliveCount = -1;
     protected Selector selector;
     protected HashMap nioSenders = new HashMap();
     protected boolean directBuf = false;
@@ -177,6 +177,8 @@ public class ParallelNioSender implements MultiPointSender {
             sender.setRxBufSize(rxBufSize);
             sender.setTxBufSize(txBufSize);
             sender.setWaitForAck(waitForAck);
+            sender.setTimeout(timeout);
+            sender.setKeepAliveCount(keepAliveCount);
             result[i] = sender;
         }
         return result;
@@ -209,7 +211,7 @@ public class ParallelNioSender implements MultiPointSender {
         
     }
     
-    public void memberRemoved(Member member) {
+    public void memberDisappeared(Member member) {
         //disconnect senders
         NioSender sender = (NioSender)nioSenders.remove(member);
         if ( sender != null ) sender.disconnect();
@@ -271,6 +273,10 @@ public class ParallelNioSender implements MultiPointSender {
 
     public void setAutoConnect(boolean autoConnect) {
         this.autoConnect = autoConnect;
+    }
+
+    public void setKeepAliveCount(int keepAliveCount) {
+        this.keepAliveCount = keepAliveCount;
     }
 
     public boolean keepalive() {

@@ -15,9 +15,8 @@
  */
 package org.apache.catalina.tribes.tcp;
 
+import java.io.IOException;
 import java.util.List;
-
-import org.apache.catalina.tribes.ChannelException;
 
 /**
  * <p>Title: </p>
@@ -31,7 +30,7 @@ import org.apache.catalina.tribes.ChannelException;
  * @author not attributable
  * @version 1.0
  */
-public abstract class PooledSender implements DataSender {
+public abstract class PooledSender implements MultiPointSender {
     
     private SenderQueue queue = null;
     private boolean connected;
@@ -40,6 +39,7 @@ public abstract class PooledSender implements DataSender {
     private boolean waitForAck;
     private long timeout;
     private int poolSize = 25;
+    private boolean suspect;
 
     public PooledSender() {
         queue = new SenderQueue(this,poolSize);
@@ -56,7 +56,7 @@ public abstract class PooledSender implements DataSender {
         queue.returnSender(sender);
     }
     
-    public synchronized void connect() throws ChannelException {
+    public synchronized void connect() throws IOException {
         //do nothing, happens in the socket sender itself
         queue.open();
         setConnected(true);
@@ -99,6 +99,10 @@ public abstract class PooledSender implements DataSender {
     public void setPoolSize(int poolSize) {
         this.poolSize = poolSize;
         queue.setLimit(poolSize);
+    }
+
+    public void setSuspect(Boolean suspect) {
+        this.suspect = suspect;
     }
 
     public boolean isConnected() {

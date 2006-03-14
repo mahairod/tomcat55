@@ -35,7 +35,7 @@ public interface MultiPointSender extends DataSender
     public void setSuspect(boolean suspect);
     public boolean getSuspect();
     public void memberAdded(Member member);
-    public void memberRemoved(Member member);
+    public void memberDisappeared(Member member);
     public void setAutoConnect(boolean auto);
 
 }

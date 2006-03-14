@@ -69,7 +69,7 @@ public class PooledParallelSender extends AbstractPooledSender implements MultiP
     
     }
     
-    public void memberRemoved(Member member) {
+    public void memberDisappeared(Member member) {
         //disconnect senders
     }    
 }
