@@ -17,6 +17,7 @@ package org.apache.catalina.tribes.tipis;
 
 import java.io.Serializable;
 import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  * The RpcCallback interface is an interface for the Tribes channel to request a

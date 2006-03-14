@@ -24,6 +24,7 @@ import org.apache.catalina.tribes.ChannelReceiver;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.InterceptorPayload;
 import org.apache.catalina.tribes.MessageListener;
+import org.apache.catalina.tribes.tcp.*;
 
 
 /**

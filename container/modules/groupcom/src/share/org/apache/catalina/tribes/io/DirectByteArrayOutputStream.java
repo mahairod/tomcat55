@@ -18,6 +18,7 @@ package org.apache.catalina.tribes.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  * Byte array output stream that exposes the byte array directly

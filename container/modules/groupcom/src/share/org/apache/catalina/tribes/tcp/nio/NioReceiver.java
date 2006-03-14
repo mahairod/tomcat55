@@ -34,6 +34,7 @@ import org.apache.catalina.tribes.io.ObjectReader;
 import org.apache.catalina.tribes.tcp.Constants;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.tribes.tcp.ReceiverBase;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  * @author Filip Hanik
@@ -86,9 +87,9 @@ public class NioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
      */
     public void start() {
         try {
-            TcpReplicationThread[] receivers = new TcpReplicationThread[tcpThreadCount];
+            NioReplicationThread[] receivers = new NioReplicationThread[tcpThreadCount];
             for ( int i=0; i<receivers.length; i++ ) {
-                receivers[i] = new TcpReplicationThread();
+                receivers[i] = new NioReplicationThread();
                 receivers[i].setRxBufSize(getRxBufSize());
                 receivers[i].setOptions(getWorkerThreadOptions());
             }
@@ -264,7 +265,7 @@ public class NioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
      *  will then de-register the channel on the next select call.
      */
     protected void readDataFromSocket(SelectionKey key) throws Exception {
-        TcpReplicationThread worker = (TcpReplicationThread) pool.getWorker();
+        NioReplicationThread worker = (NioReplicationThread) pool.getWorker();
         if (worker == null) {
             // No threads available, do nothing, the selection
             // loop will keep calling this method until a

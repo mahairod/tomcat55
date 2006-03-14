@@ -23,6 +23,7 @@ import java.nio.channels.SocketChannel;
 import org.apache.catalina.tribes.io.ObjectReader;
 import org.apache.catalina.tribes.tcp.Constants;
 import org.apache.catalina.tribes.tcp.ReceiverBase;
+import org.apache.catalina.tribes.tcp.WorkerThread;
 
 /**
  * A worker thread class which can drain channels and echo-back the input. Each
@@ -38,18 +39,13 @@ import org.apache.catalina.tribes.tcp.ReceiverBase;
  * 
  * @version $Revision: 378050 $, $Date: 2006-02-15 12:30:02 -0600 (Wed, 15 Feb 2006) $
  */
-public class TcpReplicationThread extends WorkerThread {
-    public static final int OPTION_SEND_ACK = ReceiverBase.OPTION_SEND_ACK;
-    public static final int OPTION_SYNCHRONIZED = ReceiverBase.OPTION_SYNCHRONIZED;
-    public static final int OPTION_DIRECT_BUFFER = ReceiverBase.OPTION_DIRECT_BUFFER;
-
-
+public class NioReplicationThread extends WorkerThread {
     
-    private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog( TcpReplicationThread.class );
+    private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog( NioReplicationThread.class );
     private ByteBuffer buffer = null;
     private SelectionKey key;
     private int rxBufSize;
-    public TcpReplicationThread ()
+    public NioReplicationThread ()
     {
     }
 
@@ -200,17 +196,7 @@ public class TcpReplicationThread extends WorkerThread {
     }
     
     
-    public boolean sendAckSync() {
-        int options = getOptions();
-        return ((OPTION_SEND_ACK & options) == OPTION_SEND_ACK) &&
-               ((OPTION_SYNCHRONIZED & options) == OPTION_SYNCHRONIZED);
-    }
-    
-    public boolean sendAckAsync() {
-        int options = getOptions();
-        return ((OPTION_SEND_ACK & options) == OPTION_SEND_ACK) &&
-               ((OPTION_SYNCHRONIZED & options) != OPTION_SYNCHRONIZED);
-    }
+
 
 
     /**

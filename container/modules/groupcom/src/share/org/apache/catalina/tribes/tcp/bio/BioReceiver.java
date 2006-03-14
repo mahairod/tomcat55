@@ -23,7 +23,8 @@ import org.apache.catalina.tribes.ChannelReceiver;
 import org.apache.catalina.tribes.io.ListenCallback;
 import org.apache.catalina.tribes.io.ObjectReader;
 import org.apache.catalina.tribes.tcp.ReceiverBase;
-import org.apache.catalina.tribes.tcp.nio.ThreadPool;
+import org.apache.catalina.tribes.tcp.ThreadPool;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  * <p>Title: </p>
@@ -53,7 +54,7 @@ public class BioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
      */
     public void start() throws IOException {
         try {
-            TcpReplicationThread[] receivers = new TcpReplicationThread[tcpThreadCount];
+            BioReplicationThread[] receivers = new BioReplicationThread[tcpThreadCount];
             for ( int i=0; i<receivers.length; i++ ) {
                 receivers[i] = getReplicationThread();
             }
@@ -73,8 +74,8 @@ public class BioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
         }
     }
     
-    protected TcpReplicationThread getReplicationThread() {
-        TcpReplicationThread result = new TcpReplicationThread();
+    protected BioReplicationThread getReplicationThread() {
+        BioReplicationThread result = new BioReplicationThread();
         result.setOptions(getWorkerThreadOptions());
         return result;
     }
@@ -124,7 +125,7 @@ public class BioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
                 if ( log.isWarnEnabled() )
                     log.warn("All BIO server replication threads are busy, unable to handle more requests until a thread is freed up.");
             }
-            TcpReplicationThread thread = (TcpReplicationThread)pool.getWorker();
+            BioReplicationThread thread = (BioReplicationThread)pool.getWorker();
             if ( thread == null ) continue; //should never happen
             try {
                 socket = serverSocket.accept();

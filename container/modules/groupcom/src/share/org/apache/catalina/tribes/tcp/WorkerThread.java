@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package org.apache.catalina.tribes.tcp.nio;
+package org.apache.catalina.tribes.tcp;
+
+
+
 
 /**
  * @author Filip Hanik
@@ -22,6 +25,12 @@ package org.apache.catalina.tribes.tcp.nio;
  */
 public class WorkerThread extends Thread
 {
+    
+    public static final int OPTION_SEND_ACK = ReceiverBase.OPTION_SEND_ACK;
+    public static final int OPTION_SYNCHRONIZED = ReceiverBase.OPTION_SYNCHRONIZED;
+    public static final int OPTION_DIRECT_BUFFER = ReceiverBase.OPTION_DIRECT_BUFFER;
+    
+    
     protected ThreadPool pool;
     protected boolean doRun = true;
     private int options;
@@ -46,6 +55,17 @@ public class WorkerThread extends Thread
     {
         doRun = false;
         notify();
-
     }
+    
+    public boolean sendAckSync() {
+        int options = getOptions();
+        return ((OPTION_SEND_ACK & options) == OPTION_SEND_ACK) &&
+               ((OPTION_SYNCHRONIZED & options) == OPTION_SYNCHRONIZED);
+    }
+
+    public boolean sendAckAsync() {
+        int options = getOptions();
+        return ((OPTION_SEND_ACK & options) == OPTION_SEND_ACK) &&
+               ((OPTION_SYNCHRONIZED & options) != OPTION_SYNCHRONIZED);
+    }    
 }

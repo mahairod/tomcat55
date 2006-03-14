@@ -40,6 +40,7 @@ import org.apache.catalina.tribes.MembershipListener;
 import org.apache.catalina.tribes.io.DirectByteArrayOutputStream;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.mcast.McastMember;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  * A smart implementation of a stateful replicated map. uses primary/secondary backup strategy. 

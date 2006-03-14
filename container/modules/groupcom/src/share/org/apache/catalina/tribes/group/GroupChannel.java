@@ -33,6 +33,7 @@ import org.apache.catalina.tribes.MembershipService;
 import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import java.util.ArrayList;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  * The GroupChannel manages the replication channel. It coordinates

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  * A <b>membership</b> implementation using simple multicast.
