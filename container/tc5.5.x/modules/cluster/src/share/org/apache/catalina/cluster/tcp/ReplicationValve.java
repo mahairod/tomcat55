@@ -461,6 +461,8 @@ public class ReplicationValve
   
     /**
      * Fix memory leak for long sessions with many changes, when no backup member exists!
+     * set primarySession flag at request session and all crossContext sessions
+     * @see DeltaManager#requestCompleted(String)
      * @param request current request after responce is generated
      * @param isCrossContext check crosscontext threadlocal
      */
@@ -468,6 +470,7 @@ public class ReplicationValve
         Session contextSession = request.getSessionInternal(false);
         if(contextSession != null & contextSession instanceof DeltaSession){
             resetDeltaRequest(contextSession);
+            ((DeltaSession)contextSession).setPrimarySession(true);
         }
         if(isCrossContext) {
             Object sessions = crossContextSessions.get();
@@ -477,6 +480,8 @@ public class ReplicationValve
                 for(; iter.hasNext() ;) {          
                     Session session = (Session)iter.next();
                     resetDeltaRequest(session);
+                    if(session instanceof DeltaSession)
+                        ((DeltaSession)contextSession).setPrimarySession(true);                        
                 }
             }
         }                     

@@ -54,6 +54,9 @@
   </subsection>
   <subsection name="Cluster">
     <changelog>
+      <fix>
+        ReplicationValve not set primarySession flag when all backup nodes gone (pero)
+      </fix>
       <update>
         Add DeltaSession.getLastAccessTimeInternal() without session invalidation test. (pero)
       </update>
