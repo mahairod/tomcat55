@@ -1,6 +1,6 @@
 package org.apache.catalina.tribes.tcp.bio;
 
-import java.net.InetAddress;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,8 +10,6 @@ import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.tcp.MultiPointSender;
-import org.apache.catalina.tribes.tcp.SenderState;
-import java.io.IOException;
 
 /**
  * <p>Title: </p>

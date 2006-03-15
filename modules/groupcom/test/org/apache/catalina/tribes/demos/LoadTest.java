@@ -160,7 +160,8 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
 
             }
         }catch ( Exception x ) {
-            x.printStackTrace();
+            log.error("Captured error while sending:"+x.getMessage());
+            if ( debug ) log.error("",x);
             printSendStats(LoadTest.messagesSent, LoadTest.messageSize);
         }
         endTest();

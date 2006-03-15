@@ -490,7 +490,7 @@ public class BioSender implements DataSender {
             }
         } catch (IOException x) {
             String errmsg = sm.getString("IDataSender.ack.missing", getAddress(),new Integer(socket.getLocalPort()), new Long(this.timeout));
-            if ( !SenderState.getSenderState(member).isSuspect() ) {
+            if ( SenderState.getSenderState(member).isReady() ) {
                 SenderState.getSenderState(member).setSuspect();
                 if ( log.isWarnEnabled() ) log.warn(errmsg, x);
             } else {
