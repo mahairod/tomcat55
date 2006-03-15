@@ -17,6 +17,7 @@ package org.apache.catalina.tribes.group;
 
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.apache.catalina.tribes.ByteMessage;
@@ -32,8 +33,6 @@ import org.apache.catalina.tribes.MembershipListener;
 import org.apache.catalina.tribes.MembershipService;
 import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
-import java.util.ArrayList;
-import org.apache.catalina.tribes.tcp.*;
 
 /**
  * The GroupChannel manages the replication channel. It coordinates
@@ -136,7 +135,7 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
                 if (channelListener != null && channelListener.accept(fwd, source))
                     channelListener.messageReceived(fwd, source);
             }//for
-        }catch ( Exception x ) {
+        } catch ( Exception x ) {
             log.error("Unable to deserialize channel message.",x);
         }
     }

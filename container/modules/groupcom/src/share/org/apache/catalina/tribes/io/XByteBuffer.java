@@ -519,7 +519,7 @@ public class XByteBuffer
     }
     
     public static Serializable deserialize(byte[] data, int offset, int length) 
-            throws IOException, ClassNotFoundException, ClassCastException {
+             throws IOException, ClassNotFoundException, ClassCastException {
         Object message = null;
         if (data != null) {
             InputStream  instream = new ByteArrayInputStream(data,offset,length);

@@ -29,6 +29,7 @@ import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.tcp.MultiPointSender;
+import org.apache.catalina.tribes.tcp.SenderState;
 
 /**
  * <p>Title: </p>
@@ -43,6 +44,10 @@ import org.apache.catalina.tribes.tcp.MultiPointSender;
  * @version 1.0
  */
 public class ParallelNioSender implements MultiPointSender {
+    
+    protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(ParallelNioSender.class);
+    
+    
     protected long timeout = 15000;
     protected long selectTimeout = 1000; 
     protected boolean waitForAck = false;
@@ -112,8 +117,14 @@ public class ParallelNioSender implements MultiPointSender {
                     sender.reset();
                     completed++;
                     sender.setComplete(true);
+                    SenderState.getSenderState(sender.getDestination()).setReady();
                 }//end if
             } catch (Exception x) {
+                SenderState state = SenderState.getSenderState(sender.getDestination());
+                if ( state.isReady() ) {
+                    log.warn("Member send is failing for:"+sender.getDestination().getName()+"; Setting to suspect.");
+                }
+                state.setSuspect();
                 byte[] data = sender.getMessage();
                 int attempt = sender.getAttempt()+1;
                 if ( sender.getAttempt() >= maxAttempts && maxAttempts>0 ) {
@@ -123,7 +134,7 @@ public class ParallelNioSender implements MultiPointSender {
                         sender.setAttempt(attempt);
                         sender.setMessage(data);
                     }catch ( Exception ignore){
-                        //dont report the error on a resend
+                        state.setFailing();
                     }
                 } else {
                     ChannelException cx = new ChannelException(x);
