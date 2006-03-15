@@ -48,7 +48,6 @@ public class NioSender implements DataSender{
 
     protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(NioSender.class);
 
-    protected boolean suspect = false;
     protected boolean connected = false;
     protected boolean waitForAck = false;
     protected int rxBufSize = 25188;
@@ -277,16 +276,6 @@ public class NioSender implements DataSender{
         return false;
     }
     /**
-     * getSuspect
-     *
-     * @return boolean
-     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
-     */
-    public boolean getSuspect() {
-        return suspect;
-    }
-
-    /**
      * isConnected
      *
      * @return boolean
@@ -339,17 +328,6 @@ public class NioSender implements DataSender{
     public void setRxBufSize(int size) {
         this.rxBufSize = size;
     }
-
-    /**
-     * setSuspect
-     *
-     * @param suspect boolean
-     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
-     */
-    public void setSuspect(boolean suspect) {
-        this.suspect = suspect;
-    }
-
     /**
      * setTxBufSize
      *

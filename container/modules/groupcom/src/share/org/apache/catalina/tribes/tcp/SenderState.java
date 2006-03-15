@@ -16,6 +16,9 @@
 
 package org.apache.catalina.tribes.tcp;
 
+import org.apache.catalina.tribes.Member;
+import java.util.HashMap;
+
 
 /**
  * Send cluster messages with a pool of sockets (25).
@@ -36,6 +39,30 @@ public class SenderState {
      * The descriptive information about this implementation.
      */
     private static final String info = "SenderState/1.0";
+    
+    
+    protected static HashMap memberStates = new HashMap();
+    
+    public static SenderState getSenderState(Member member) {
+        SenderState state = (SenderState)memberStates.get(member);
+        if ( state == null ) {
+            synchronized ( memberStates ) {
+                state = (SenderState)memberStates.get(member);
+                if ( state == null ) {
+                    state = new SenderState();
+                    memberStates.put(member,state);
+                }
+            }
+        }
+        return state;
+    }
+    
+    public static void removeSenderState(Member member) {
+        synchronized ( memberStates ) {
+            memberStates.remove(member);
+        }
+    }
+    
 
     // ----------------------------------------------------- Instance Variables
 
@@ -44,11 +71,11 @@ public class SenderState {
     //  ----------------------------------------------------- Constructor
 
     
-    public SenderState() {
+    private SenderState() {
         this(READY);
     }
 
-    public SenderState(int state) {
+    private SenderState(int state) {
         this.state = state;
     }
     

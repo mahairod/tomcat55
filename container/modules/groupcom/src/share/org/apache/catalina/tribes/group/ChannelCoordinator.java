@@ -15,16 +15,15 @@
  */
 package org.apache.catalina.tribes.group;
 
-import org.apache.catalina.tribes.MembershipService;
-import org.apache.catalina.tribes.Member;
-import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.ChannelException;
-import org.apache.catalina.tribes.ChannelSender;
+import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.ChannelReceiver;
-import org.apache.catalina.tribes.Channel;
+import org.apache.catalina.tribes.ChannelSender;
 import org.apache.catalina.tribes.InterceptorPayload;
+import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.MembershipService;
 import org.apache.catalina.tribes.MessageListener;
-import org.apache.catalina.tribes.tcp.*;
+import org.apache.catalina.tribes.tcp.SenderState;
 
 
 /**
@@ -122,11 +121,13 @@ public class ChannelCoordinator extends ChannelInterceptorBase implements Messag
     }
     
     public void memberAdded(Member member){
+        SenderState.getSenderState(member);
         if ( clusterSender!=null ) clusterSender.add(member);
         super.memberAdded(member);
     }
     
     public void memberDisappeared(Member member){
+        SenderState.removeSenderState(member);
         if ( clusterSender!=null ) clusterSender.remove(member);
         super.memberDisappeared(member);
     }
