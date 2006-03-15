@@ -25,6 +25,7 @@ import org.apache.catalina.tribes.ManagedChannel;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
 import org.apache.catalina.tribes.tipis.LazyReplicatedMap;
+import org.apache.catalina.tribes.tcp.*;
 
 /**
  * <p>Title: </p>
