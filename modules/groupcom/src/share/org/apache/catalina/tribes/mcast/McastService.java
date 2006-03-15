@@ -72,7 +72,7 @@ public class McastService implements MembershipService,MembershipListener {
     /**
      * The local member
      */
-    protected McastMember localMember ;
+    protected MemberImpl localMember ;
     private int mcastSoTimeout;
     private int mcastTTL;
 
@@ -246,7 +246,7 @@ public class McastService implements MembershipService,MembershipListener {
         int port = Integer.parseInt(getProperties().getProperty("tcpListenPort"));
         
         if ( localMember == null ) {
-            localMember = new McastMember(domain, host, port, 100);
+            localMember = new MemberImpl(domain, host, port, 100);
         } else {
             localMember.setDomain(domain);
             localMember.setHostname(host);
@@ -275,7 +275,7 @@ public class McastService implements MembershipService,MembershipListener {
             }
         }
 
-        impl = new McastServiceImpl((McastMember)localMember,Long.parseLong(properties.getProperty("msgFrequency")),
+        impl = new McastServiceImpl((MemberImpl)localMember,Long.parseLong(properties.getProperty("msgFrequency")),
                                     Long.parseLong(properties.getProperty("memberDropTime")),
                                     Integer.parseInt(properties.getProperty("mcastPort")),
                                     bind,
