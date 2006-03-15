@@ -39,8 +39,6 @@ public abstract class PooledSender implements MultiPointSender {
     private boolean waitForAck;
     private long timeout;
     private int poolSize = 25;
-    private boolean suspect;
-
     public PooledSender() {
         queue = new SenderQueue(this,poolSize);
     }
@@ -99,14 +97,6 @@ public abstract class PooledSender implements MultiPointSender {
     public void setPoolSize(int poolSize) {
         this.poolSize = poolSize;
         queue.setLimit(poolSize);
-    }
-
-    public void setSuspect(boolean suspect) {
-        this.suspect = suspect;
-    }
-    
-    public boolean getSuspect() {
-        return suspect;
     }
 
     public boolean isConnected() {
