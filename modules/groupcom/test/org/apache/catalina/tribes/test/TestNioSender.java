@@ -5,7 +5,7 @@ import java.nio.channels.SelectionKey;
 import java.util.Iterator;
 import java.nio.channels.Selector;
 import org.apache.catalina.tribes.tcp.nio.NioSender;
-import org.apache.catalina.tribes.mcast.McastMember;
+import org.apache.catalina.tribes.mcast.MemberImpl;
 import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.Member;
@@ -25,7 +25,7 @@ import org.apache.catalina.tribes.Member;
 public class TestNioSender {
     private Selector selector = null;
     private int counter = 0;
-    McastMember mbr;
+    MemberImpl mbr;
     public TestNioSender()  {
         
     }
@@ -44,7 +44,7 @@ public class TestNioSender {
 
     public void init() throws Exception {
         selector = Selector.open();
-        mbr = new McastMember("","localhost",4444,0);
+        mbr = new MemberImpl("","localhost",4444,0);
         NioSender sender = new NioSender(mbr);
         sender.setWaitForAck(false);
         sender.setDirect(true);

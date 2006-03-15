@@ -8,6 +8,7 @@ Documentation:
 Code Tasks:
 ===========================================
 
+18. Implement SSL encryption over message transfers
 
 8. WaitForCompletionInterceptor - waits for the message to get processed by all receivers before returning
   (This is useful when synchronized=false and waitForAck=false, to improve
@@ -27,19 +28,6 @@ don't return until all have been processed on the remote end.)
 
 11. Code a ReplicatedFileSystem example, package org.apache.catalina.tipis
 
-12. LazyReplicatedHashMap - memory efficient clustered map.
-    This map can be used for PRIMARY/SECONDARY session replication
-    Ahh, the beauty of storing data in remote locations
-    The lazy hash map will only replicate its attribute names to all members in the group
-    with that name, it will also replicate the source (where to get the object)
-    and the backup member where it can find a backup if the source is gone.
-    If the source disappears, the backup node will replicate attributes that 
-    are stored to a new primary backups can be chosen on round robin.
-    When a new member arrives and requests state, that member will get all the attribute 
-    names and the locations.
-    It can replicate every X seconds, or on dirty flags by the objects stored,
-    or a request to scan for dirty flags, or a request with the objects.
-    
 13. StateTransfer interceptor
     the ideas just come up in my head. the state transfer interceptor 
     will hold all incoming messages until it has received a message
@@ -52,11 +40,9 @@ don't return until all have been processed on the remote end.)
     
 14. Keepalive count and idle kill off for Nio senders
 
-15. remove DataSenderFactory and DataSender.properties -
-    these cause the settings to be hard coded ant not pluggable.
-    
 16. Guaranteed delivery of messages, ie either all get it or none get it.
     Meaning, that all receivers get it, then wait for a process command.
+    ala Gossip protocol
 
 17. Implement transactions - the ability to start a transaction, send several messages,
                              and then commit the transaction
@@ -93,3 +79,21 @@ Notes: completed. works very well, have not implemented suspect error logging.
 
 7. FragmentationInterceptor - splits up messages that are larger than X bytes.
 Notes: complated
+
+15. remove DataSenderFactory and DataSender.properties -
+    these cause the settings to be hard coded ant not pluggable.
+Notes: Completed, now you can initialize a transport class
+
+12. LazyReplicatedHashMap - memory efficient clustered map.
+    This map can be used for PRIMARY/SECONDARY session replication
+    Ahh, the beauty of storing data in remote locations
+    The lazy hash map will only replicate its attribute names to all members in the group
+    with that name, it will also replicate the source (where to get the object)
+    and the backup member where it can find a backup if the source is gone.
+    If the source disappears, the backup node will replicate attributes that 
+    are stored to a new primary backups can be chosen on round robin.
+    When a new member arrives and requests state, that member will get all the attribute 
+    names and the locations.
+    It can replicate every X seconds, or on dirty flags by the objects stored,
+    or a request to scan for dirty flags, or a request with the objects.
+Notes: the map has been completed
