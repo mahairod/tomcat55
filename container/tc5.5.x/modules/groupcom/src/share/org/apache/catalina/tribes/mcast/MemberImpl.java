@@ -33,7 +33,7 @@ import java.util.Arrays;
  * @author Peter Rossbach
  * @version $Revision: 304032 $, $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
  */
-public class McastMember implements Member, java.io.Externalizable {
+public class MemberImpl implements Member, java.io.Externalizable {
 
     /**
      * Digits, used for "superfast" de-serialization of an
@@ -87,7 +87,7 @@ public class McastMember implements Member, java.io.Externalizable {
     /**
      * Empty constructor for serialization
      */
-    public McastMember() {
+    public MemberImpl() {
         
     }
 
@@ -98,7 +98,7 @@ public class McastMember implements Member, java.io.Externalizable {
      * @param host - the tcp listen host
      * @param port - the tcp listen port
      */
-    public McastMember(String domain,
+    public MemberImpl(String domain,
                        String host,
                        int port,
                        long aliveTime) throws IOException {
@@ -117,10 +117,10 @@ public class McastMember implements Member, java.io.Externalizable {
      */
     public java.util.HashMap getMemberProperties() {
         java.util.HashMap map = new java.util.HashMap(2);
-        map.put(McastMember.TCP_LISTEN_HOST,this.host);
-        map.put(McastMember.TCP_LISTEN_PORT,String.valueOf(this.port));
-        map.put(McastMember.MEMBER_NAME,getName());
-        map.put(McastMember.MEMBER_DOMAIN,domain);
+        map.put(MemberImpl.TCP_LISTEN_HOST,this.host);
+        map.put(MemberImpl.TCP_LISTEN_PORT,String.valueOf(this.port));
+        map.put(MemberImpl.MEMBER_NAME,getName());
+        map.put(MemberImpl.MEMBER_DOMAIN,domain);
         return map;
     }
 
@@ -187,7 +187,7 @@ public class McastMember implements Member, java.io.Externalizable {
      * @param data - the bytes received
      * @return a member object.
      */
-    public static McastMember getMember(byte[] data, McastMember member) {
+    public static MemberImpl getMember(byte[] data, MemberImpl member) {
        //package looks like
        //alive - 8 bytes
        //port - 4 bytes
@@ -214,8 +214,8 @@ public class McastMember implements Member, java.io.Externalizable {
        return member;
     }
 
-    public static McastMember getMember(byte[] data) {
-       return getMember(data,new McastMember());
+    public static MemberImpl getMember(byte[] data) {
+       return getMember(data,new MemberImpl());
     }
 
     /**
@@ -303,9 +303,9 @@ public class McastMember implements Member, java.io.Externalizable {
      * @param o
      */
     public boolean equals(Object o) {
-        if ( o instanceof McastMember )    {
-            return Arrays.equals(this.getHost(),((McastMember)o).getHost()) &&
-                   this.getPort() == ((McastMember)o).getPort();
+        if ( o instanceof MemberImpl )    {
+            return Arrays.equals(this.getHost(),((MemberImpl)o).getHost()) &&
+                   this.getPort() == ((MemberImpl)o).getPort();
         }
         else
             return false;

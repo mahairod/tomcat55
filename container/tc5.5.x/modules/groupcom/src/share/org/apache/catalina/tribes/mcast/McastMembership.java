@@ -37,13 +37,13 @@ import org.apache.catalina.tribes.tcp.*;
  */
 public class McastMembership
 {
-    protected static final McastMember[] EMPTY_MEMBERS = new McastMember[0];
+    protected static final MemberImpl[] EMPTY_MEMBERS = new MemberImpl[0];
     
     /**
      * The name of this membership, has to be the same as the name for the local
      * member
      */
-    protected McastMember local;
+    protected MemberImpl local;
     
     /**
      * A map of all the members in the cluster.
@@ -53,7 +53,7 @@ public class McastMembership
     /**
      * A list of all the members in the cluster.
      */
-    protected McastMember[] members = EMPTY_MEMBERS;
+    protected MemberImpl[] members = EMPTY_MEMBERS;
     
     /**
       * sort members by alive time
@@ -64,7 +64,7 @@ public class McastMembership
      * Constructs a new membership
      * @param name - has to be the name of the local member. Used to filter the local member from the cluster membership
      */
-    public McastMembership(McastMember local) {
+    public McastMembership(MemberImpl local) {
         this.local = local;
     }
 
@@ -84,7 +84,7 @@ public class McastMembership
      * @return - true if this member is new to the cluster, false otherwise.
      * @return - false if this member is the local member or updated.
      */
-    public synchronized boolean memberAlive(McastMember member) {
+    public synchronized boolean memberAlive(MemberImpl member) {
         boolean result = false;
         //ignore ourselves
         if (  member.equals(local) ) return result;
@@ -98,7 +98,7 @@ public class McastMembership
             result = true;
        } else {
             //update the member alive time
-            McastMember updateMember = entry.getMember() ;
+            MemberImpl updateMember = entry.getMember() ;
             if(updateMember.getMemberAliveTime() != member.getMemberAliveTime()) {
                 updateMember.setMemberAliveTime(member.getMemberAliveTime());
                 Arrays.sort(members, memberComparator);
@@ -113,10 +113,10 @@ public class McastMembership
      * Add a member to this component and sort array with memberComparator
      * @param member The member to add
      */
-    protected void addMcastMember(McastMember member) {
+    protected void addMcastMember(MemberImpl member) {
       synchronized (members) {
-          McastMember results[] =
-            new McastMember[members.length + 1];
+          MemberImpl results[] =
+            new MemberImpl[members.length + 1];
           for (int i = 0; i < members.length; i++)
               results[i] = members[i];
           results[members.length] = member;
@@ -130,7 +130,7 @@ public class McastMembership
      * 
      * @param member The member to remove
      */
-    protected void removeMcastMember(McastMember member) {
+    protected void removeMcastMember(MemberImpl member) {
         synchronized (members) {
             int n = -1;
             for (int i = 0; i < members.length; i++) {
@@ -141,8 +141,8 @@ public class McastMembership
             }
             if (n < 0)
                 return;
-            McastMember results[] =
-              new McastMember[members.length - 1];
+            MemberImpl results[] =
+              new MemberImpl[members.length - 1];
             int j = 0;
             for (int i = 0; i < members.length; i++) {
                 if (i != n)
@@ -159,7 +159,7 @@ public class McastMembership
      * @param maxtime - the max time a member can remain unannounced before it is considered dead.
      * @return the list of expired members
      */
-    public synchronized McastMember[] expire(long maxtime) {
+    public synchronized MemberImpl[] expire(long maxtime) {
         if(!hasMembers() )
            return EMPTY_MEMBERS;
        
@@ -175,7 +175,7 @@ public class McastMembership
         }
         
         if(list != null) {
-            McastMember[] result = new McastMember[list.size()];
+            MemberImpl[] result = new MemberImpl[list.size()];
             list.toArray(result);
             for( int j=0; j<result.length; j++) {
                 map.remove(result[j]);
@@ -195,9 +195,9 @@ public class McastMembership
     }
     
     
-    public synchronized McastMember getMember(Member mbr) {
+    public synchronized MemberImpl getMember(Member mbr) {
         if(hasMembers()) {
-            McastMember result = null;
+            MemberImpl result = null;
             for ( int i=0; i<this.members.length && result==null; i++ ) {
                 if ( members[i].equals(mbr) ) result = members[i];
             }//for
@@ -211,7 +211,7 @@ public class McastMembership
      * Returning a list of all the members in the membership
      * We not need a copy: add and remove generate new arrays.
      */
-    public synchronized McastMember[] getMembers() {
+    public synchronized MemberImpl[] getMembers() {
         if(hasMembers()) {
             return members;
         } else {
@@ -238,13 +238,13 @@ public class McastMembership
 
         public int compare(Object o1, Object o2) {
             try {
-                return compare((McastMember) o1, (McastMember) o2);
+                return compare((MemberImpl) o1, (MemberImpl) o2);
             } catch (ClassCastException x) {
                 return 0;
             }
         }
 
-        public int compare(McastMember m1, McastMember m2) {
+        public int compare(MemberImpl m1, MemberImpl m2) {
             //longer alive time, means sort first
             long result = m2.getMemberAliveTime() - m1.getMemberAliveTime();
             if (result < 0)
@@ -262,10 +262,10 @@ public class McastMembership
     protected static class MbrEntry
     {
 
-        protected McastMember mbr;
+        protected MemberImpl mbr;
         protected long lastHeardFrom;
 
-        public MbrEntry(McastMember mbr) {
+        public MbrEntry(MemberImpl mbr) {
            this.mbr = mbr;
         }
 
@@ -279,7 +279,7 @@ public class McastMembership
         /**
          * Return the actual McastMember object
          */
-        public McastMember getMember() {
+        public MemberImpl getMember() {
             return mbr;
         }
 
