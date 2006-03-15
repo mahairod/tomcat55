@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import org.apache.catalina.tribes.mcast.McastMember;
+import org.apache.catalina.tribes.mcast.MemberImpl;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import org.apache.catalina.tribes.util.UUIDGenerator;
@@ -148,7 +148,7 @@ public class ClusterData implements ChannelMessage {
      * @return byte[]
      */
     public byte[] getDataPackage()  {
-        byte[] addr = ((McastMember)address).getData(false);
+        byte[] addr = ((MemberImpl)address).getData(false);
         int length = 
             4 + //options
             8 + //timestamp  off=4
@@ -193,7 +193,7 @@ public class ClusterData implements ChannelMessage {
         byte[] addr = new byte[XByteBuffer.toInt(b,offset)];
         offset += 4; //addr length
         System.arraycopy(b,offset,addr,0,addr.length);
-        data.setAddress(McastMember.getMember(addr));
+        data.setAddress(MemberImpl.getMember(addr));
         offset += addr.length; //addr data
         data.message = new XByteBuffer(new byte[XByteBuffer.toInt(b,offset)],false);
         offset += 4; //message length

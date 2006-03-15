@@ -50,7 +50,7 @@ public class McastServiceImpl
     /**
      * The local member that we intend to broad cast over and over again
      */
-    protected McastMember member;
+    protected MemberImpl member;
     /**
      * The multicast address
      */
@@ -113,7 +113,7 @@ public class McastServiceImpl
      * @throws IOException
      */
     public McastServiceImpl(
-        McastMember member,
+        MemberImpl member,
         long sendFrequency,
         long expireTime,
         int port,
@@ -208,7 +208,7 @@ public class McastServiceImpl
         socket.receive(receivePacket);
         byte[] data = new byte[receivePacket.getLength()];
         System.arraycopy(receivePacket.getData(),receivePacket.getOffset(),data,0,data.length);
-        McastMember m = McastMember.getMember(data);
+        MemberImpl m = MemberImpl.getMember(data);
         if(log.isDebugEnabled())
             log.debug("Mcast receive ping from member " + m);
 
@@ -217,7 +217,7 @@ public class McastServiceImpl
                 log.debug("Mcast add member " + m);
             service.memberAdded(m);
         }
-        McastMember[] expired = membership.expire(timeToExpiration);
+        MemberImpl[] expired = membership.expire(timeToExpiration);
         for ( int i=0; i<expired.length; i++) {
             if(log.isDebugEnabled())
                 log.debug("Mcast exipre  member " + m);
