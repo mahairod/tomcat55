@@ -53,7 +53,6 @@ public class ParallelNioSender implements MultiPointSender {
     protected boolean directBuf = false;
     protected int rxBufSize = 43800;
     protected int txBufSize = 25188;
-    protected boolean suspect = false;
     private boolean connected;
     private boolean autoConnect;
 
@@ -227,10 +226,6 @@ public class ParallelNioSender implements MultiPointSender {
     public void finalize() {
         try {disconnect(); }catch ( Exception ignore){}
     }
-    
-    public boolean getSuspect() {
-        return suspect;
-    }
 
     public boolean isConnected() {
         return connected;
@@ -240,10 +235,6 @@ public class ParallelNioSender implements MultiPointSender {
         return autoConnect;
     }
 
-    public void setSuspect(boolean suspect) {
-        this.suspect = suspect;
-    }
-    
     public void setUseDirectBuffer(boolean directBuf) {
         this.directBuf = directBuf;
     }

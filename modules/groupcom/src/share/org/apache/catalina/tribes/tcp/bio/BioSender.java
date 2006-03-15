@@ -29,6 +29,8 @@ import org.apache.catalina.tribes.tcp.SenderState;
 import org.apache.catalina.util.StringManager;
 import java.io.OutputStream;
 import java.io.InputStream;
+import org.apache.catalina.tribes.Member;
+import java.net.UnknownHostException;
 
 /**
  * Send cluster messages with only one socket. Ack and keep Alive Handling is
@@ -64,6 +66,7 @@ public class BioSender implements DataSender {
      * receiver port
      */
     private int port;
+    protected Member member;
 
     
     /**
@@ -77,11 +80,6 @@ public class BioSender implements DataSender {
      * is Socket really connected
      */
     private boolean connected = false;
-
-    /**
-     * sender is in suspect state (last transfer failed)
-     */
-    private SenderState senderState = new SenderState();
 
     /**
      * wait time for ack
@@ -137,19 +135,16 @@ public class BioSender implements DataSender {
 
     // ------------------------------------------------------------- Constructor
     
-    public BioSender(InetAddress host, int port) {
-        this.address = host;
-        this.port = port;
+    public BioSender(Member member) throws UnknownHostException {
+        this.member = member;
+        this.address = InetAddress.getByAddress(member.getHost());
+        this.port = member.getPort();
         if (log.isDebugEnabled())
             log.debug(sm.getString("IDataSender.create",address, new Integer(port)));
     }
 
-    public BioSender(InetAddress host, int port, SenderState state) {
-        this(host,port);
-        if ( state != null ) this.senderState = state;
-    }
-    public BioSender(InetAddress host, int port, SenderState state, int rxBufSize, int txBufSize) {
-        this(host,port,state);
+    public BioSender(Member member, int rxBufSize, int txBufSize) throws UnknownHostException {
+        this(member);
         this.rxBufSize = rxBufSize;
         this.txBufSize = txBufSize;
     }
@@ -191,21 +186,6 @@ public class BioSender implements DataSender {
 
     public boolean isConnected() {
         return connected;
-    }
-
-    public boolean isSuspect() {
-        return senderState.isSuspect() || senderState.isFailing();
-    }
-
-    public boolean getSuspect() {
-        return isSuspect();
-    }
-
-    public void setSuspect(boolean suspect) {
-        if ( suspect ) 
-            this.senderState.setSuspect();
-        else
-            this.senderState.setReady();
     }
 
     public long getTimeout() {
@@ -272,10 +252,6 @@ public class BioSender implements DataSender {
      */
     public void setResend(boolean resend) {
         this.resend = resend;
-    }
-
-    public SenderState getSenderState() {
-        return senderState;
     }
 
     public int getRxBufSize() {
@@ -413,7 +389,7 @@ public class BioSender implements DataSender {
            if (log.isDebugEnabled())
                log.debug(sm.getString("IDataSender.openSocket", address.getHostAddress(), new Integer(port), new Long(0)));
       } catch (IOException ex1) {
-          getSenderState().setSuspect();
+          SenderState.getSenderState(member).setSuspect();
           if (log.isDebugEnabled())
               log.debug(sm.getString("IDataSender.openSocket.failure",address.getHostAddress(), new Integer(port),new Long(0)), ex1);
           throw (ex1);
@@ -514,8 +490,8 @@ public class BioSender implements DataSender {
             }
         } catch (IOException x) {
             String errmsg = sm.getString("IDataSender.ack.missing", getAddress(),new Integer(socket.getLocalPort()), new Long(this.timeout));
-            if ( !this.isSuspect() ) {
-                this.setSuspect(true);
+            if ( !SenderState.getSenderState(member).isSuspect() ) {
+                SenderState.getSenderState(member).setSuspect();
                 if ( log.isWarnEnabled() ) log.warn(errmsg, x);
             } else {
                 if ( log.isDebugEnabled() )log.debug(errmsg, x);

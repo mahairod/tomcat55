@@ -38,7 +38,6 @@ public class MultipointBioSender implements MultiPointSender {
     protected boolean directBuf = false;
     protected int rxBufSize = 43800;
     protected int txBufSize = 25188;
-    protected boolean suspect = false;
     private boolean connected;
     private boolean autoConnect;
 
@@ -67,8 +66,7 @@ public class MultipointBioSender implements MultiPointSender {
             try {
                 BioSender sender = (BioSender) bioSenders.get(destination[i]);
                 if (sender == null) {
-                    InetAddress dest = InetAddress.getByAddress(destination[i].getHost());
-                    sender = new BioSender(dest, destination[i].getPort(), new SenderState(), rxBufSize, txBufSize);
+                    sender = new BioSender(destination[i], rxBufSize, txBufSize);
                     sender.setKeepAliveCount(keepAliveCount);
                     sender.setTimeout(timeout);
                     //sender.setResend();
@@ -131,20 +129,12 @@ public class MultipointBioSender implements MultiPointSender {
         try {disconnect(); }catch ( Exception ignore){}
     }
 
-    public boolean getSuspect() {
-        return suspect;
-    }
-
     public boolean isConnected() {
         return connected;
     }
 
     public boolean isAutoConnect() {
         return autoConnect;
-    }
-
-    public void setSuspect(boolean suspect) {
-        this.suspect = suspect;
     }
 
     public void setUseDirectBuffer(boolean directBuf) {
