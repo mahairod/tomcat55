@@ -65,6 +65,16 @@
       <a href="[preferred]/tomcat/tomcat-5/v5.5.16/README.html">README</a>
       file for packaging information.  It explains what every distribution contains.
       </p>
+      <p>
+      <strong>Note Regarding Native Connector:</strong>
+      The Tomcat 5.5.16 binaries include the Native Connector version 1.1.1.  This version
+      contains some significant bugs that have been addressed in version 1.1.2.  We strongly
+      encourage users of the Native Connector to upgrade to version 1.1.2 by downloading it: 
+      <a href="[preferred]/tomcat/tomcat-connectors/native/tomcat-native-1.1.2.tar.gz">tar.gz</a>
+      (<a href="http://www.apache.org/dist/tomcat/tomcat-connectors/native/tomcat-native-1.1.2.tar.gz.asc">PGP</a>), 
+      <a href="[preferred]/tomcat/tomcat-connectors/native/tomcat-native-1.1.2.zip">zip</a> 
+      (<a href="http://www.apache.org/dist/tomcat/tomcat-connectors/native/tomcat-native-1.1.2.zip.asc">PGP</a>)
+      </p>
 
       <subsection name="Binary Distributions">
       <ul>
