@@ -30,14 +30,9 @@ import java.util.List;
  * @author not attributable
  * @version 1.0
  */
-public abstract class PooledSender implements MultiPointSender {
+public abstract class PooledSender extends AbstractSocketSender implements MultiPointSender {
     
     private SenderQueue queue = null;
-    private boolean connected;
-    private int rxBufSize;
-    private int txBufSize;
-    private boolean waitForAck;
-    private long timeout;
     private int poolSize = 25;
     public PooledSender() {
         queue = new SenderQueue(this,poolSize);
@@ -46,7 +41,7 @@ public abstract class PooledSender implements MultiPointSender {
     public abstract DataSender getNewDataSender();
     
     public DataSender getSender() {
-        return queue.getSender(timeout);
+        return queue.getSender(getTimeout());
     }
     
     public void returnSender(DataSender sender) {
@@ -74,49 +69,10 @@ public abstract class PooledSender implements MultiPointSender {
         return queue.getInUsePoolSize();
     }
 
-    public void setConnected(boolean connected) {
-        this.connected = connected;
-    }
-
-    public void setRxBufSize(int rxBufSize) {
-        this.rxBufSize = rxBufSize;
-    }
-
-    public void setTxBufSize(int txBufSize) {
-        this.txBufSize = txBufSize;
-    }
-
-    public void setWaitForAck(boolean waitForAck) {
-        this.waitForAck = waitForAck;
-    }
-
-    public void setTimeout(long timeout) {
-        this.timeout = timeout;
-    }
 
     public void setPoolSize(int poolSize) {
         this.poolSize = poolSize;
         queue.setLimit(poolSize);
-    }
-
-    public boolean isConnected() {
-        return connected;
-    }
-
-    public int getRxBufSize() {
-        return rxBufSize;
-    }
-
-    public int getTxBufSize() {
-        return txBufSize;
-    }
-
-    public boolean getWaitForAck() {
-        return waitForAck;
-    }
-
-    public long getTimeout() {
-        return timeout;
     }
 
     public int getPoolSize() {
