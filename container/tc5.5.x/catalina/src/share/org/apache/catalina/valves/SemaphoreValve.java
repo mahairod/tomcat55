@@ -101,6 +101,22 @@ public class SemaphoreValve
     public void setFairness(boolean fairness) { this.fairness = fairness; }
     
 
+    /**
+     * Block until a permit is available.
+     */
+    protected boolean block = true;
+    public boolean getBlock() { return block; }
+    public void setBlock(boolean block) { this.block = block; }
+    
+
+    /**
+     * Block interruptibly until a permit is available.
+     */
+    protected boolean interruptible = false;
+    public boolean getInterruptible() { return interruptible; }
+    public void setInterruptible(boolean interruptible) { this.interruptible = interruptible; }
+    
+
     // ------------------------------------------------------ Lifecycle Methods
 
 
@@ -206,15 +222,55 @@ public class SemaphoreValve
     public void invoke(Request request, Response response)
         throws IOException, ServletException {
 
-        try {
-            semaphore.acquireUninterruptibly();
-            // Perform the request
+        if (controlConcurrency(request, response)) {
+            boolean shouldRelease = true;
+            try {
+                if (block) {
+                    if (interruptible) {
+                        try {
+                            semaphore.acquire();
+                        } catch (InterruptedException e) {
+                            shouldRelease = false;
+                            permitDenied(request, response);
+                            return;
+                        }  
+                    } else {
+                        semaphore.acquireUninterruptibly();
+                    }
+                } else {
+                    if (!semaphore.tryAcquire()) {
+                        shouldRelease = false;
+                        permitDenied(request, response);
+                        return;
+                    }
+                }
+                getNext().invoke(request, response);
+            } finally {
+                if (shouldRelease) {
+                    semaphore.release();
+                }
+            }
+        } else {
             getNext().invoke(request, response);
-        } finally {
-            semaphore.release();
         }
 
     }
 
+    
+    /**
+     * Subclass friendly method to add conditions.
+     */
+    public boolean controlConcurrency(Request request, Response response) {
+        return true;
+    }
+    
+
+    /**
+     * Subclass friendly method to add error handling when a permit isn't granted.
+     */
+    public void permitDenied(Request request, Response response)
+        throws IOException, ServletException {
+    }
+    
 
 }
