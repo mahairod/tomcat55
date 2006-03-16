@@ -38,6 +38,7 @@ public class MultipointBioSender implements MultiPointSender {
     protected int txBufSize = 25188;
     private boolean connected;
     private boolean autoConnect;
+    private long keepAliveTime = -1;
 
     public synchronized void sendMessage(Member[] destination, ChannelMessage msg) throws ChannelException {
         long start = System.currentTimeMillis();
@@ -66,6 +67,7 @@ public class MultipointBioSender implements MultiPointSender {
                 if (sender == null) {
                     sender = new BioSender(destination[i], rxBufSize, txBufSize);
                     sender.setKeepAliveCount(keepAliveCount);
+                    sender.setKeepAliveTime(keepAliveTime);
                     sender.setTimeout(timeout);
                     //sender.setResend();
                     //sender.setKeepAliveTimeout();
@@ -135,6 +137,10 @@ public class MultipointBioSender implements MultiPointSender {
         return autoConnect;
     }
 
+    public long getKeepAliveTime() {
+        return keepAliveTime;
+    }
+
     public void setUseDirectBuffer(boolean directBuf) {
         this.directBuf = directBuf;
     }
@@ -169,6 +175,10 @@ public class MultipointBioSender implements MultiPointSender {
 
     public void setKeepAliveCount(int keepAliveCount) {
         this.keepAliveCount = keepAliveCount;
+    }
+
+    public void setKeepAliveTime(long keepAliveTime) {
+        this.keepAliveTime = keepAliveTime;
     }
 
     public boolean keepalive() {
