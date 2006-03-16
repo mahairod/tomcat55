@@ -468,6 +468,7 @@ public class ReplicationValve
         Session contextSession = request.getSessionInternal(false);
         if(contextSession != null & contextSession instanceof DeltaSession){
             resetDeltaRequest(contextSession);
+            ((DeltaSession)contextSession).setPrimarySession(true);
         }
         if(isCrossContext) {
             Object sessions = crossContextSessions.get();
@@ -477,6 +478,9 @@ public class ReplicationValve
                 for(; iter.hasNext() ;) {          
                     Session session = (Session)iter.next();
                     resetDeltaRequest(session);
+                    if(session instanceof DeltaSession)
+                        ((DeltaSession)contextSession).setPrimarySession(true);
+
                 }
             }
         }                     
