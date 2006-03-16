@@ -120,7 +120,7 @@ public class NioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
         selector = Selector.open();
         // set the port the server channel will listen to
         //serverSocket.bind(new InetSocketAddress(getBind(), getTcpListenPort()));
-        bind(serverSocket,getTcpListenPort(),10);
+        bind(serverSocket,getTcpListenPort(),getAutoBind());
         // set non-blocking mode for the listening socket
         serverChannel.configureBlocking(false);
         // register the ServerSocketChannel with the Selector

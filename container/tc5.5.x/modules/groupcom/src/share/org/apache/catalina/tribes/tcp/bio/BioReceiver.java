@@ -99,7 +99,7 @@ public class BioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
         serverSocket = new ServerSocket();
         // set the port the server channel will listen to
         //serverSocket.bind(new InetSocketAddress(getBind(), getTcpListenPort()));
-        bind(serverSocket,getPort(),10);
+        bind(serverSocket,getPort(),getAutoBind());
     }
     
     
