@@ -69,7 +69,10 @@ public class NioSender implements DataSender{
     protected int remaining = 0;
     protected boolean complete;
     protected int attempt;
-    protected int keepAliveCount;
+    protected int keepAliveCount = -1;
+    protected int requestCount = 0;
+    protected long connectTime;
+    protected long keepAliveTime = -1;
     protected long timeout;
 
     public NioSender(Member destination) {
@@ -90,6 +93,8 @@ public class NioSender implements DataSender{
             if ( socketChannel.finishConnect() ) {
                 //we connected, register ourselves for writing
                 connected = true;
+                requestCount = 0;
+                connectTime = System.currentTimeMillis();
                 socketChannel.socket().setSendBufferSize(txBufSize);
                 socketChannel.socket().setReceiveBufferSize(rxBufSize);
                 socketChannel.socket().setSoTimeout((int)timeout);
@@ -99,32 +104,39 @@ public class NioSender implements DataSender{
                 //wait for the connection to finish
                 key.interestOps(key.interestOps() | SelectionKey.OP_CONNECT);
                 return false;
-            }
+            }//end if
         } else if ( key.isWritable() ) {
             boolean writecomplete = write(key);
             if ( writecomplete ) {
                 //we are completed, should we read an ack?
-                if ( waitForAck ) key.interestOps(key.interestOps()|SelectionKey.OP_READ);
-                //if not, we are ready, setMessage will reregister us for another write interest
-                else {
+                if ( waitForAck ) {
+                    //register to read the ack
+                    key.interestOps(key.interestOps() | SelectionKey.OP_READ);
+                } else {
+                    //if not, we are ready, setMessage will reregister us for another write interest
                     //do a health check, we have no way of verify a disconnected
                     //socket since we don't register for OP_READ on waitForAck=false
                     read(key);//this causes overhead.
+                    requestCount++;
                     return true;
                 }
             } else {
                 //we are not complete, lets write some more
                 key.interestOps(key.interestOps()|SelectionKey.OP_WRITE);
-            }
+            }//end if
         } else if ( key.isReadable() ) {
             boolean readcomplete = read(key);
-            if ( readcomplete ) return true;
-            else key.interestOps(key.interestOps()|SelectionKey.OP_READ);
+            if ( readcomplete ) {
+                requestCount++;
+                return true;
+            } else {
+                key.interestOps(key.interestOps() | SelectionKey.OP_READ);
+            }//end if
         } else {
             //unknown state, should never happen
             log.warn("Data is in unknown state. readyOps="+ops);
             throw new IOException("Data is in unknown state. readyOps="+ops);
-        }
+        }//end if
         return false;
     }
     
@@ -193,7 +205,6 @@ public class NioSender implements DataSender{
         socketChannel = SocketChannel.open();
         socketChannel.configureBlocking(false);
         socketChannel.connect(addr);
-        
         socketChannel.register(getSelector(),SelectionKey.OP_CONNECT,this);
     }
     
@@ -236,6 +247,8 @@ public class NioSender implements DataSender{
         remaining = 0;
         complete = false;
         attempt = 0;
+        requestCount = 0;
+        connectTime = -1;
     }
 
     private ByteBuffer getReadBuffer() {
@@ -273,7 +286,11 @@ public class NioSender implements DataSender{
      * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
      */
     public boolean keepalive() {
-        return false;
+        boolean disconnect = false;
+        if ( keepAliveCount >= 0 && requestCount>keepAliveCount ) disconnect = true;
+        else if ( keepAliveTime >= 0 && keepAliveTime> (System.currentTimeMillis()-connectTime) ) disconnect = true;
+        if ( disconnect ) disconnect();
+        return disconnect;
     }
     /**
      * isConnected
@@ -370,5 +387,9 @@ public class NioSender implements DataSender{
 
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+    }
+
+    public void setKeepAliveTime(long keepAliveTime) {
+        this.keepAliveTime = keepAliveTime;
     }
 }

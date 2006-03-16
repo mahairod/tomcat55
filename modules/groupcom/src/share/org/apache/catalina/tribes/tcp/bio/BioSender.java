@@ -17,20 +17,20 @@
 package org.apache.catalina.tribes.tcp.bio;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 
+import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.tcp.Constants;
 import org.apache.catalina.tribes.tcp.DataSender;
 import org.apache.catalina.tribes.tcp.SenderState;
 import org.apache.catalina.util.StringManager;
-import java.io.OutputStream;
-import java.io.InputStream;
-import org.apache.catalina.tribes.Member;
-import java.net.UnknownHostException;
 
 /**
  * Send cluster messages with only one socket. Ack and keep Alive Handling is
@@ -95,7 +95,7 @@ public class BioSender implements DataSender {
     /**
      * keep socket open for no more than one min
      */
-    private long keepAliveTimeout = 60 * 1000;
+    private long keepAliveTime = -1;
 
     /**
      * max requests before reconnecting (default -1 unlimited)
@@ -196,14 +196,6 @@ public class BioSender implements DataSender {
         this.timeout = ackTimeout;
     }
 
-    public long getKeepAliveTimeout() {
-        return keepAliveTimeout;
-    }
-
-    public void setKeepAliveTimeout(long keepAliveTimeout) {
-        this.keepAliveTimeout = keepAliveTimeout;
-    }
-
     public int getKeepAliveCount() {
         return keepAliveCount;
     }
@@ -270,6 +262,10 @@ public class BioSender implements DataSender {
         this.txBufSize = txBufSize;
     }
 
+    public void setKeepAliveTime(long keepAliveTime) {
+        this.keepAliveTime = keepAliveTime;
+    }
+
     // --------------------------------------------------------- Public Methods
 
     /**
@@ -307,7 +303,7 @@ public class BioSender implements DataSender {
     public  boolean keepalive() {
         boolean isCloseSocket = true ;
         if(isConnected()) {
-            if ((keepAliveTimeout > -1 && (System.currentTimeMillis() - keepAliveConnectTime) > keepAliveTimeout)
+            if ((keepAliveTime > -1 && (System.currentTimeMillis() - keepAliveConnectTime) > keepAliveTime)
                 || (keepAliveCount > -1 && requestCount >= keepAliveCount)) {
                     closeSocket();
            } else
@@ -444,7 +440,6 @@ public class BioSender implements DataSender {
         keepalive();
         if ( reconnect ) closeSocket();
         if (!isConnected()) openSocket();
-        else if(keepAliveTimeout > -1) this.keepAliveConnectTime = System.currentTimeMillis();
         writeData(data);
     }
     
