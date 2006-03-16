@@ -143,7 +143,18 @@ public class MapDemo implements ChannelListener, MembershipListener{
             public int getColumnCount() { return columnNames.length; }
     
             public int getRowCount() {return map.sizeFull() +1; }
-    
+            
+            public StringBuffer getMemberNames(Member[] members){
+                StringBuffer buf = new StringBuffer();
+                if ( members!=null ) {
+                    for (int i=0;i<members.length; i++ ) {
+                        buf.append(members[i].getName());
+                        buf.append("; ");
+                    }
+                }
+                return buf;
+            }
+            
             public Object getValueAt(int row, int col) {
                 if ( row==-1 ) {
                     update();
@@ -157,7 +168,7 @@ public class MapDemo implements ChannelListener, MembershipListener{
                 switch (col) {
                     case 0: return entry.getKey();
                     case 1: return entry.getValue();
-                    case 2: return entry.getBackupNode()!=null?entry.getBackupNode().getName():"";
+                    case 2: return getMemberNames(entry.getBackupNodes());
                     case 3: return new Boolean(entry.isPrimary());
                     case 4: return new Boolean(entry.isProxy());
                     case 5: return new Boolean(entry.isBackup());
