@@ -24,7 +24,7 @@ import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.ChannelReceiver;
 import org.apache.catalina.tribes.MessageListener;
 import org.apache.catalina.tribes.io.ListenCallback;
-
+import org.apache.commons.logging.Log;
 
 /**
  * <p>Title: </p>
@@ -47,19 +47,20 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
 
     protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(ReceiverBase.class);
     
-    protected MessageListener listener;
-    protected String host;
-    protected InetAddress bind;
-    protected int port;
-    protected boolean sendack;
-    protected boolean sync;
-    protected int rxBufSize = 43800;
-    protected int txBufSize = 25188;
-    protected int tcpThreadCount;
-    protected boolean doListen = false;
-    protected ThreadPool pool;
-    protected boolean direct = true;
-    protected long tcpSelectorTimeout;
+    private MessageListener listener;
+    private String host;
+    private InetAddress bind;
+    private int port;
+    private boolean sync;
+    private int rxBufSize = 43800;
+    private int txBufSize = 25188;
+    private int tcpThreadCount;
+    private boolean listen = false;
+    private ThreadPool pool;
+    private boolean direct = true;
+    private long tcpSelectorTimeout;
+    private String tcpListenAddress;
+    private boolean sendAck;
 
     public ReceiverBase() {
     }
@@ -101,7 +102,7 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
      * @todo Implement this org.apache.catalina.tribes.ChannelReceiver method
      */
     public boolean getSendAck() {
-        return sendack;
+        return sendAck;
     }
 
     /**
@@ -114,15 +115,6 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
         this.listener = listener;
     }
 
-
-    /**
-     *
-     * @param isSendAck boolean
-     * @todo Implement this org.apache.catalina.tribes.ChannelReceiver method
-     */
-    public void setSendAck(boolean sendAck) {
-        this.sendack = sendAck;
-    }
     public void setTcpListenPort(int tcpListenPort) {
         this.port = tcpListenPort;
     }
@@ -249,15 +241,55 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
         return tcpSelectorTimeout;
     }
 
+    public boolean doListen() {
+        return listen;
+    }
+
+    public MessageListener getListener() {
+        return listener;
+    }
+
+    public ThreadPool getPool() {
+        return pool;
+    }
+
+    public String getTcpListenAddress() {
+        return tcpListenAddress;
+    }
+
     public void setTcpSelectorTimeout(long selTimeout) {
         tcpSelectorTimeout = selTimeout;
     }
-    /* (non-Javadoc)
-     * @see org.apache.catalina.tribes.io.ListenCallback#sendAck()
-     */
-    public void sendAck() throws IOException {
-        // do nothing
+
+    public void setListen(boolean doListen) {
+        this.listen = doListen;
     }
 
+    public void setHost(String host) {
+        this.host = host;
+    }
 
+    public void setListener(MessageListener listener) {
+        this.listener = listener;
+    }
+
+    public void setLog(Log log) {
+        this.log = log;
+    }
+
+    public void setPool(ThreadPool pool) {
+        this.pool = pool;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public void setSync(boolean sync) {
+        this.sync = sync;
+    }
+
+    public void setSendAck(boolean sendAck) {
+        this.sendAck = sendAck;
+    }
 }

@@ -87,13 +87,13 @@ public class NioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
      */
     public void start() {
         try {
-            NioReplicationThread[] receivers = new NioReplicationThread[tcpThreadCount];
+            NioReplicationThread[] receivers = new NioReplicationThread[getTcpThreadCount()];
             for ( int i=0; i<receivers.length; i++ ) {
                 receivers[i] = new NioReplicationThread();
                 receivers[i].setRxBufSize(getRxBufSize());
                 receivers[i].setOptions(getWorkerThreadOptions());
             }
-            pool = new ThreadPool(interestOpsMutex, receivers);
+            setPool(new ThreadPool(interestOpsMutex, receivers));
         } catch (Exception e) {
             log.error("ThreadPool can initilzed. Listener not started", e);
             return;
@@ -134,14 +134,14 @@ public class NioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
      * @throws java.nio.channels.ClosedChannelException
      */
     protected void listen() throws Exception {
-        if (doListen) {
+        if (doListen()) {
             log.warn("ServerSocketChannel already started");
             return;
         }
         
-        doListen = true;
+        setListen(true);
 
-        while (doListen && selector != null) {
+        while (doListen() && selector != null) {
             // this may block for a long time, upon return the
             // selected set contains keys of the ready channels
             try {
@@ -171,8 +171,8 @@ public class NioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
                             (ServerSocketChannel) key.channel();
                         SocketChannel channel = server.accept();
 
-                        channel.socket().setReceiveBufferSize(rxBufSize);
-                        channel.socket().setSendBufferSize(txBufSize);
+                        channel.socket().setReceiveBufferSize(getRxBufSize());
+                        channel.socket().setSendBufferSize(getTxBufSize());
                         Object attach = new ObjectReader(channel, selector,this);
                         registerChannel(selector,
                                         channel,
@@ -211,7 +211,7 @@ public class NioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
      */
     protected void stopListening() {
         // Bugzilla 37529: http://issues.apache.org/bugzilla/show_bug.cgi?id=37529
-        doListen = false;
+        setListen(false);
         if (selector != null) {
             try {
                 for (int i = 0; i < getTcpThreadCount(); i++) {
@@ -265,7 +265,7 @@ public class NioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
      *  will then de-register the channel on the next select call.
      */
     protected void readDataFromSocket(SelectionKey key) throws Exception {
-        NioReplicationThread worker = (NioReplicationThread) pool.getWorker();
+        NioReplicationThread worker = (NioReplicationThread) getPool().getWorker();
         if (worker == null) {
             // No threads available, do nothing, the selection
             // loop will keep calling this method until a

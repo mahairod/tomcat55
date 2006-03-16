@@ -20,9 +20,9 @@ import java.io.IOException;
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.Member;
-import org.apache.catalina.tribes.tcp.AbstractPooledSender;
 import org.apache.catalina.tribes.tcp.DataSender;
 import org.apache.catalina.tribes.tcp.MultiPointSender;
+import org.apache.catalina.tribes.tcp.PooledSender;
 
 /**
  * <p>Title: </p>
@@ -36,7 +36,7 @@ import org.apache.catalina.tribes.tcp.MultiPointSender;
  * @author not attributable
  * @version 1.0
  */
-public class PooledParallelSender extends AbstractPooledSender implements MultiPointSender {
+public class PooledParallelSender extends PooledSender implements MultiPointSender {
     protected boolean connected = false;
     public PooledParallelSender() {
         super();
@@ -58,7 +58,7 @@ public class PooledParallelSender extends AbstractPooledSender implements MultiP
             sender.setTimeout(getTimeout());
             sender.setWaitForAck(getWaitForAck());
             sender.setMaxRetryAttempts(getMaxRetryAttempts()); 
-            sender.setUseDirectBuffer(getUseDirectBuffer());
+            sender.setDirectBuffer(getDirectBuffer());
             sender.setRxBufSize(getRxBufSize());
             sender.setTxBufSize(getTxBufSize());
             return sender;

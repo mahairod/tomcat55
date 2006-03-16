@@ -10,6 +10,7 @@ import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.tcp.MultiPointSender;
+import org.apache.catalina.tribes.tcp.AbstractSocketSender;
 
 /**
  * <p>Title: </p>
@@ -23,22 +24,13 @@ import org.apache.catalina.tribes.tcp.MultiPointSender;
  * @author not attributable
  * @version 1.0
  */
-public class MultipointBioSender implements MultiPointSender {
+public class MultipointBioSender extends AbstractSocketSender implements MultiPointSender {
     public MultipointBioSender() {
     }
     
-    protected long timeout = 15000;
     protected long selectTimeout = 1000; 
-    protected boolean waitForAck = false;
-    protected int retryAttempts=0;
-    protected int keepAliveCount = -1;
     protected HashMap bioSenders = new HashMap();
-    protected boolean directBuf = false;
-    protected int rxBufSize = 43800;
-    protected int txBufSize = 25188;
-    private boolean connected;
     private boolean autoConnect;
-    private long keepAliveTime = -1;
 
     public synchronized void sendMessage(Member[] destination, ChannelMessage msg) throws ChannelException {
         long start = System.currentTimeMillis();
@@ -65,15 +57,15 @@ public class MultipointBioSender implements MultiPointSender {
             try {
                 BioSender sender = (BioSender) bioSenders.get(destination[i]);
                 if (sender == null) {
-                    sender = new BioSender(destination[i], rxBufSize, txBufSize);
-                    sender.setKeepAliveCount(keepAliveCount);
-                    sender.setKeepAliveTime(keepAliveTime);
-                    sender.setTimeout(timeout);
-                    //sender.setResend();
-                    //sender.setKeepAliveTimeout();
+                    sender = new BioSender(destination[i], getRxBufSize(), getTxBufSize());
+                    sender.setKeepAliveCount(getKeepAliveCount());
+                    sender.setKeepAliveTime(getKeepAliveTime());
+                    sender.setTimeout(getTimeout());
+                    sender.setMaxRetryAttempts(getMaxRetryAttempts());
+                    sender.setKeepAliveTime(getKeepAliveTime());
                     bioSenders.put(destination[i], sender);
                 }
-                sender.setWaitForAck(waitForAck);
+                sender.setWaitForAck(getWaitForAck());
                 result[i] = sender;
                 if (!result[i].isConnected() ) result[i].connect();
                 result[i].keepalive();
@@ -129,57 +121,6 @@ public class MultipointBioSender implements MultiPointSender {
         try {disconnect(); }catch ( Exception ignore){}
     }
 
-    public boolean isConnected() {
-        return connected;
-    }
-
-    public boolean isAutoConnect() {
-        return autoConnect;
-    }
-
-    public long getKeepAliveTime() {
-        return keepAliveTime;
-    }
-
-    public void setUseDirectBuffer(boolean directBuf) {
-        this.directBuf = directBuf;
-    }
-
-    public void setMaxRetryAttempts(int attempts) {
-        this.retryAttempts = attempts;
-    }
-
-    public void setTxBufSize(int size) {
-        this.txBufSize = size;
-    }
-
-    public void setRxBufSize(int size) {
-        this.rxBufSize = size;
-    }
-
-    public void setWaitForAck(boolean wait) {
-        this.waitForAck = wait;
-    }
-
-    public void setTimeout(long timeout) {
-        this.timeout = timeout;
-    }
-
-    public void setConnected(boolean connected) {
-        this.connected = connected;
-    }
-
-    public void setAutoConnect(boolean autoConnect) {
-        this.autoConnect = autoConnect;
-    }
-
-    public void setKeepAliveCount(int keepAliveCount) {
-        this.keepAliveCount = keepAliveCount;
-    }
-
-    public void setKeepAliveTime(long keepAliveTime) {
-        this.keepAliveTime = keepAliveTime;
-    }
 
     public boolean keepalive() {
         //throw new UnsupportedOperationException("Method ParallelBioSender.checkKeepAlive() not implemented");

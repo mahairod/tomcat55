@@ -31,9 +31,7 @@ public interface MultiPointSender extends DataSender
     public void setRxBufSize(int size);
     public void setTxBufSize(int size);
     public void setMaxRetryAttempts(int attempts);
-    public void setUseDirectBuffer(boolean directBuf);
+    public void setDirectBuffer(boolean directBuf);
     public void memberAdded(Member member);
     public void memberDisappeared(Member member);
-    public void setAutoConnect(boolean auto);
-
 }
