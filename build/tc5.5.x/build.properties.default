@@ -126,12 +126,12 @@ commons-modeler.lib=${commons-modeler.home}
 commons-modeler.jar=${commons-modeler.lib}/commons-modeler.jar
 commons-modeler.loc=${base-jakarta.loc}/commons/modeler/binaries/modeler-1.1.tar.gz
 
-# ----- Xerces XML Parser, version 2.7.1 -----
-xerces.home=${base.path}/xerces-2_7_1
+# ----- Xerces XML Parser, version 2.8.0 -----
+xerces.home=${base.path}/xerces-2_8_0
 xerces.lib=${xerces.home}
 xercesImpl.jar=${xerces.lib}/xercesImpl.jar
 xml-apis.jar=${xerces.lib}/xml-apis.jar
-xerces.loc=${base-xml.loc}/xerces-j/binaries/Xerces-J-bin.2.7.1.tar.gz
+xerces.loc=${base-xml.loc}/xerces-j/binaries/Xerces-J-bin.2.8.0.tar.gz
 
 
 # ----- Eclipse JDT, version 3.1.2 or later -----
