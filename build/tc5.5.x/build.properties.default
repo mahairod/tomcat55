@@ -142,9 +142,9 @@ jdt.loc=http://sunsite.informatik.rwth-aachen.de/eclipse/downloads/drops/R-3.1.2
 
 
 # ----- Tomcat native library -----
-tomcat-native.home=${base.path}/tomcat-native-1.1.1
+tomcat-native.home=${base.path}/tomcat-native-1.1.2
 tomcat-native.tar.gz=${tomcat-native.home}/tomcat-native.tar.gz
-tomcat-native.loc=${base-tomcat.loc}/tomcat-connectors/native/tomcat-native-1.1.1.tar.gz
+tomcat-native.loc=${base-tomcat.loc}/tomcat-connectors/native/tomcat-native-1.1.2.tar.gz
 
 
 # --------------------------------------------------
