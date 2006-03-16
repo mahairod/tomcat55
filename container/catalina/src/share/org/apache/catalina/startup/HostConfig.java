@@ -975,12 +975,17 @@ public class HostConfig
                     if (log.isInfoEnabled())
                         log.info(sm.getString("hostConfig.undeploy", app.name));
                     ContainerBase context = (ContainerBase) host.findChild(app.name);
-                    host.removeChild(context);
+                    try {
+                        host.removeChild(context);
+                    } catch (Throwable t) {
+                        log.warn(sm.getString
+                                 ("hostConfig.context.remove", app.name), t);
+                    }
                     try {
                         context.destroy();
-                    } catch (Exception e) {
+                    } catch (Throwable t) {
                         log.warn(sm.getString
-                                 ("hostConfig.context.destroy", app.name), e);
+                                 ("hostConfig.context.destroy", app.name), t);
                     }
                     // Delete other redeploy resources
                     for (int j = i + 1; j < resources.length; j++) {
@@ -1010,12 +1015,17 @@ public class HostConfig
                 if (log.isInfoEnabled())
                     log.info(sm.getString("hostConfig.undeploy", app.name));
                 ContainerBase context = (ContainerBase) host.findChild(app.name);
-                host.removeChild(context);
+                try {
+                    host.removeChild(context);
+                } catch (Throwable t) {
+                    log.warn(sm.getString
+                             ("hostConfig.context.remove", app.name), t);
+                }
                 try {
                     context.destroy();
-                } catch (Exception e) {
+                } catch (Throwable t) {
                     log.warn(sm.getString
-                             ("hostConfig.context.destroy", app.name), e);
+                             ("hostConfig.context.destroy", app.name), t);
                 }
                 // Delete all redeploy resources
                 for (int j = i + 1; j < resources.length; j++) {
@@ -1150,7 +1160,12 @@ public class HostConfig
         DeployedApplication[] apps = 
             (DeployedApplication[]) deployed.values().toArray(new DeployedApplication[0]);
         for (int i = 0; i < apps.length; i++) {
-            host.removeChild(host.findChild(apps[i].name));
+            try {
+                host.removeChild(host.findChild(apps[i].name));
+            } catch (Throwable t) {
+                log.warn(sm.getString
+                        ("hostConfig.context.remove", apps[i].name), t);
+            }
         }
         
         deployed.clear();
