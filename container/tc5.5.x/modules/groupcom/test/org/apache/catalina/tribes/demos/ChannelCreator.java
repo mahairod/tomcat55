@@ -52,7 +52,6 @@ public class ChannelCreator {
            .append("\n\t\t[-port tcplistenport]")
            .append("\n\t\t[-ack true|false]")
            .append("\n\t\t[-ackto acktimeout]") 
-           .append("\n\t\t[-autoconnect true|false]")
            .append("\n\t\t[-sync true|false]")
            .append("\n\t\t[-receiver org.apache.catalina.tribes.tcp.nio.NioReceiver|org.apache.catalina.tribes.tcp.bio.BioReceiver|]")
            .append("\n\t\t[-transport org.apache.catalina.tribes.tcp.nio.PooledParallelSender|org.apache.catalina.tribes.tcp.bio.PooledMultiSender]")
@@ -81,7 +80,6 @@ public class ChannelCreator {
         int tcpseltimeout = 100;
         int tcpthreadcount = 4;
         int acktimeout = 15000;
-        boolean autoconnect = true;
         String mcastaddr = "228.0.0.5";
         int mcastport = 45565;
         long mcastfreq = 500;
@@ -121,8 +119,6 @@ public class ChannelCreator {
                 acktimeout = Integer.parseInt(args[++i]);
             } else if ("-sync".equals(args[i])) {
                 sync = Boolean.parseBoolean(args[++i]);
-            } else if ("-autoconnect".equals(args[i])) {
-                autoconnect = Boolean.parseBoolean(args[++i]);
             } else if ("-transport".equals(args[i])) {
                 transport = args[++i];
             } else if (args[i]!=null && args[i].startsWith("transport.")) {
@@ -162,7 +158,6 @@ public class ChannelCreator {
         System.out.println("Creating transport class="+transport);
         MultiPointSender sender = (MultiPointSender)Class.forName(transport,true,ChannelCreator.class.getClassLoader()).newInstance();
         sender.setTimeout(acktimeout);
-        sender.setAutoConnect(autoconnect);
         sender.setWaitForAck(ack);
         sender.setMaxRetryAttempts(2);
         sender.setRxBufSize(43800);

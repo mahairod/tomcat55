@@ -47,7 +47,7 @@ public class TestNioSender {
         mbr = new MemberImpl("","localhost",4444,0);
         NioSender sender = new NioSender(mbr);
         sender.setWaitForAck(false);
-        sender.setDirect(true);
+        sender.setDirectBuffer(true);
         sender.setSelector(selector);
         sender.setMessage(XByteBuffer.createDataPackage(getMessage(mbr)));
         sender.connect();
