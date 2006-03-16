@@ -48,31 +48,10 @@ public class ReplicationTransmitter implements ChannelSender {
     protected StringManager sm = StringManager.getManager(Constants.Package);
 
     
-    /* 
-     * @todo make this configurable
-     */
-    protected int rxBufSize = 43800;
-    /**
-     * We are only sending acks
-     */
-    protected int txBufSize = 25188;
 
     public ReplicationTransmitter() {
     }
-    /**
-     * sender default ackTimeout
-     */
-    private long ackTimeout = 15000; //15 seconds by default
 
-    /**
-     * enabled wait for ack
-     */
-    private boolean waitForAck = true;
-
-    /**
-     * autoConnect sender when next message send
-     */
-    private boolean autoConnect = false;
     private MultiPointSender transport;
 
     /**

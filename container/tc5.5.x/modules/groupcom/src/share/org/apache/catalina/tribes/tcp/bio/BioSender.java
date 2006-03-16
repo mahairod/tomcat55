@@ -31,6 +31,7 @@ import org.apache.catalina.tribes.tcp.Constants;
 import org.apache.catalina.tribes.tcp.DataSender;
 import org.apache.catalina.tribes.tcp.SenderState;
 import org.apache.catalina.util.StringManager;
+import org.apache.catalina.tribes.tcp.AbstractSocketSender;
 
 /**
  * Send cluster messages with only one socket. Ack and keep Alive Handling is
@@ -41,7 +42,7 @@ import org.apache.catalina.util.StringManager;
  * @version $Revision: 377484 $ $Date: 2006-02-13 15:00:05 -0600 (Mon, 13 Feb 2006) $
  * @since 5.5.16
  */
-public class BioSender implements DataSender {
+public class BioSender extends AbstractSocketSender implements DataSender {
 
     private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(BioSender.class);
 
@@ -57,17 +58,6 @@ public class BioSender implements DataSender {
      */
     private static final String info = "DataSender/3.0";
 
-    /**
-     * receiver address
-     */
-    private InetAddress address;
-
-    /**
-     * receiver port
-     */
-    private int port;
-    protected Member member;
-
     
     /**
      * current sender socket
@@ -76,59 +66,11 @@ public class BioSender implements DataSender {
     private OutputStream soOut = null;
     private InputStream soIn = null;
 
-    /**
-     * is Socket really connected
-     */
-    private boolean connected = false;
-
-    /**
-     * wait time for ack
-     */
-    private long timeout;
-
-    /**
-     * waitAckTime
-     */
-    protected long waitAckTime = 0;
-    
-
-    /**
-     * keep socket open for no more than one min
-     */
-    private long keepAliveTime = -1;
-
-    /**
-     * max requests before reconnecting (default -1 unlimited)
-     */
-    private int keepAliveCount = -1;
-
-    /**
-     * Last connect timestamp
-     */
-    protected long keepAliveConnectTime = 0;
-
-    /**
-     * keepalive counter
-     */
-    protected int requestCount = 0;
-
-    /**
-     * wait for receiver Ack
-     */
-    private boolean waitForAck = false;
 
     /**
      * After failure make a resend
      */
     private boolean resend = false ;
-    /**
-     * @todo make this configurable
-     */
-    protected int rxBufSize = 43800;
-    /**
-     * We are only sending acks
-     */
-    protected int txBufSize = 25188;
     
     protected XByteBuffer ackbuf = new XByteBuffer(Constants.ACK_COMMAND.length,true);
 
@@ -136,17 +78,13 @@ public class BioSender implements DataSender {
     // ------------------------------------------------------------- Constructor
     
     public BioSender(Member member) throws UnknownHostException {
-        this.member = member;
-        this.address = InetAddress.getByAddress(member.getHost());
-        this.port = member.getPort();
+        super(member);
         if (log.isDebugEnabled())
-            log.debug(sm.getString("IDataSender.create",address, new Integer(port)));
+            log.debug(sm.getString("IDataSender.create",getAddress(), new Integer(getPort())));
     }
 
     public BioSender(Member member, int rxBufSize, int txBufSize) throws UnknownHostException {
-        this(member);
-        this.rxBufSize = rxBufSize;
-        this.txBufSize = txBufSize;
+        super(member,rxBufSize,txBufSize);
     }
 
     // ------------------------------------------------------------- Properties
@@ -161,77 +99,6 @@ public class BioSender implements DataSender {
     }
 
     
-    /**
-     * @param address The address to set.
-     */
-    public void setAddress(InetAddress address) {
-        this.address = address;
-    }
-
-    public InetAddress getAddress() {
-        return address;
-    }
-
-    
-    /**
-     * @param port The port to set.
-     */
-    public void setPort(int port) {
-        this.port = port;
-    }
-    
-    public int getPort() {
-        return port;
-    }
-
-    public boolean isConnected() {
-        return connected;
-    }
-
-    public long getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(long ackTimeout) {
-        this.timeout = ackTimeout;
-    }
-
-    public int getKeepAliveCount() {
-        return keepAliveCount;
-    }
-
-    public void setKeepAliveCount(int keepAliveMaxRequestCount) {
-        this.keepAliveCount = keepAliveMaxRequestCount;
-    }
-
-    /**
-     * @return Returns the keepAliveConnectTime.
-     */
-    public long getKeepAliveConnectTime() {
-        return keepAliveConnectTime;
-    }
-
-    /**
-     * @return Returns the keepAliveCount.
-     */
-    public int getRequestCount() {
-        return requestCount;
-    }
-
-    /**
-     * @return Returns the waitForAck.
-     */
-    public boolean getWaitForAck() {
-        return waitForAck;
-    }
-
-    /**
-     * @param waitForAck
-     *            The waitForAck to set.
-     */
-    public void setWaitForAck(boolean waitForAck) {
-        this.waitForAck = waitForAck;
-    }
 
     /**
      * @return Returns the resend.
@@ -246,25 +113,6 @@ public class BioSender implements DataSender {
         this.resend = resend;
     }
 
-    public int getRxBufSize() {
-        return rxBufSize;
-    }
-
-    public int getTxBufSize() {
-        return txBufSize;
-    }
-
-    public void setRxBufSize(int rxBufSize) {
-        this.rxBufSize = rxBufSize;
-    }
-
-    public void setTxBufSize(int txBufSize) {
-        this.txBufSize = txBufSize;
-    }
-
-    public void setKeepAliveTime(long keepAliveTime) {
-        this.keepAliveTime = keepAliveTime;
-    }
 
     // --------------------------------------------------------- Public Methods
 
@@ -287,30 +135,9 @@ public class BioSender implements DataSender {
         closeSocket();
         if (connect) {
             if (log.isDebugEnabled())
-                log.debug(sm.getString("IDataSender.disconnect", address.getHostAddress(), new Integer(port), new Long(0)));
+                log.debug(sm.getString("IDataSender.disconnect", getAddress().getHostAddress(), new Integer(getPort()), new Long(0)));
         }
         
-    }
-
-    /**
-     * Check, if time to close socket! Important for AsyncSocketSender that
-     * replication thread is not fork again! <b>Only work when keepAliveTimeout
-     * or keepAliveMaxRequestCount greater -1 </b>
-     * FIXME Can we close a socket when a message wait for ack?
-     * @return true, is socket close
-     * @see DataSender#closeSocket()
-     */
-    public  boolean keepalive() {
-        boolean isCloseSocket = true ;
-        if(isConnected()) {
-            if ((keepAliveTime > -1 && (System.currentTimeMillis() - keepAliveConnectTime) > keepAliveTime)
-                || (keepAliveCount > -1 && requestCount >= keepAliveCount)) {
-                    closeSocket();
-           } else
-                isCloseSocket = false ;
-        }
-        
-        return isCloseSocket;
     }
 
     /**
@@ -329,7 +156,7 @@ public class BioSender implements DataSender {
         } catch (IOException x) {
             exception = x;
             //resend
-            if (log.isTraceEnabled()) log.trace(sm.getString("IDataSender.send.again", address.getHostAddress(),new Integer(port)),x);
+            if (log.isTraceEnabled()) log.trace(sm.getString("IDataSender.send.again", getAddress().getHostAddress(),new Integer(getPort())),x);
             try {
                 // second try with fresh connection
                 pushMessage(data,true);                    
@@ -340,7 +167,7 @@ public class BioSender implements DataSender {
                 closeSocket();
             }
         } finally {
-            this.requestCount++;
+            setRequestCount(getRequestCount()+1);
             keepalive();
             if(messageTransfered) {
 
@@ -373,21 +200,21 @@ public class BioSender implements DataSender {
        try {
            socket = new Socket();
            InetSocketAddress sockaddr = new InetSocketAddress(getAddress(), getPort());
-           socket.connect(sockaddr,(int)timeout);
+           socket.connect(sockaddr,(int)getTimeout());
            socket.setSendBufferSize(getTxBufSize());
            socket.setReceiveBufferSize(getRxBufSize());
-           socket.setSoTimeout( (int) timeout);
-           connected = true;
+           socket.setSoTimeout( (int) getTimeout());
+           setConnected(true);
            soOut = socket.getOutputStream();
            soIn  = socket.getInputStream();
-           this.requestCount = 0;
-           this.keepAliveConnectTime = System.currentTimeMillis();
+           setRequestCount(0);
+           setConnectTime(System.currentTimeMillis());
            if (log.isDebugEnabled())
-               log.debug(sm.getString("IDataSender.openSocket", address.getHostAddress(), new Integer(port), new Long(0)));
+               log.debug(sm.getString("IDataSender.openSocket", getAddress().getHostAddress(), new Integer(getPort()), new Long(0)));
       } catch (IOException ex1) {
-          SenderState.getSenderState(member).setSuspect();
+          SenderState.getSenderState(getDestination()).setSuspect();
           if (log.isDebugEnabled())
-              log.debug(sm.getString("IDataSender.openSocket.failure",address.getHostAddress(), new Integer(port),new Long(0)), ex1);
+              log.debug(sm.getString("IDataSender.openSocket.failure",getAddress().getHostAddress(), new Integer(getPort()),new Long(0)), ex1);
           throw (ex1);
         }
         
@@ -411,10 +238,10 @@ public class BioSender implements DataSender {
                     soIn = null;
                 }
             }
-            this.requestCount = 0;
-            connected = false;
+            setRequestCount(0);
+            setConnected(false);
             if (log.isDebugEnabled())
-                log.debug(sm.getString("IDataSender.closeSocket",address.getHostAddress(), new Integer(port),new Long(0)));
+                log.debug(sm.getString("IDataSender.closeSocket",getAddress().getHostAddress(), new Integer(getPort()),new Long(0)));
        }
     }
 
@@ -484,9 +311,9 @@ public class BioSender implements DataSender {
                 else throw new IOException(sm.getString("IDataSender.ack.wrong",getAddress(), new Integer(socket.getLocalPort())));
             }
         } catch (IOException x) {
-            String errmsg = sm.getString("IDataSender.ack.missing", getAddress(),new Integer(socket.getLocalPort()), new Long(this.timeout));
-            if ( SenderState.getSenderState(member).isReady() ) {
-                SenderState.getSenderState(member).setSuspect();
+            String errmsg = sm.getString("IDataSender.ack.missing", getAddress(),new Integer(socket.getLocalPort()), new Long(getTimeout()));
+            if ( SenderState.getSenderState(getDestination()).isReady() ) {
+                SenderState.getSenderState(getDestination()).setSuspect();
                 if ( log.isWarnEnabled() ) log.warn(errmsg, x);
             } else {
                 if ( log.isDebugEnabled() )log.debug(errmsg, x);

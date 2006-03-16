@@ -29,6 +29,8 @@ import java.util.Arrays;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.tcp.DataSender;
+import org.apache.catalina.tribes.tcp.AbstractSocketSender;
+import java.net.UnknownHostException;
 
 /**
  * This class is NOT thread safe and should never be used with more than one thread at a time
@@ -44,39 +46,28 @@ import org.apache.catalina.tribes.tcp.DataSender;
  * @author Filip Hanik
  * @version 1.0
  */
-public class NioSender implements DataSender{
+public class NioSender extends AbstractSocketSender implements DataSender{
 
     protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(NioSender.class);
 
-    protected boolean connected = false;
-    protected boolean waitForAck = false;
-    protected int rxBufSize = 25188;
-    protected int txBufSize = 43800;
-    protected Selector selector;
-    protected Member destination;
     
     
+    protected Selector selector;    
     protected SocketChannel socketChannel;
 
     /*
      * STATE VARIABLES *
      */
     protected ByteBuffer readbuf = null;
-    protected boolean direct = false;
     protected byte[] current = null;
     protected int curPos=0;
     protected XByteBuffer ackbuf = new XByteBuffer(128,true);
     protected int remaining = 0;
     protected boolean complete;
     protected int attempt;
-    protected int keepAliveCount = -1;
-    protected int requestCount = 0;
-    protected long connectTime;
-    protected long keepAliveTime = -1;
-    protected long timeout;
 
-    public NioSender(Member destination) {
-        this.destination = destination;
+    public NioSender(Member destination) throws UnknownHostException {
+        super(destination);
         
     }
     
@@ -92,12 +83,12 @@ public class NioSender implements DataSender{
         if ( key.isConnectable() ) {
             if ( socketChannel.finishConnect() ) {
                 //we connected, register ourselves for writing
-                connected = true;
-                requestCount = 0;
-                connectTime = System.currentTimeMillis();
-                socketChannel.socket().setSendBufferSize(txBufSize);
-                socketChannel.socket().setReceiveBufferSize(rxBufSize);
-                socketChannel.socket().setSoTimeout((int)timeout);
+                setConnected(true);
+                setRequestCount(0);
+                setConnectTime(System.currentTimeMillis());
+                socketChannel.socket().setSendBufferSize(getTxBufSize());
+                socketChannel.socket().setReceiveBufferSize(getRxBufSize());
+                socketChannel.socket().setSoTimeout((int)getTimeout());
                 if ( current != null ) key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
                 return false;
             } else  { 
@@ -109,7 +100,7 @@ public class NioSender implements DataSender{
             boolean writecomplete = write(key);
             if ( writecomplete ) {
                 //we are completed, should we read an ack?
-                if ( waitForAck ) {
+                if ( getWaitForAck() ) {
                     //register to read the ack
                     key.interestOps(key.interestOps() | SelectionKey.OP_READ);
                 } else {
@@ -117,7 +108,7 @@ public class NioSender implements DataSender{
                     //do a health check, we have no way of verify a disconnected
                     //socket since we don't register for OP_READ on waitForAck=false
                     read(key);//this causes overhead.
-                    requestCount++;
+                    setRequestCount(getRequestCount()+1);
                     return true;
                 }
             } else {
@@ -127,7 +118,7 @@ public class NioSender implements DataSender{
         } else if ( key.isReadable() ) {
             boolean readcomplete = read(key);
             if ( readcomplete ) {
-                requestCount++;
+                setRequestCount(getRequestCount()+1);
                 return true;
             } else {
                 key.interestOps(key.interestOps() | SelectionKey.OP_READ);
@@ -162,7 +153,7 @@ public class NioSender implements DataSender{
 
     
     protected boolean write(SelectionKey key) throws IOException {
-        if ( (!connected) || (this.socketChannel==null)) {
+        if ( (!isConnected()) || (this.socketChannel==null)) {
             throw new IOException("NioSender is not connected, this should not occur.");
         }
         if ( current != null ) {
@@ -194,13 +185,13 @@ public class NioSender implements DataSender{
      * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
      */
     public synchronized void connect() throws IOException {
-        if ( connected ) throw new IOException("NioSender is already in connected state.");
+        if ( isConnected() ) throw new IOException("NioSender is already in connected state.");
         if ( readbuf == null ) {
             readbuf = getReadBuffer();
         } else {
             readbuf.clear();
         }
-        InetSocketAddress addr = new InetSocketAddress(InetAddress.getByAddress(destination.getHost()),destination.getPort());
+        InetSocketAddress addr = new InetSocketAddress(getAddress(),getPort());
         if ( socketChannel != null ) throw new IOException("Socket channel has already been established. Connection might be in progress.");
         socketChannel = SocketChannel.open();
         socketChannel.configureBlocking(false);
@@ -216,7 +207,7 @@ public class NioSender implements DataSender{
      */
     public void disconnect() {
         try {
-            this.connected = false;
+            setConnected(false);
             if ( socketChannel != null ) {
                 Socket socket = socketChannel.socket();
                 //error free close, all the way
@@ -237,7 +228,7 @@ public class NioSender implements DataSender{
     }
     
     public void reset() {
-        if ( connected && readbuf == null) {
+        if ( isConnected() && readbuf == null) {
             readbuf = getReadBuffer();
         }
         if ( readbuf != null ) readbuf.clear();
@@ -247,12 +238,12 @@ public class NioSender implements DataSender{
         remaining = 0;
         complete = false;
         attempt = 0;
-        requestCount = 0;
-        connectTime = -1;
+        setRequestCount(0);
+        setConnectTime(-1);
     }
 
     private ByteBuffer getReadBuffer() {
-        return (direct?ByteBuffer.allocateDirect(rxBufSize):ByteBuffer.allocate(rxBufSize));
+        return (getDirectBuffer()?ByteBuffer.allocateDirect(getRxBufSize()):ByteBuffer.allocate(getRxBufSize()));
     }
     
     /**
@@ -268,7 +259,7 @@ public class NioSender implements DataSender{
            current = data;
            remaining = current.length;
            curPos = 0;
-           if (connected) {
+           if (isConnected()) {
                socketChannel.register(getSelector(), SelectionKey.OP_WRITE, this);
            }
        } 
@@ -279,50 +270,6 @@ public class NioSender implements DataSender{
    }
 
 
-    /**
-     * checkKeepAlive
-     *
-     * @return boolean
-     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
-     */
-    public boolean keepalive() {
-        boolean disconnect = false;
-        if ( keepAliveCount >= 0 && requestCount>keepAliveCount ) disconnect = true;
-        else if ( keepAliveTime >= 0 && keepAliveTime> (System.currentTimeMillis()-connectTime) ) disconnect = true;
-        if ( disconnect ) disconnect();
-        return disconnect;
-    }
-    /**
-     * isConnected
-     *
-     * @return boolean
-     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
-     */
-    public boolean isConnected() {
-        return connected;
-    }
-
-    /**
-     * isWaitForAck
-     *
-     * @return boolean
-     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
-     */
-    public boolean getWaitForAck() {
-        return waitForAck;
-    }
-
-    public Selector getSelector() {
-        return selector;
-    }
-
-    public boolean getDirect() {
-        return direct;
-    }
-
-    public Member getDestination() {
-        return destination;
-    }
 
     public boolean isComplete() {
         return complete;
@@ -332,46 +279,14 @@ public class NioSender implements DataSender{
         return attempt;
     }
 
-    public long getTimeout() {
-        return timeout;
-    }
-
-    /**
-     * setRxBufSize
-     *
-     * @param size int
-     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
-     */
-    public void setRxBufSize(int size) {
-        this.rxBufSize = size;
-    }
-    /**
-     * setTxBufSize
-     *
-     * @param size int
-     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
-     */
-    public void setTxBufSize(int size) {
-        this.txBufSize= size;
-    }
-
-    /**
-     * setWaitForAck
-     *
-     * @param isWaitForAck boolean
-     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
-     */
-    public void setWaitForAck(boolean waitForAck) {
-        this.waitForAck=waitForAck;
+    public Selector getSelector() {
+        return selector;
     }
 
     public void setSelector(Selector selector) {
         this.selector = selector;
     }
 
-    public void setDirect(boolean directBuffer) {
-        this.direct = directBuffer;
-    }
 
     public void setComplete(boolean complete) {
         this.complete = complete;
@@ -381,15 +296,5 @@ public class NioSender implements DataSender{
         this.attempt = attempt;
     }
 
-    public void setKeepAliveCount(int keepAliveCount) {
-        this.keepAliveCount = keepAliveCount;
-    }
 
-    public void setTimeout(long timeout) {
-        this.timeout = timeout;
-    }
-
-    public void setKeepAliveTime(long keepAliveTime) {
-        this.keepAliveTime = keepAliveTime;
-    }
 }

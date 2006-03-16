@@ -40,5 +40,8 @@ public interface DataSender {
     public void setWaitForAck(boolean isWaitForAck);
     public void setKeepAliveCount(int maxRequests);
     public void setKeepAliveTime(long keepAliveTimeInMs);
+    public int getRequestCount();
+    public long getConnectTime();
+    
     
 }

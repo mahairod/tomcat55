@@ -54,11 +54,11 @@ public class BioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
      */
     public void start() throws IOException {
         try {
-            BioReplicationThread[] receivers = new BioReplicationThread[tcpThreadCount];
+            BioReplicationThread[] receivers = new BioReplicationThread[getTcpThreadCount()];
             for ( int i=0; i<receivers.length; i++ ) {
                 receivers[i] = getReplicationThread();
             }
-            pool = new ThreadPool(new Object(), receivers);
+            setPool(new ThreadPool(new Object(), receivers));
         } catch (Exception e) {
             log.error("ThreadPool can initilzed. Listener not started", e);
             return;
@@ -85,7 +85,7 @@ public class BioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
      * @todo Implement this org.apache.catalina.tribes.ChannelReceiver method
      */
     public void stop() {
-        this.doListen = false;
+        setListen(false);
         try {
             this.serverSocket.close();
         }catch ( Exception x ) {}
@@ -113,29 +113,29 @@ public class BioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
     }
     
     public void listen() throws Exception {
-        if (doListen) {
+        if (doListen()) {
             log.warn("ServerSocket already started");
             return;
         }
-        doListen = true;
+        setListen(true);
 
-        while ( doListen ) {
+        while ( doListen() ) {
             Socket socket = null;
-            if ( pool.available() < 1 ) {
+            if ( getPool().available() < 1 ) {
                 if ( log.isWarnEnabled() )
                     log.warn("All BIO server replication threads are busy, unable to handle more requests until a thread is freed up.");
             }
-            BioReplicationThread thread = (BioReplicationThread)pool.getWorker();
+            BioReplicationThread thread = (BioReplicationThread)getPool().getWorker();
             if ( thread == null ) continue; //should never happen
             try {
                 socket = serverSocket.accept();
             }catch ( Exception x ) {
-                if ( doListen ) throw x;
+                if ( doListen() ) throw x;
             }
-            if ( !doListen ) break; //regular shutdown
+            if ( !doListen() ) break; //regular shutdown
             if ( socket == null ) continue;
-            socket.setReceiveBufferSize(rxBufSize);
-            socket.setSendBufferSize(txBufSize);
+            socket.setReceiveBufferSize(getRxBufSize());
+            socket.setSendBufferSize(getRxBufSize());
             ObjectReader reader = new ObjectReader(socket,this);
             thread.serviceSocket(socket,reader);
         }//while

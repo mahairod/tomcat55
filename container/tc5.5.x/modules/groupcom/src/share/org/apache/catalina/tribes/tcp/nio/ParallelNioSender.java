@@ -30,6 +30,8 @@ import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.tcp.MultiPointSender;
 import org.apache.catalina.tribes.tcp.SenderState;
+import org.apache.catalina.tribes.tcp.AbstractSocketSender;
+import java.net.UnknownHostException;
 
 /**
  * <p>Title: </p>
@@ -43,23 +45,13 @@ import org.apache.catalina.tribes.tcp.SenderState;
  * @author not attributable
  * @version 1.0
  */
-public class ParallelNioSender implements MultiPointSender {
+public class ParallelNioSender extends AbstractSocketSender implements MultiPointSender {
     
     protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(ParallelNioSender.class);
     
-    
-    protected long timeout = 15000;
     protected long selectTimeout = 1000; 
-    protected boolean waitForAck = false;
-    protected int retryAttempts=0;
-    protected int keepAliveCount = -1;
     protected Selector selector;
     protected HashMap nioSenders = new HashMap();
-    protected boolean directBuf = false;
-    protected int rxBufSize = 43800;
-    protected int txBufSize = 25188;
-    private boolean connected;
-    private boolean autoConnect;
 
     public ParallelNioSender() throws IOException {
         selector = Selector.open();
@@ -77,13 +69,13 @@ public class ParallelNioSender implements MultiPointSender {
         try {
             //loop until complete, an error happens, or we timeout
             long delta = System.currentTimeMillis() - start;
-            while ( (remaining>0) && (delta<timeout) ) {
-                remaining -= doLoop(selectTimeout,retryAttempts);
+            while ( (remaining>0) && (delta<getTimeout()) ) {
+                remaining -= doLoop(selectTimeout,getMaxRetryAttempts());
                 delta = System.currentTimeMillis() - start;
             }
             if ( remaining > 0 ) {
                 //timeout has occured
-                ChannelException cx = new ChannelException("Operation has timed out("+timeout+" ms.).");
+                ChannelException cx = new ChannelException("Operation has timed out("+getTimeout()+" ms.).");
                 for (int i=0; i<senders.length; i++ ) {
                     if (!senders[i].isComplete() ) cx.addFaultyMember(senders[i].getDestination());
                 }
@@ -174,25 +166,35 @@ public class ParallelNioSender implements MultiPointSender {
     }
     
     
-    private NioSender[] setupForSend(Member[] destination) {
+    private NioSender[] setupForSend(Member[] destination) throws ChannelException {
+        ChannelException cx = null;
         NioSender[] result = new NioSender[destination.length];
         for ( int i=0; i<destination.length; i++ ) {
             NioSender sender = (NioSender)nioSenders.get(destination[i]);
             if ( sender == null ) {
-                sender = new NioSender(destination[i]);
-                nioSenders.put(destination[i],sender);
+                try {
+                    sender = new NioSender(destination[i]);
+                    nioSenders.put(destination[i], sender);
+                }catch ( UnknownHostException x ) {
+                    if ( cx == null ) cx = new ChannelException("Unable to setup NioSender.",x);
+                    cx.addFaultyMember(destination[i]);
+                }
             }
-            sender.reset();
-            sender.setSelector(selector);
-            sender.setDirect(directBuf);
-            sender.setRxBufSize(rxBufSize);
-            sender.setTxBufSize(txBufSize);
-            sender.setWaitForAck(waitForAck);
-            sender.setTimeout(timeout);
-            sender.setKeepAliveCount(keepAliveCount);
-            result[i] = sender;
+            if ( sender != null ) {
+                sender.reset();
+                sender.setSelector(selector);
+                sender.setDirectBuffer(getDirectBuffer());
+                sender.setRxBufSize(getRxBufSize());
+                sender.setTxBufSize(getTxBufSize());
+                sender.setWaitForAck(getWaitForAck());
+                sender.setTimeout(getTimeout());
+                sender.setKeepAliveCount(getKeepAliveCount());
+                sender.setKeepAliveTime(getKeepAliveTime());
+                result[i] = sender;
+            }
         }
-        return result;
+        if ( cx != null ) throw cx;
+        else return result;
     }
     
     public void connect() {
@@ -236,50 +238,6 @@ public class ParallelNioSender implements MultiPointSender {
     
     public void finalize() {
         try {disconnect(); }catch ( Exception ignore){}
-    }
-
-    public boolean isConnected() {
-        return connected;
-    }
-
-    public boolean isAutoConnect() {
-        return autoConnect;
-    }
-
-    public void setUseDirectBuffer(boolean directBuf) {
-        this.directBuf = directBuf;
-    }
-    
-    public void setMaxRetryAttempts(int attempts) {
-        this.retryAttempts = attempts;
-    }
-    
-    public void setTxBufSize(int size) {
-        this.txBufSize = size;
-    }
-    
-    public void setRxBufSize(int size) {
-        this.rxBufSize = size;
-    }
-    
-    public void setWaitForAck(boolean wait) {
-        this.waitForAck = wait;
-    }
-    
-    public void setTimeout(long timeout) {
-        this.timeout = timeout;
-    }
-
-    public void setConnected(boolean connected) {
-        this.connected = connected;
-    }
-
-    public void setAutoConnect(boolean autoConnect) {
-        this.autoConnect = autoConnect;
-    }
-
-    public void setKeepAliveCount(int keepAliveCount) {
-        this.keepAliveCount = keepAliveCount;
     }
 
     public boolean keepalive() {
