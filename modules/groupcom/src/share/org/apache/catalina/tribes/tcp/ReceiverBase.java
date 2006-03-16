@@ -61,6 +61,8 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
     private long tcpSelectorTimeout;
     private String tcpListenAddress;
     private boolean sendAck;
+    //how many times to search for an available socket
+    private int autoBind = 1;
 
     public ReceiverBase() {
     }
@@ -257,6 +259,10 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
         return tcpListenAddress;
     }
 
+    public int getAutoBind() {
+        return autoBind;
+    }
+
     public void setTcpSelectorTimeout(long selTimeout) {
         tcpSelectorTimeout = selTimeout;
     }
@@ -291,5 +297,10 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
 
     public void setSendAck(boolean sendAck) {
         this.sendAck = sendAck;
+    }
+
+    public void setAutoBind(int autoBind) {
+        this.autoBind = autoBind;
+        if ( this.autoBind <= 0 ) this.autoBind = 1;
     }
 }
