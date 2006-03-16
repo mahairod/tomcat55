@@ -4059,18 +4059,19 @@ public class StandardContext
             }
         }
 
-        // Binding thread
-        ClassLoader oldCCL = bindThread();
-
         // Standard container startup
         if (log.isDebugEnabled())
             log.debug("Processing standard container startup");
 
-        if (ok) {
+        // Binding thread
+        ClassLoader oldCCL = bindThread();
 
-            boolean mainOk = false;
-            try {
+        boolean mainOk = false;
 
+        try {
+
+            if (ok) {
+                
                 started = true;
 
                 // Start our subordinate components, if any
@@ -4141,17 +4142,18 @@ public class StandardContext
 
                 mainOk = true;
 
-            } finally {
-                // Unbinding thread
-                unbindThread(oldCCL);
-                if (!mainOk) {
-                    // An exception occurred
-                    // Register with JMX anyway, to allow management
-                    registerJMX();
-                }
             }
 
+        } finally {
+            // Unbinding thread
+            unbindThread(oldCCL);
+            if (!mainOk) {
+                // An exception occurred
+                // Register with JMX anyway, to allow management
+                registerJMX();
+            }
         }
+
         if (!getConfigured()) {
             log.error( "Error getConfigured");
             ok = false;
@@ -4168,37 +4170,41 @@ public class StandardContext
         // Binding thread
         oldCCL = bindThread();
 
-        // Create context attributes that will be required
-        if (ok) {
-            postWelcomeFiles();
-        }
-
-        if (ok) {
-            // Notify our interested LifecycleListeners
-            lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
-        }
-
-        // Configure and call application event listeners and filters
-        if (ok) {
-            if (!listenerStart()) {
-                log.error( "Error listenerStart");
-                ok = false;
+        try {
+            
+            // Create context attributes that will be required
+            if (ok) {
+                postWelcomeFiles();
             }
-        }
-        if (ok) {
-            if (!filterStart()) {
-                log.error( "Error filterStart");
-                ok = false;
+            
+            if (ok) {
+                // Notify our interested LifecycleListeners
+                lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
             }
+            
+            // Configure and call application event listeners and filters
+            if (ok) {
+                if (!listenerStart()) {
+                    log.error( "Error listenerStart");
+                    ok = false;
+                }
+            }
+            if (ok) {
+                if (!filterStart()) {
+                    log.error( "Error filterStart");
+                    ok = false;
+                }
+            }
+            
+            // Load and initialize all "load on startup" servlets
+            if (ok) {
+                loadOnStartup(findChildren());
+            }
+            
+        } finally {
+            // Unbinding thread
+            unbindThread(oldCCL);
         }
-
-        // Load and initialize all "load on startup" servlets
-        if (ok) {
-            loadOnStartup(findChildren());
-        }
-
-        // Unbinding thread
-        unbindThread(oldCCL);
 
         // Set available status depending upon startup success
         if (ok) {
@@ -4324,30 +4330,30 @@ public class StandardContext
         // Binding thread
         ClassLoader oldCCL = bindThread();
 
-        // Stop our filters
-        filterStop();
-
-        // Stop our application listeners
-        listenerStop();
-
-        // Stop ContainerBackgroundProcessor thread
-        super.threadStop();
-
-        if ((manager != null) && (manager instanceof Lifecycle)) {
-            ((Lifecycle) manager).stop();
-        }
-
-        // Finalize our character set mapper
-        setCharsetMapper(null);
-
-        // Normal container shutdown processing
-        if (log.isDebugEnabled())
-            log.debug("Processing standard container shutdown");
-        // Notify our interested LifecycleListeners
-        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-        started = false;
-
         try {
+
+            // Stop our filters
+            filterStop();
+
+            // Stop our application listeners
+            listenerStop();
+
+            // Stop ContainerBackgroundProcessor thread
+            super.threadStop();
+
+            if ((manager != null) && (manager instanceof Lifecycle)) {
+                ((Lifecycle) manager).stop();
+            }
+
+            // Finalize our character set mapper
+            setCharsetMapper(null);
+
+            // Normal container shutdown processing
+            if (log.isDebugEnabled())
+                log.debug("Processing standard container shutdown");
+            // Notify our interested LifecycleListeners
+            lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+            started = false;
 
             // Stop the Valves in our pipeline (including the basic), if any
             if (pipeline instanceof Lifecycle) {
