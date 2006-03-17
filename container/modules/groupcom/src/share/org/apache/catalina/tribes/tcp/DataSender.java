@@ -37,7 +37,6 @@ public interface DataSender {
     public void setTxBufSize(int size);
     public boolean keepalive();
     public void setTimeout(long timeout);
-    public void setWaitForAck(boolean isWaitForAck);
     public void setKeepAliveCount(int maxRequests);
     public void setKeepAliveTime(long keepAliveTimeInMs);
     public int getRequestCount();

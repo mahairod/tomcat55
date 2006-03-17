@@ -132,12 +132,12 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
         //publish the data out to all nodes
         MapMessage msg = new MapMessage(getMapContextName(), MapMessage.MSG_PROXY, false,
                                         (Serializable) key, null, null, wrap(backup));
-        getChannel().send(getMapMembers(), msg);
+        getChannel().send(getMapMembers(), msg,Channel.SEND_OPTIONS_DEFAULT);
 
         //publish the backup data to one node
         msg = new MapMessage(getMapContextName(), MapMessage.MSG_BACKUP, false,
                              (Serializable) key, (Serializable) value, null, wrap(backup));
-        getChannel().send(new Member[] {backup}, msg);
+        getChannel().send(new Member[] {backup}, msg, Channel.SEND_OPTIONS_DEFAULT);
         return wrap(backup);
     }
     
@@ -149,7 +149,7 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
             try {
                 MapMessage msg = new MapMessage(getMapContextName(), MapMessage.MSG_RETRIEVE_BACKUP, false,
                                                 (Serializable) key, null, null, null);
-                Response[] resp = getRpcChannel().send(entry.getBackupNodes(),msg, this.getRpcChannel().FIRST_REPLY, getRpcTimeout());
+                Response[] resp = getRpcChannel().send(entry.getBackupNodes(),msg, this.getRpcChannel().FIRST_REPLY, Channel.SEND_OPTIONS_DEFAULT, getRpcTimeout());
                 if (resp == null || resp.length == 0) {
                     //no responses
                     log.warn("Unable to retrieve remote object for key:" + key);
@@ -165,7 +165,7 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
                 } else if ( entry.isProxy() ) {
                     //invalidate the previous primary
                     msg = new MapMessage(getMapContextName(),MapMessage.MSG_PROXY,false,(Serializable)key,null,null,backup);
-                    getChannel().send(backup,msg);
+                    getChannel().send(backup,msg,Channel.SEND_OPTIONS_DEFAULT);
                 }
 
                 entry.setBackupNodes(backup);
@@ -239,7 +239,7 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
         MapEntry entry = (MapEntry)super.remove(key);
         MapMessage msg = new MapMessage(getMapContextName(),MapMessage.MSG_REMOVE,false,(Serializable)key,null,null,null);
         try {
-            getChannel().send(getMapMembers(), msg);
+            getChannel().send(getMapMembers(), msg,Channel.SEND_OPTIONS_DEFAULT);
         } catch ( ChannelException x ) {
             log.error("Unable to replicate out data for a LazyReplicatedMap.remove operation",x);
         }

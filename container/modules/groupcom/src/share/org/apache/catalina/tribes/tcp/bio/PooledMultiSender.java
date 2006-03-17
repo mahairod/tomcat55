@@ -52,7 +52,6 @@ public class PooledMultiSender extends PooledSender {
     public DataSender getNewDataSender() {
         MultipointBioSender sender = new MultipointBioSender();
         sender.setTimeout(getTimeout());
-        sender.setWaitForAck(getWaitForAck());
         sender.setMaxRetryAttempts(getMaxRetryAttempts());
         sender.setRxBufSize(getRxBufSize());
         sender.setTxBufSize(getTxBufSize());

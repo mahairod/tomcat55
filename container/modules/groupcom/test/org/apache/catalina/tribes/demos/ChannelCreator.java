@@ -50,9 +50,8 @@ public class ChannelCreator {
            .append("\n\t\t[-tcpselto tcpselectortimeout]") 
            .append("\n\t\t[-tcpthreads tcpthreadcount]") 
            .append("\n\t\t[-port tcplistenport]")
-           .append("\n\t\t[-ack true|false]")
+           .append("\n\t\t[-autobind tcpbindtryrange]")
            .append("\n\t\t[-ackto acktimeout]") 
-           .append("\n\t\t[-sync true|false]")
            .append("\n\t\t[-receiver org.apache.catalina.tribes.tcp.nio.NioReceiver|org.apache.catalina.tribes.tcp.bio.BioReceiver|]")
            .append("\n\t\t[-transport org.apache.catalina.tribes.tcp.nio.PooledParallelSender|org.apache.catalina.tribes.tcp.bio.PooledMultiSender]")
            .append("\n\t\t[-transport.xxx transport specific property]")
@@ -74,8 +73,6 @@ public class ChannelCreator {
         String bind = "auto";
         int port = 4001;
         String mbind = null;
-        boolean ack = false;
-        boolean sync = false;
         boolean gzip = false;
         int tcpseltimeout = 100;
         int tcpthreadcount = 4;
@@ -88,6 +85,7 @@ public class ChannelCreator {
         int ordersize = Integer.MAX_VALUE;
         boolean frag = false;
         int fragsize = 1024;
+        int autoBind = 10;
         Properties transportProperties = new Properties();
         String transport = "org.apache.catalina.tribes.tcp.nio.PooledParallelSender";
         String receiver = "org.apache.catalina.tribes.tcp.nio.NioReceiver";
@@ -97,6 +95,8 @@ public class ChannelCreator {
                 bind = args[++i];
             } else if ("-port".equals(args[i])) {
                 port = Integer.parseInt(args[++i]);
+            } else if ("-autobind".equals(args[i])) {
+                autoBind = Integer.parseInt(args[++i]);
             } else if ("-tcpselto".equals(args[i])) {
                 tcpseltimeout = Integer.parseInt(args[++i]);
             } else if ("-tcpthreads".equals(args[i])) {
@@ -113,12 +113,8 @@ public class ChannelCreator {
             } else if ("-fragsize".equals(args[i])) {
                 fragsize = Integer.parseInt(args[++i]);
                 System.out.println("Setting FragmentationInterceptor.maxSize="+fragsize);
-            } else if ("-ack".equals(args[i])) {
-                ack = Boolean.parseBoolean(args[++i]);
             } else if ("-ackto".equals(args[i])) {
                 acktimeout = Integer.parseInt(args[++i]);
-            } else if ("-sync".equals(args[i])) {
-                sync = Boolean.parseBoolean(args[++i]);
             } else if ("-transport".equals(args[i])) {
                 transport = args[++i];
             } else if (args[i]!=null && args[i].startsWith("transport.")) {
@@ -148,17 +144,15 @@ public class ChannelCreator {
         rx.setTcpSelectorTimeout(tcpseltimeout);
         rx.setTcpThreadCount(tcpthreadcount);
         rx.getBind();
-        rx.setSendAck(ack);
-        rx.setSynchronized(sync);
         rx.setRxBufSize(43800);
         rx.setTxBufSize(25188);
+        rx.setAutoBind(autoBind);
 
         
         ReplicationTransmitter ps = new ReplicationTransmitter();
         System.out.println("Creating transport class="+transport);
         MultiPointSender sender = (MultiPointSender)Class.forName(transport,true,ChannelCreator.class.getClassLoader()).newInstance();
         sender.setTimeout(acktimeout);
-        sender.setWaitForAck(ack);
         sender.setMaxRetryAttempts(2);
         sender.setRxBufSize(43800);
         sender.setTxBufSize(25188);

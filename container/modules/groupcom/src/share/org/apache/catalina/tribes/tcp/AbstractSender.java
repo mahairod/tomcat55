@@ -37,7 +37,6 @@ import org.apache.catalina.tribes.Member;
 public abstract class AbstractSender implements DataSender {
     
     private boolean connected = false;
-    private boolean waitForAck = false;
     private int rxBufSize = 25188;
     private int txBufSize = 43800;
     private boolean directBuffer = false;
@@ -138,10 +137,6 @@ public abstract class AbstractSender implements DataSender {
         return txBufSize;
     }
 
-    public boolean getWaitForAck() {
-        return waitForAck;
-    }
-
     public InetAddress getAddress() {
         return address;
     }
@@ -188,10 +183,6 @@ public abstract class AbstractSender implements DataSender {
 
     public void setTxBufSize(int txBufSize) {
         this.txBufSize = txBufSize;
-    }
-
-    public void setWaitForAck(boolean waitForAck) {
-        this.waitForAck = waitForAck;
     }
 
     public void setConnectTime(long connectTime) {

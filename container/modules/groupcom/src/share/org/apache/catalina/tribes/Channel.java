@@ -36,6 +36,16 @@ public interface Channel {
     public static final int MBR_TX_SEQ = 8;
     
     /**
+     * 
+     * Send options
+     */
+    public static final int SEND_OPTIONS_USE_ACK = 0x0001;
+    public static final int SEND_OPTIONS_SYNCHRONIZED_ACK = 0x0002;
+    public static final int SEND_OPTIONS_DEFAULT = SEND_OPTIONS_USE_ACK;
+    public static final int SEND_OPTIONS_BYTE_MESSAGE = 0x0004;
+
+    
+    /**
      * Adds an interceptor to the channel message chain.
      * @param interceptor ChannelInterceptor
      */
@@ -74,7 +84,7 @@ public interface Channel {
      * @param options int - sender options, see class documentation
      * @return ClusterMessage[] - the replies from the members, if any. 
      */
-    public void send(Member[] destination, Serializable msg) throws ChannelException;
+    public void send(Member[] destination, Serializable msg, int options) throws ChannelException;
 
     
     /**

@@ -112,7 +112,7 @@ public class ReplicatedMap extends AbstractReplicatedMap implements RpcCallback,
         MapMessage msg = new MapMessage(getMapContextName(), MapMessage.MSG_BACKUP, false,
                                         (Serializable) key, null, null, backup);
 
-        getChannel().send(getMapMembers(), msg);
+        getChannel().send(getMapMembers(), msg, Channel.SEND_OPTIONS_DEFAULT);
 
         return backup;
     }
@@ -182,7 +182,7 @@ public class ReplicatedMap extends AbstractReplicatedMap implements RpcCallback,
         MapEntry entry = (MapEntry)super.remove(key);
         MapMessage msg = new MapMessage(getMapContextName(), MapMessage.MSG_REMOVE, false, (Serializable) key, null, null, null);
         try {
-            getChannel().send(getMapMembers(), msg);
+            getChannel().send(getMapMembers(), msg, Channel.SEND_OPTIONS_DEFAULT);
         } catch (ChannelException x) {
             log.error("Unable to replicate out data for a LazyReplicatedMap.remove operation", x);
         }

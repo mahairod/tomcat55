@@ -124,13 +124,13 @@ public class BioSender extends AbstractSender implements DataSender {
      * @see org.apache.catalina.tribes.tcp.IDataSender#sendMessage(,
      *      ChannelMessage)
      */
-    public  void sendMessage(byte[] data) throws IOException {
+    public  void sendMessage(byte[] data, boolean waitForAck) throws IOException {
         boolean messageTransfered = false ;
         IOException exception = null;
         setAttempt(0);
         try {
              // first try with existing connection
-             pushMessage(data,false);
+             pushMessage(data,false,waitForAck);
              messageTransfered = true ;
         } catch (IOException x) {
             SenderState.getSenderState(getDestination()).setSuspect();
@@ -140,7 +140,7 @@ public class BioSender extends AbstractSender implements DataSender {
                 try {
                     setAttempt(getAttempt()+1);
                     // second try with fresh connection
-                    pushMessage(data, true);
+                    pushMessage(data, true,waitForAck);
                     messageTransfered = true;
                     exception = null;
                 } catch (IOException xx) {
@@ -245,13 +245,13 @@ public class BioSender extends AbstractSender implements DataSender {
      * @since 5.5.10
      */
     
-    protected  void pushMessage(byte[] data, boolean reconnect) throws IOException {
+    protected  void pushMessage(byte[] data, boolean reconnect, boolean waitForAck) throws IOException {
         keepalive();
         if ( reconnect ) closeSocket();
         if (!isConnected()) openSocket();
         soOut.write(data);
         soOut.flush();
-        if (getWaitForAck()) waitForAck();
+        if (waitForAck) waitForAck();
         SenderState.getSenderState(getDestination()).setReady();
 
     }

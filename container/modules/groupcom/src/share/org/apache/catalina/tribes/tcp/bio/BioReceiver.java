@@ -75,7 +75,7 @@ public class BioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
     }
     
     protected BioReplicationThread getReplicationThread() {
-        BioReplicationThread result = new BioReplicationThread();
+        BioReplicationThread result = new BioReplicationThread(this);
         result.setOptions(getWorkerThreadOptions());
         return result;
     }
@@ -136,7 +136,7 @@ public class BioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
             if ( socket == null ) continue;
             socket.setReceiveBufferSize(getRxBufSize());
             socket.setSendBufferSize(getRxBufSize());
-            ObjectReader reader = new ObjectReader(socket,this);
+            ObjectReader reader = new ObjectReader(socket);
             thread.serviceSocket(socket,reader);
         }//while
     }

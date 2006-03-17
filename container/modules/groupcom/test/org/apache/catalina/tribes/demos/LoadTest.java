@@ -25,6 +25,7 @@ import org.apache.catalina.tribes.ManagedChannel;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
 import org.apache.catalina.tribes.io.XByteBuffer;
+import org.apache.catalina.tribes.Channel;
 
 
 /**
@@ -55,6 +56,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
     public long pause = 0;
     public boolean breakonChannelException = false;
     public long receiveStart = 0;
+    public int channelOptions = Channel.SEND_OPTIONS_DEFAULT;
     
     static int messageSize = 0;
     
@@ -136,7 +138,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
                         if (debug) {
                             printArray(msg.getMessage());
                         }
-                        channel.send(channel.getMembers(), msg);
+                        channel.send(channel.getMembers(), msg, channelOptions);
                         if ( pause > 0 ) {
                             if ( debug) System.out.println("Pausing sender for "+pause+" ms.");
                             Thread.sleep(pause);
@@ -307,6 +309,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
                            "[-pause nrofsecondstopausebetweensends]  \n\t\t"+
                            "[-threads numberofsenderthreads]  \n\t\t"+
                            "[-size messagesize]  \n\t\t"+
+                           "[-sendoptions channeloptions]  \n\t\t"+
                            "[-break (halts execution on exception)]\n"+
                            "\tChannel options:"+
                            ChannelCreator.usage()+"\n\n"+
@@ -324,6 +327,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
         int stats = 10000;
         boolean breakOnEx = false;
         int threads = 1;
+        int channelOptions = Channel.SEND_OPTIONS_DEFAULT;
         if ( args.length == 0 ) {
             args = new String[] {"-help"};
         }
@@ -340,6 +344,9 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
             } else if ("-stats".equals(args[i])) {
                 stats = Integer.parseInt(args[++i]);
                 System.out.println("Stats every "+stats+" message");
+            } else if ("-sendoptions".equals(args[i])) {
+                channelOptions = Integer.parseInt(args[++i]);
+                System.out.println("Setting send options to "+channelOptions);
             } else if ("-size".equals(args[i])) {
                 size = Integer.parseInt(args[++i])-4;
                 System.out.println("Message size will be:"+(size+4)+" bytes");
@@ -358,6 +365,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
         ManagedChannel channel = (ManagedChannel)ChannelCreator.createChannel(args);
         
         LoadTest test = new LoadTest(channel,send,count,debug,pause,stats,breakOnEx);
+        test.channelOptions = channelOptions;
         LoadMessage msg = new LoadMessage();
         
         messageSize = LoadMessage.getMessageSize(msg);

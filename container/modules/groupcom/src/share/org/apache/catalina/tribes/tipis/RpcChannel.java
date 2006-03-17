@@ -74,17 +74,18 @@ public class RpcChannel implements ChannelListener{
      */
     public Response[] send(Member[] destination, 
                            Serializable message,
-                           int options, 
+                           int rpcOptions, 
+                           int channelOptions,
                            long timeout) throws ChannelException {
         
         if ( destination==null || destination.length == 0 ) return new Response[0];
         RpcCollectorKey key = new RpcCollectorKey(UUIDGenerator.randomUUID(false));
-        RpcCollector collector = new RpcCollector(key,options,destination.length,timeout);
+        RpcCollector collector = new RpcCollector(key,rpcOptions,destination.length,timeout);
         try {
             synchronized (collector) {
                 responseMap.put(key, collector);
                 RpcMessage rmsg = new RpcMessage(rpcId, key.id, message);
-                channel.send(destination, rmsg);
+                channel.send(destination, rmsg, channelOptions);
                 collector.wait(timeout);
             }
         } catch ( InterruptedException ix ) {
@@ -119,7 +120,7 @@ public class RpcChannel implements ChannelListener{
             rmsg.reply = true;
             rmsg.message = reply;
             try {
-                channel.send(new Member[] {sender}, rmsg);
+                channel.send(new Member[] {sender}, rmsg,Channel.SEND_OPTIONS_DEFAULT);
             }catch ( Exception x )  {
                 log.error("Unable to send back reply in RpcChannel.",x);
             }

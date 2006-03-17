@@ -32,6 +32,7 @@ import org.apache.catalina.tribes.tcp.MultiPointSender;
 import org.apache.catalina.tribes.tcp.SenderState;
 import org.apache.catalina.tribes.tcp.AbstractSender;
 import java.net.UnknownHostException;
+import org.apache.catalina.tribes.Channel;
 
 /**
  * <p>Title: </p>
@@ -70,7 +71,7 @@ public class ParallelNioSender extends AbstractSender implements MultiPointSende
             //loop until complete, an error happens, or we timeout
             long delta = System.currentTimeMillis() - start;
             while ( (remaining>0) && (delta<getTimeout()) ) {
-                remaining -= doLoop(selectTimeout,getMaxRetryAttempts());
+                remaining -= doLoop(selectTimeout,getMaxRetryAttempts(),(Channel.SEND_OPTIONS_USE_ACK&msg.getOptions())==Channel.SEND_OPTIONS_USE_ACK);
                 delta = System.currentTimeMillis() - start;
             }
             if ( remaining > 0 ) {
@@ -89,7 +90,7 @@ public class ParallelNioSender extends AbstractSender implements MultiPointSende
         
     }
     
-    private int doLoop(long selectTimeOut, int maxAttempts) throws IOException, ChannelException {
+    private int doLoop(long selectTimeOut, int maxAttempts, boolean waitForAck) throws IOException, ChannelException {
         int completed = 0;
         int selectedKeys = selector.select(selectTimeOut);
         
@@ -105,7 +106,7 @@ public class ParallelNioSender extends AbstractSender implements MultiPointSende
             sk.interestOps(sk.interestOps() & ~readyOps);
             NioSender sender = (NioSender) sk.attachment();
             try {
-                if (sender.process(sk)) {
+                if (sender.process(sk,waitForAck)) {
                     sender.reset();
                     completed++;
                     sender.setComplete(true);
@@ -186,7 +187,6 @@ public class ParallelNioSender extends AbstractSender implements MultiPointSende
                 sender.setDirectBuffer(getDirectBuffer());
                 sender.setRxBufSize(getRxBufSize());
                 sender.setTxBufSize(getTxBufSize());
-                sender.setWaitForAck(getWaitForAck());
                 sender.setTimeout(getTimeout());
                 sender.setKeepAliveCount(getKeepAliveCount());
                 sender.setKeepAliveTime(getKeepAliveTime());

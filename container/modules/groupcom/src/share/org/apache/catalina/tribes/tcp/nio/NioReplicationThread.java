@@ -23,6 +23,9 @@ import java.nio.channels.SocketChannel;
 import org.apache.catalina.tribes.io.ObjectReader;
 import org.apache.catalina.tribes.tcp.Constants;
 import org.apache.catalina.tribes.tcp.WorkerThread;
+import org.apache.catalina.tribes.ChannelMessage;
+import org.apache.catalina.tribes.io.ListenCallback;
+import org.apache.catalina.tribes.io.ClusterData;
 
 /**
  * A worker thread class which can drain channels and echo-back the input. Each
@@ -44,8 +47,9 @@ public class NioReplicationThread extends WorkerThread {
     private ByteBuffer buffer = null;
     private SelectionKey key;
     private int rxBufSize;
-    public NioReplicationThread ()
+    public NioReplicationThread (ListenCallback callback)
     {
+        super(callback);
     }
 
     // loop forever waiting for work to do
@@ -56,7 +60,7 @@ public class NioReplicationThread extends WorkerThread {
         }else {
             buffer = ByteBuffer.allocate (getRxBufSize());
         }
-        while (doRun) {
+        while (isDoRun()) {
             try {
                 // sleep and release object lock
                 this.wait();
@@ -93,7 +97,7 @@ public class NioReplicationThread extends WorkerThread {
             }
             key = null;
             // done, ready for more, return to pool
-            this.pool.returnWorker (this);
+            getPool().returnWorker (this);
         }
     }
 
@@ -142,38 +146,27 @@ public class NioReplicationThread extends WorkerThread {
         
         int pkgcnt = reader.count();
 
+        if ( pkgcnt > 0 ) {
+            ChannelMessage[] msgs = reader.execute();
+            for ( int i=0; i<msgs.length; i++ ) {
+                /**
+                 * Use send ack here if you want to ack the request to the remote 
+                 * server before completing the request
+                 * This is considered an asynchronized request
+                 */
+                if (ClusterData.sendAckAsync(msgs[i].getOptions())) sendAck(key,channel);
+                //process the message
+                getCallback().messageDataReceived(msgs[i]);
+                /**
+                 * Use send ack here if you want the request to complete on this 
+                 * server before sending the ack to the remote server
+                 * This is considered a synchronized request
+                 */
+                if (ClusterData.sendAckSync(msgs[i].getOptions())) sendAck(key,channel);
+            }                        
+        }
+
         
-
-        /**
-         * Use send ack here if you want to ack the request to the remote 
-         * server before completing the request
-         * This is considered an asynchronized request
-         */
-        if (sendAckAsync()) {
-            while ( pkgcnt > 0 ) {
-                sendAck(key,channel);
-                pkgcnt--;
-            }
-        }
-
-        //check to see if any data is available
-        pkgcnt = reader.execute();
-
-        if (log.isTraceEnabled()) {
-            log.trace("sending " + pkgcnt + " ack packages to " + channel.socket().getLocalPort() );
-        }
-
-        /**
-         * Use send ack here if you want the request to complete on this 
-         * server before sending the ack to the remote server
-         * This is considered a synchronized request
-         */
-        if (sendAckSync()) {
-            while ( pkgcnt > 0 ) {
-                sendAck(key,channel);
-                pkgcnt--;
-            }
-        }        
 
         
         if (count < 0) {

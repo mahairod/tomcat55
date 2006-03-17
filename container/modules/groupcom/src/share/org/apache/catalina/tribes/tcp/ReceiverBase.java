@@ -40,8 +40,6 @@ import org.apache.commons.logging.Log;
  */
 public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
 
-    public static final int OPTION_SEND_ACK = 0x0001;
-    public static final int OPTION_SYNCHRONIZED = 0x0002;
     public static final int OPTION_DIRECT_BUFFER = 0x0004;
 
 
@@ -51,7 +49,6 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
     private String host;
     private InetAddress bind;
     private int port;
-    private boolean sync;
     private int rxBufSize = 43800;
     private int txBufSize = 25188;
     private int tcpThreadCount;
@@ -60,7 +57,6 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
     private boolean direct = true;
     private long tcpSelectorTimeout;
     private String tcpListenAddress;
-    private boolean sendAck;
     //how many times to search for an available socket
     private int autoBind = 1;
 
@@ -99,15 +95,6 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
     }
 
     /**
-     *
-     * @return boolean
-     * @todo Implement this org.apache.catalina.tribes.ChannelReceiver method
-     */
-    public boolean getSendAck() {
-        return sendAck;
-    }
-
-    /**
      * setMessageListener
      *
      * @param listener MessageListener
@@ -123,10 +110,6 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
 
     public void setTcpListenAddress(String tcpListenHost) {
         this.host = tcpListenHost;
-    }
-
-    public void setSynchronized(boolean sync) {
-        this.sync = sync;
     }
 
     public void setRxBufSize(int rxBufSize) {
@@ -194,8 +177,6 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
     
     public int getWorkerThreadOptions() {
         int options = 0;
-        if ( getSynchronized() ) options = options |OPTION_SYNCHRONIZED;
-        if ( getSendAck() ) options = options |OPTION_SEND_ACK;
         if ( getDirect() ) options = options | OPTION_DIRECT_BUFFER;
         return options;
     }
@@ -213,10 +194,6 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
         return this.port;
     }
 
-    public boolean isSync() {
-        return sync;
-    }
-
     public boolean getDirect() {
         return direct;
     }
@@ -225,11 +202,6 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
 
     public void setDirect(boolean direct) {
         this.direct = direct;
-    }
-
-
-    public boolean getSynchronized() {
-        return this.sync;
     }
 
 
@@ -289,14 +261,6 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
 
     public void setPort(int port) {
         this.port = port;
-    }
-
-    public void setSync(boolean sync) {
-        this.sync = sync;
-    }
-
-    public void setSendAck(boolean sendAck) {
-        this.sendAck = sendAck;
     }
 
     public void setAutoBind(int autoBind) {
