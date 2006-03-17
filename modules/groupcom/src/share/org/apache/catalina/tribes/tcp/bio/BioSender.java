@@ -31,7 +31,7 @@ import org.apache.catalina.tribes.tcp.Constants;
 import org.apache.catalina.tribes.tcp.DataSender;
 import org.apache.catalina.tribes.tcp.SenderState;
 import org.apache.catalina.util.StringManager;
-import org.apache.catalina.tribes.tcp.AbstractSocketSender;
+import org.apache.catalina.tribes.tcp.AbstractSender;
 
 /**
  * Send cluster messages with only one socket. Ack and keep Alive Handling is
@@ -42,7 +42,7 @@ import org.apache.catalina.tribes.tcp.AbstractSocketSender;
  * @version $Revision: 377484 $ $Date: 2006-02-13 15:00:05 -0600 (Mon, 13 Feb 2006) $
  * @since 5.5.16
  */
-public class BioSender extends AbstractSocketSender implements DataSender {
+public class BioSender extends AbstractSender implements DataSender {
 
     private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(BioSender.class);
 
@@ -65,12 +65,6 @@ public class BioSender extends AbstractSocketSender implements DataSender {
     private Socket socket = null;
     private OutputStream soOut = null;
     private InputStream soIn = null;
-
-
-    /**
-     * After failure make a resend
-     */
-    private boolean resend = false ;
     
     protected XByteBuffer ackbuf = new XByteBuffer(Constants.ACK_COMMAND.length,true);
 
@@ -97,22 +91,6 @@ public class BioSender extends AbstractSocketSender implements DataSender {
     public String getInfo() {
         return (info);
     }
-
-    
-
-    /**
-     * @return Returns the resend.
-     */
-    public boolean isResend() {
-        return resend;
-    }
-    /**
-     * @param resend The resend to set.
-     */
-    public void setResend(boolean resend) {
-        this.resend = resend;
-    }
-
 
     // --------------------------------------------------------- Public Methods
 
@@ -149,22 +127,26 @@ public class BioSender extends AbstractSocketSender implements DataSender {
     public  void sendMessage(byte[] data) throws IOException {
         boolean messageTransfered = false ;
         IOException exception = null;
+        setAttempt(0);
         try {
              // first try with existing connection
              pushMessage(data,false);
              messageTransfered = true ;
         } catch (IOException x) {
+            SenderState.getSenderState(getDestination()).setSuspect();
             exception = x;
-            //resend
             if (log.isTraceEnabled()) log.trace(sm.getString("IDataSender.send.again", getAddress().getHostAddress(),new Integer(getPort())),x);
-            try {
-                // second try with fresh connection
-                pushMessage(data,true);                    
-                messageTransfered = true;
-                exception = null;
-            } catch (IOException xx) {
-                exception = xx;
-                closeSocket();
+            while ( getAttempt()<getMaxRetryAttempts() ) {
+                try {
+                    setAttempt(getAttempt()+1);
+                    // second try with fresh connection
+                    pushMessage(data, true);
+                    messageTransfered = true;
+                    exception = null;
+                } catch (IOException xx) {
+                    exception = xx;
+                    closeSocket();
+                }
             }
         } finally {
             setRequestCount(getRequestCount()+1);
@@ -270,6 +252,7 @@ public class BioSender extends AbstractSocketSender implements DataSender {
         soOut.write(data);
         soOut.flush();
         if (getWaitForAck()) waitForAck();
+        SenderState.getSenderState(getDestination()).setReady();
 
     }
     

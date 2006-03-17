@@ -34,7 +34,7 @@ import org.apache.catalina.tribes.Member;
  * @author not attributable
  * @version 1.0
  */
-public abstract class AbstractSocketSender implements DataSender {
+public abstract class AbstractSender implements DataSender {
     
     private boolean connected = false;
     private boolean waitForAck = false;
@@ -50,17 +50,18 @@ public abstract class AbstractSocketSender implements DataSender {
     private InetAddress address;
     private int port;
     private int maxRetryAttempts;
-    public AbstractSocketSender() {
+    private int attempt;
+    public AbstractSender() {
         
     }
     
-    public AbstractSocketSender(Member destination) throws UnknownHostException {
+    public AbstractSender(Member destination) throws UnknownHostException {
         this.destination = destination;
         this.address = InetAddress.getByAddress(destination.getHost());
         this.port = destination.getPort();
     }
     
-    public AbstractSocketSender(Member destination, int rxBufSize, int txBufSize) throws UnknownHostException {
+    public AbstractSender(Member destination, int rxBufSize, int txBufSize) throws UnknownHostException {
         this(destination);
         this.rxBufSize = rxBufSize;
         this.txBufSize = txBufSize;
@@ -161,6 +162,9 @@ public abstract class AbstractSocketSender implements DataSender {
         return this.directBuffer;
     }
 
+    public int getAttempt() {
+        return attempt;
+    }
 
     public void setKeepAliveCount(int keepAliveCount) {
         this.keepAliveCount = keepAliveCount;
@@ -196,5 +200,9 @@ public abstract class AbstractSocketSender implements DataSender {
 
     public void setMaxRetryAttempts(int maxRetryAttempts) {
         this.maxRetryAttempts = maxRetryAttempts;
+    }
+
+    public void setAttempt(int attempt) {
+        this.attempt = attempt;
     }
 }
