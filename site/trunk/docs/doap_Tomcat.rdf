@@ -19,11 +19,11 @@ Apache Tomcat powers numerous large-scale, mission-critical web applications acr
     <bug-database rdf:resource="http://issues.apache.org/bugzilla" />
     <mailing-list rdf:resource="http://tomcat.apache.org/lists.html" />
     <download-page rdf:resource="http://tomcat.apache.org" />
-    <programming-language>java</programming-language>
-    <category rdf:resource="http://projects.apache.org/category/servletContainer" />
+    <programming-language>Java</programming-language>
+    <category rdf:resource="http://projects.apache.org/category/network-server" />
     <release>
       <Version>
-        <name>5.5.16</name>
+        <name>Latest Stable Release</name>
         <created>2006-03-05</created>
         <revision>5.5.16</revision>
       </Version>
@@ -39,6 +39,18 @@ Apache Tomcat powers numerous large-scale, mission-critical web applications acr
         <browse rdf:resource="http://svn.apache.org/repos/asf/tomcat/"/>
       </SVNRepository>
     </repository>
+    <asfext:standard>
+      <asfext:title>Java Servlets</asfext:title>
+      <asfext:body>JCP</asfext:body>
+      <asfext:id>JSR 154</asfext:id>
+      <asfext:url rdf:resource="http://www.jcp.org/en/jsr/detail?id=154"/>
+    </asfext:standard>
+    <asfext:standard>
+      <asfext:title>Java Server Pages</asfext:title>
+      <asfext:body>JCP</asfext:body>
+      <asfext:id>JSR 152</asfext:id>
+      <asfext:url rdf:resource="http://www.jcp.org/en/jsr/detail?id=152"/>
+    </asfext:standard>
   </Project>
 </rdf:RDF>
 
