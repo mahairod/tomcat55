@@ -30,7 +30,7 @@ import java.util.List;
  * @author not attributable
  * @version 1.0
  */
-public abstract class PooledSender extends AbstractSocketSender implements MultiPointSender {
+public abstract class PooledSender extends AbstractSender implements MultiPointSender {
     
     private SenderQueue queue = null;
     private int poolSize = 25;

@@ -29,7 +29,7 @@ import java.util.Arrays;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.tcp.DataSender;
-import org.apache.catalina.tribes.tcp.AbstractSocketSender;
+import org.apache.catalina.tribes.tcp.AbstractSender;
 import java.net.UnknownHostException;
 
 /**
@@ -46,7 +46,7 @@ import java.net.UnknownHostException;
  * @author Filip Hanik
  * @version 1.0
  */
-public class NioSender extends AbstractSocketSender implements DataSender{
+public class NioSender extends AbstractSender implements DataSender{
 
     protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(NioSender.class);
 
@@ -64,8 +64,6 @@ public class NioSender extends AbstractSocketSender implements DataSender{
     protected XByteBuffer ackbuf = new XByteBuffer(128,true);
     protected int remaining = 0;
     protected boolean complete;
-    protected int attempt;
-
     public NioSender(Member destination) throws UnknownHostException {
         super(destination);
         
@@ -237,7 +235,7 @@ public class NioSender extends AbstractSocketSender implements DataSender{
         ackbuf.clear();
         remaining = 0;
         complete = false;
-        attempt = 0;
+        setAttempt(0);
         setRequestCount(0);
         setConnectTime(-1);
     }
@@ -275,10 +273,6 @@ public class NioSender extends AbstractSocketSender implements DataSender{
         return complete;
     }
 
-    public int getAttempt() {
-        return attempt;
-    }
-
     public Selector getSelector() {
         return selector;
     }
@@ -291,10 +285,4 @@ public class NioSender extends AbstractSocketSender implements DataSender{
     public void setComplete(boolean complete) {
         this.complete = complete;
     }
-
-    public void setAttempt(int attempt) {
-        this.attempt = attempt;
-    }
-
-
 }
