@@ -20,8 +20,13 @@ Apache Tomcat powers numerous large-scale, mission-critical web applications acr
     <mailing-list rdf:resource="http://tomcat.apache.org/lists.html" />
     <download-page rdf:resource="http://tomcat.apache.org" />
     <programming-language>java</programming-language>
-    <category rdf:resource="http://projects.apache.org/category/servletcontainerJavaServerPagesJSP" />
+    <category rdf:resource="http://projects.apache.org/category/servletContainer" />
     <release>
+      <Version>
+        <name>5.5.16</name>
+        <created>2006-03-05</created>
+        <revision>5.5.16</revision>
+      </Version>
       <Version>
         <name>5.5.15</name>
         <created>2006-01-23</created>
