@@ -267,22 +267,12 @@ public class BioSender extends AbstractSocketSender implements DataSender {
         keepalive();
         if ( reconnect ) closeSocket();
         if (!isConnected()) openSocket();
-        writeData(data);
-    }
-    
-    /**
-     * Sent real cluster Message to socket stream
-     * FIXME send compress
-     * @param data
-     * @throws IOException
-     * @since 5.5.10
-     */
-    protected  void writeData(byte[] data) throws IOException { 
         soOut.write(data);
         soOut.flush();
         if (getWaitForAck()) waitForAck();
-    }
 
+    }
+    
     /**
      * Wait for Acknowledgement from other server
      * FIXME Please, not wait only for three charcters, better control that the wait ack message is correct.
