@@ -15,19 +15,11 @@
  */
 package org.apache.catalina.tribes.tipis;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -37,9 +29,6 @@ import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelListener;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
-import org.apache.catalina.tribes.io.DirectByteArrayOutputStream;
-import org.apache.catalina.tribes.io.XByteBuffer;
-import org.apache.catalina.tribes.mcast.MemberImpl;
 
 /**
  * A smart implementation of a stateful replicated map. uses primary/secondary backup strategy. 
