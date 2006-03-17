@@ -8,12 +8,19 @@ Documentation:
 Code Tasks:
 ===========================================
 
-18. Implement SSL encryption over message transfers
+21. Implement a WAN membership layer, using a WANMbrInterceptor and a 
+    WAN Router/Forwarder (Tipi on top of a ManagedChannel)
+
+20. Implement a TCP membership interceptor, for guaranteed functionality, not just discovery
+
+19. Implement a hardcoded tcp membership
+
+18. Implement SSL encryption over message transfers, BIO and NIO
 
 8. WaitForCompletionInterceptor - waits for the message to get processed by all receivers before returning
-  (This is useful when synchronized=false and waitForAck=false, to improve
-parallel processing, but you want to have all messages sent in parallel and
-don't return until all have been processed on the remote end.)
+   (This is useful when synchronized=false and waitForAck=false, to improve
+   parallel processing, but you want to have all messages sent in parallel and
+   don't return until all have been processed on the remote end.)
 
 9. CoordinatorInterceptor - manages the selection of a cluster coordinator
    just had a brilliant idea, if GroupChannel keeps its own view of members,
