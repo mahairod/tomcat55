@@ -21,6 +21,12 @@ Apache Tomcat powers numerous large-scale, mission-critical web applications acr
     <download-page rdf:resource="http://tomcat.apache.org" />
     <programming-language>Java</programming-language>
     <category rdf:resource="http://projects.apache.org/category/network-server" />
+    <maintainer>
+      <foaf:Person>
+        <foaf:name>Tomcat PMC</foaf:name>
+          <foaf:mbox rdf:resource="mailto:dev@tomcat.apache.org"/>
+      </foaf:Person>
+    </maintainer>
     <release>
       <Version>
         <name>Latest Stable Release</name>
