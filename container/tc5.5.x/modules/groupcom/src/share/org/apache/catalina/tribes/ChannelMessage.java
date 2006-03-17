@@ -24,6 +24,9 @@ import org.apache.catalina.tribes.io.XByteBuffer;
  */
 public interface ChannelMessage extends Serializable {
     
+    
+    
+    
     /**
      * Get the address that this message originated from.  This would be set
      * if the message was being relayed from a host other than the one

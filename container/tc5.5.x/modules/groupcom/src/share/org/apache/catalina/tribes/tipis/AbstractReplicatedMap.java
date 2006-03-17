@@ -135,7 +135,7 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
             //send out a map membership message, only wait for the first reply
             MapMessage msg = new MapMessage(this.mapContextName, MapMessage.MSG_START,
                                             false, null, null, null, wrap(channel.getLocalMember(false)));
-            Response[] resp = rpcChannel.send(channel.getMembers(), msg, rpcChannel.FIRST_REPLY, timeout);
+            Response[] resp = rpcChannel.send(channel.getMembers(), msg, rpcChannel.FIRST_REPLY, Channel.SEND_OPTIONS_DEFAULT, timeout);
             for (int i = 0; i < resp.length; i++) {
                 messageReceived(resp[i].getMessage(), resp[i].getSource());
             }
@@ -156,7 +156,7 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
             //send a map membership stop message
             MapMessage msg = new MapMessage(this.mapContextName, MapMessage.MSG_STOP,
                                             false, null, null, null, wrap(channel.getLocalMember(false)));
-            if (channel != null) channel.send(channel.getMembers(), msg);
+            if (channel != null) channel.send(channel.getMembers(), msg,channel.SEND_OPTIONS_DEFAULT);
         } catch (ChannelException x) {
             log.warn("Unable to send stop message.", x);
         }
@@ -225,7 +225,7 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
 
             }
             try {
-                channel.send(entry.getBackupNodes(), msg);
+                channel.send(entry.getBackupNodes(), msg,channel.SEND_OPTIONS_DEFAULT);
             } catch (ChannelException x) {
                 log.error("Unable to replicate data.", x);
             }
@@ -255,7 +255,7 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
             if (backup != null) {
                 MapMessage msg = new MapMessage(mapContextName, MapMessage.MSG_STATE, false,
                                                 null, null, null, null);
-                Response[] resp = rpcChannel.send(new Member[] {backup}, msg, rpcChannel.FIRST_REPLY, rpcTimeout);
+                Response[] resp = rpcChannel.send(new Member[] {backup}, msg, rpcChannel.FIRST_REPLY, Channel.SEND_OPTIONS_DEFAULT, rpcTimeout);
                 if (resp.length > 0) {
                     msg = (MapMessage) resp[0].getMessage();
                     ArrayList list = (ArrayList) msg.getValue();

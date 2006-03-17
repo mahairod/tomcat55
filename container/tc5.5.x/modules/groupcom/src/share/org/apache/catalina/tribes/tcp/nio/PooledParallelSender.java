@@ -56,7 +56,6 @@ public class PooledParallelSender extends PooledSender implements MultiPointSend
         try {
             ParallelNioSender sender = new ParallelNioSender();
             sender.setTimeout(getTimeout());
-            sender.setWaitForAck(getWaitForAck());
             sender.setMaxRetryAttempts(getMaxRetryAttempts()); 
             sender.setDirectBuffer(getDirectBuffer());
             sender.setRxBufSize(getRxBufSize());

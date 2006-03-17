@@ -111,7 +111,7 @@ public class ThreadPool
                 mutex.notify();
             }
         }else {
-            worker.doRun = false;
+            worker.setDoRun(false);
             synchronized (worker){worker.notify();}
         }
     }

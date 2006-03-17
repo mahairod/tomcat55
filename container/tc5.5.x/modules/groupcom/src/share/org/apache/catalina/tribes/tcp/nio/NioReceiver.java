@@ -89,7 +89,7 @@ public class NioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
         try {
             NioReplicationThread[] receivers = new NioReplicationThread[getTcpThreadCount()];
             for ( int i=0; i<receivers.length; i++ ) {
-                receivers[i] = new NioReplicationThread();
+                receivers[i] = new NioReplicationThread(this);
                 receivers[i].setRxBufSize(getRxBufSize());
                 receivers[i].setOptions(getWorkerThreadOptions());
             }
@@ -173,7 +173,7 @@ public class NioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
 
                         channel.socket().setReceiveBufferSize(getRxBufSize());
                         channel.socket().setSendBufferSize(getTxBufSize());
-                        Object attach = new ObjectReader(channel, selector,this);
+                        Object attach = new ObjectReader(channel);
                         registerChannel(selector,
                                         channel,
                                         SelectionKey.OP_READ,

@@ -11,6 +11,7 @@ import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.tcp.MultiPointSender;
 import org.apache.catalina.tribes.tcp.AbstractSender;
+import org.apache.catalina.tribes.Channel;
 
 /**
  * <p>Title: </p>
@@ -39,7 +40,7 @@ public class MultipointBioSender extends AbstractSender implements MultiPointSen
         ChannelException cx = null;
         for ( int i=0; i<senders.length; i++ ) {
             try {
-                senders[i].sendMessage(data);
+                senders[i].sendMessage(data,(msg.getOptions()&Channel.SEND_OPTIONS_USE_ACK)==Channel.SEND_OPTIONS_USE_ACK);
             } catch (Exception x) {
                 if (cx == null) cx = new ChannelException(x);
                 cx.addFaultyMember(destination[i]);
@@ -65,7 +66,6 @@ public class MultipointBioSender extends AbstractSender implements MultiPointSen
                     sender.setKeepAliveTime(getKeepAliveTime());
                     bioSenders.put(destination[i], sender);
                 }
-                sender.setWaitForAck(getWaitForAck());
                 result[i] = sender;
                 if (!result[i].isConnected() ) result[i].connect();
                 result[i].keepalive();
