@@ -30,7 +30,7 @@ import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.tcp.MultiPointSender;
 import org.apache.catalina.tribes.tcp.SenderState;
-import org.apache.catalina.tribes.tcp.AbstractSocketSender;
+import org.apache.catalina.tribes.tcp.AbstractSender;
 import java.net.UnknownHostException;
 
 /**
@@ -45,7 +45,7 @@ import java.net.UnknownHostException;
  * @author not attributable
  * @version 1.0
  */
-public class ParallelNioSender extends AbstractSocketSender implements MultiPointSender {
+public class ParallelNioSender extends AbstractSender implements MultiPointSender {
     
     protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(ParallelNioSender.class);
     

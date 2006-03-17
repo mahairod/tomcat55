@@ -10,7 +10,7 @@ import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.tcp.MultiPointSender;
-import org.apache.catalina.tribes.tcp.AbstractSocketSender;
+import org.apache.catalina.tribes.tcp.AbstractSender;
 
 /**
  * <p>Title: </p>
@@ -24,7 +24,7 @@ import org.apache.catalina.tribes.tcp.AbstractSocketSender;
  * @author not attributable
  * @version 1.0
  */
-public class MultipointBioSender extends AbstractSocketSender implements MultiPointSender {
+public class MultipointBioSender extends AbstractSender implements MultiPointSender {
     public MultipointBioSender() {
     }
     
