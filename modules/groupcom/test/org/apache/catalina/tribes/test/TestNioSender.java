@@ -9,6 +9,7 @@ import org.apache.catalina.tribes.mcast.MemberImpl;
 import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.Channel;
 
 /**
  * <p>Title: </p>
@@ -26,6 +27,7 @@ public class TestNioSender {
     private Selector selector = null;
     private int counter = 0;
     MemberImpl mbr;
+    private static int testOptions = Channel.SEND_OPTIONS_DEFAULT;
     public TestNioSender()  {
         
     }
@@ -39,6 +41,7 @@ public class TestNioSender {
         ClusterData data = new ClusterData(true);
         data.setMessage(new XByteBuffer(msg.getBytes(),false));
         data.setAddress(mbr);
+        
         return data;
     }
 
@@ -46,7 +49,6 @@ public class TestNioSender {
         selector = Selector.open();
         mbr = new MemberImpl("","localhost",4444,0);
         NioSender sender = new NioSender(mbr);
-        sender.setWaitForAck(false);
         sender.setDirectBuffer(true);
         sender.setSelector(selector);
         sender.setMessage(XByteBuffer.createDataPackage(getMessage(mbr)));
@@ -79,7 +81,7 @@ public class TestNioSender {
                     int readyOps = sk.readyOps();
                     sk.interestOps(sk.interestOps() & ~readyOps);
                     NioSender sender = (NioSender) sk.attachment();
-                    if ( sender.process(sk) ) {
+                    if ( sender.process(sk, (testOptions&Channel.SEND_OPTIONS_USE_ACK)==Channel.SEND_OPTIONS_USE_ACK) ) {
                         System.out.println("Message completed for handler:"+sender);
                         Thread.currentThread().sleep(2000);
                         sender.reset();

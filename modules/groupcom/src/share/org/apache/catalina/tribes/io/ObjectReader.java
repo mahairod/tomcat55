@@ -15,13 +15,13 @@
  */
 package org.apache.catalina.tribes.io;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+
 import org.apache.catalina.tribes.ChannelMessage;
-import java.io.IOException;
-import java.net.Socket;
-import org.apache.catalina.tribes.tcp.*;
 
 
 
@@ -41,10 +41,6 @@ public class ObjectReader {
 
     protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(ObjectReader.class);
 
-    private SocketChannel channel;
-
-    private ListenCallback callback;
-
     private XByteBuffer buffer;
 
     /**
@@ -53,18 +49,10 @@ public class ObjectReader {
      * @param selector
      * @param callback
      */
-    public ObjectReader(SocketChannel channel, Selector selector, ListenCallback callback) {
-        this.channel = channel;
-        this.callback = callback;
-        try {
-            this.buffer = new XByteBuffer(channel.socket().getReceiveBufferSize(), true);
-        }catch ( IOException x ) {
-            //unable to get buffer size
-            log.warn("Unable to retrieve the socket channel receiver buffer size, setting to default 43800 bytes.");
-            this.buffer = new XByteBuffer(43800,true);
-        }
+    public ObjectReader(SocketChannel channel) {
+        this(channel.socket());
     }
-    public ObjectReader(Socket socket, ListenCallback callback) {
+    public ObjectReader(Socket socket) {
         try{
             this.buffer = new XByteBuffer(socket.getReceiveBufferSize(), true);
         }catch ( IOException x ) {
@@ -72,23 +60,6 @@ public class ObjectReader {
             log.warn("Unable to retrieve the socket receiver buffer size, setting to default 43800 bytes.");
             this.buffer = new XByteBuffer(43800,true);
         }
-        this.callback = callback;
-    }
-
-    /**
-     * get the current SimpleTcpCluster
-     * @return Returns the callback.
-     */
-    public ListenCallback getCallback() {
-        return callback;
-    }
-
-    /**
-     * Get underlying NIO channel
-     * @return The socket
-     */
-    public SocketChannel getChannel() {
-        return this.channel;
     }
 
     /**
@@ -125,16 +96,14 @@ public class ObjectReader {
      * @return number of received packages/messages
      * @throws java.io.IOException
      */
-    public int execute() throws java.io.IOException {
-        int pkgCnt = 0;
-        boolean pkgExists = buffer.doesPackageExist();
-        while ( pkgExists ) {
+    public ChannelMessage[] execute() throws java.io.IOException {
+        int pkgCnt = buffer.countPackages();
+        ChannelMessage[] result = new ChannelMessage[pkgCnt];
+        for (int i=0; i<pkgCnt; i++)  {
             ChannelMessage data = buffer.extractPackage(true);
-            getCallback().messageDataReceived(data);
-            pkgCnt++;
-            pkgExists = buffer.doesPackageExist();
+            result[i] = data;
         }
-        return pkgCnt;
+        return result;
     }
     
     public int bufferSize() {
@@ -149,19 +118,7 @@ public class ObjectReader {
         return buffer.countPackages();
     }
     
-    /**
-     * Write Ack to sender
-     * @param buf
-     * @return The bytes written count
-     * @throws java.io.IOException
-     */
-    public int write(ByteBuffer buf) throws java.io.IOException {
-        return getChannel().write(buf);
-    }
-    
     public void close() {
-        this.callback = null;
-        this.channel = null;
         this.buffer = null;
     }
 

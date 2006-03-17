@@ -8,6 +8,9 @@ Documentation:
 Code Tasks:
 ===========================================
 
+22. sendAck and synchronized should not have to be a XML config,
+    it can be configured on a per packet basis using ClusterData.getOptions()
+
 21. Implement a WAN membership layer, using a WANMbrInterceptor and a 
     WAN Router/Forwarder (Tipi on top of a ManagedChannel)
 

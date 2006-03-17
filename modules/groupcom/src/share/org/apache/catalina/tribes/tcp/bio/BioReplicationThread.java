@@ -24,6 +24,9 @@ import java.net.Socket;
 import java.io.InputStream;
 import org.apache.catalina.tribes.tcp.ReceiverBase;
 import java.io.OutputStream;
+import org.apache.catalina.tribes.io.ListenCallback;
+import org.apache.catalina.tribes.ChannelMessage;
+import org.apache.catalina.tribes.io.ClusterData;
 
 /**
  * A worker thread class which can drain channels and echo-back the input. Each
@@ -47,14 +50,14 @@ public class BioReplicationThread extends WorkerThread {
     protected Socket socket;
     protected ObjectReader reader;
     
-    public BioReplicationThread ()
-    {
+    public BioReplicationThread (ListenCallback callback) {
+        super(callback);
     }
 
     // loop forever waiting for work to do
     public synchronized void run()
     {
-        while (doRun) {
+        while (isDoRun()) {
             try {
                 // sleep and release object lock
                 this.wait();
@@ -77,8 +80,8 @@ public class BioReplicationThread extends WorkerThread {
                 }
             }
             // done, ready for more, return to pool
-            if ( this.pool != null ) this.pool.returnWorker (this);
-            else doRun = false;
+            if ( getPool() != null ) getPool().returnWorker (this);
+            else setDoRun(false);
         }
     }
 
@@ -91,31 +94,27 @@ public class BioReplicationThread extends WorkerThread {
     
     protected void execute(ObjectReader reader) throws Exception{
         int pkgcnt = reader.count();
-        /**
-         * Use send ack here if you want to ack the request to the remote 
-         * server before completing the request
-         * This is considered an asynchronized request
-         */
-        if (sendAckAsync()) {
-            while ( pkgcnt > 0 ) {
-                sendAck();
-                pkgcnt--;
-            }
-        }
-        //check to see if any data is available
-        pkgcnt = reader.execute();
 
-        /**
-         * Use send ack here if you want the request to complete on this 
-         * server before sending the ack to the remote server
-         * This is considered a synchronized request
-         */
-        if (sendAckSync()) {
-            while ( pkgcnt > 0 ) {
-                sendAck();
-                pkgcnt--;
-            }
-        }        
+        if ( pkgcnt > 0 ) {
+            ChannelMessage[] msgs = reader.execute();
+            for ( int i=0; i<msgs.length; i++ ) {
+                /**
+                 * Use send ack here if you want to ack the request to the remote 
+                 * server before completing the request
+                 * This is considered an asynchronized request
+                 */
+                if (ClusterData.sendAckAsync(msgs[i].getOptions())) sendAck();
+                //process the message
+                getCallback().messageDataReceived(msgs[i]);
+                /**
+                 * Use send ack here if you want the request to complete on this 
+                 * server before sending the ack to the remote server
+                 * This is considered a synchronized request
+                 */
+                if (ClusterData.sendAckSync(msgs[i].getOptions())) sendAck();
+            }                        
+        }
+
        
     }
 
@@ -161,7 +160,7 @@ public class BioReplicationThread extends WorkerThread {
     }
     
     public void close() {
-        doRun = false;
+        setDoRun(false);
         try {socket.close();}catch ( Exception ignore){}
         try {reader.close();}catch ( Exception ignore){}
         reader = null;

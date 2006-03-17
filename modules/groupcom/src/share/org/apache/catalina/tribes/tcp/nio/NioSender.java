@@ -75,7 +75,7 @@ public class NioSender extends AbstractSender implements DataSender{
      * @return boolean
      * @throws IOException
      */
-    public boolean process(SelectionKey key) throws IOException {
+    public boolean process(SelectionKey key, boolean waitForAck) throws IOException {
         int ops = key.readyOps();
         key.interestOps(key.interestOps() & ~ops);
         if ( key.isConnectable() ) {
@@ -98,7 +98,7 @@ public class NioSender extends AbstractSender implements DataSender{
             boolean writecomplete = write(key);
             if ( writecomplete ) {
                 //we are completed, should we read an ack?
-                if ( getWaitForAck() ) {
+                if ( waitForAck ) {
                     //register to read the ack
                     key.interestOps(key.interestOps() | SelectionKey.OP_READ);
                 } else {

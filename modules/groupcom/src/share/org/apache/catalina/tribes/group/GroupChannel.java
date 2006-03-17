@@ -43,7 +43,7 @@ import org.apache.catalina.tribes.io.XByteBuffer;
  * @version $Revision: 304032 $, $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
  */
 public class GroupChannel extends ChannelInterceptorBase implements ManagedChannel {
-    public static final int BYTE_MESSAGE = 0x0001;
+    
     
     private ChannelCoordinator coordinator = new ChannelCoordinator();
     private ChannelInterceptor interceptors = null;
@@ -90,19 +90,18 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
      * @param options int - sender options, see class documentation
      * @return ClusterMessage[] - the replies from the members, if any.
      */
-    public void send(Member[] destination, Serializable msg) throws ChannelException {
+    public void send(Member[] destination, Serializable msg, int options) throws ChannelException {
         if ( msg == null ) return;
         try {
             if ( destination == null ) throw new ChannelException("No destination given");
             if ( destination.length == 0 ) return;
-            int options = 0;
             ClusterData data = new ClusterData();//generates a unique Id
             data.setAddress(getLocalMember(false));
             data.setTimestamp(System.currentTimeMillis());
             byte[] b = null;
             if ( msg instanceof ByteMessage ){
                 b = ((ByteMessage)msg).getMessage();
-                options = options | BYTE_MESSAGE;
+                options = options | SEND_OPTIONS_BYTE_MESSAGE;
             } else {
                 b = XByteBuffer.serialize(msg);
             }
@@ -122,7 +121,7 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
         try {
             
             Serializable fwd = null;
-            if ( (msg.getOptions() & BYTE_MESSAGE) == BYTE_MESSAGE ) {
+            if ( (msg.getOptions() & SEND_OPTIONS_BYTE_MESSAGE) == SEND_OPTIONS_BYTE_MESSAGE ) {
                 fwd = new ByteMessage(msg.getMessage().getBytes());
             } else {
                 fwd = XByteBuffer.deserialize(msg.getMessage().getBytes());

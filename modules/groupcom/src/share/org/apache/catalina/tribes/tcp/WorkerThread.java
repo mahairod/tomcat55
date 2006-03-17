@@ -16,6 +16,8 @@
 
 package org.apache.catalina.tribes.tcp;
 
+import org.apache.catalina.tribes.io.ListenCallback;
+
 
 
 
@@ -23,17 +25,19 @@ package org.apache.catalina.tribes.tcp;
  * @author Filip Hanik
  * @version $Revision: 366253 $ $Date: 2006-01-05 13:30:42 -0600 (Thu, 05 Jan 2006) $
  */
-public class WorkerThread extends Thread
+public abstract class WorkerThread extends Thread 
 {
     
-    public static final int OPTION_SEND_ACK = ReceiverBase.OPTION_SEND_ACK;
-    public static final int OPTION_SYNCHRONIZED = ReceiverBase.OPTION_SYNCHRONIZED;
     public static final int OPTION_DIRECT_BUFFER = ReceiverBase.OPTION_DIRECT_BUFFER;
     
-    
-    protected ThreadPool pool;
-    protected boolean doRun = true;
+    private ListenCallback callback;
+    private ThreadPool pool;
+    private boolean doRun = true;
     private int options;
+
+    public WorkerThread(ListenCallback callback) {
+        this.callback = callback;
+    }
 
     public void setPool(ThreadPool pool) {
         this.pool = pool;
@@ -41,6 +45,14 @@ public class WorkerThread extends Thread
 
     public void setOptions(int options) {
         this.options = options;
+    }
+
+    public void setCallback(ListenCallback callback) {
+        this.callback = callback;
+    }
+
+    public void setDoRun(boolean doRun) {
+        this.doRun = doRun;
     }
 
     public ThreadPool getPool() {
@@ -51,21 +63,18 @@ public class WorkerThread extends Thread
         return options;
     }
 
+    public ListenCallback getCallback() {
+        return callback;
+    }
+
+    public boolean isDoRun() {
+        return doRun;
+    }
+
     public void close()
     {
         doRun = false;
         notify();
     }
     
-    public boolean sendAckSync() {
-        int options = getOptions();
-        return ((OPTION_SEND_ACK & options) == OPTION_SEND_ACK) &&
-               ((OPTION_SYNCHRONIZED & options) == OPTION_SYNCHRONIZED);
-    }
-
-    public boolean sendAckAsync() {
-        int options = getOptions();
-        return ((OPTION_SEND_ACK & options) == OPTION_SEND_ACK) &&
-               ((OPTION_SYNCHRONIZED & options) != OPTION_SYNCHRONIZED);
-    }    
 }

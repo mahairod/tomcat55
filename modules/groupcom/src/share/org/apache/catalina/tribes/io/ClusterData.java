@@ -15,17 +15,13 @@
  */
 package org.apache.catalina.tribes.io;
 
+import java.util.Arrays;
+
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.Member;
-import java.io.IOException;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import org.apache.catalina.tribes.mcast.MemberImpl;
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
 import org.apache.catalina.tribes.util.UUIDGenerator;
-import java.util.Arrays;
+import org.apache.catalina.tribes.Channel;
 
 /**
  * The cluster data class is used to transport around the byte array from
@@ -226,6 +222,17 @@ public class ClusterData implements ChannelMessage {
         clone.uniqueId = this.uniqueId;
         clone.address = this.address;
         return clone;
+    }
+    
+    public static boolean sendAckSync(int options) {
+        return ( (Channel.SEND_OPTIONS_USE_ACK & options) == Channel.SEND_OPTIONS_USE_ACK) &&
+            ( (Channel.SEND_OPTIONS_SYNCHRONIZED_ACK & options) == Channel.SEND_OPTIONS_SYNCHRONIZED_ACK);
+    }
+
+
+    public static boolean sendAckAsync(int options) {
+        return ( (Channel.SEND_OPTIONS_USE_ACK & options) == Channel.SEND_OPTIONS_USE_ACK) &&
+            ( (Channel.SEND_OPTIONS_SYNCHRONIZED_ACK & options) != Channel.SEND_OPTIONS_SYNCHRONIZED_ACK);
     }
     
 }

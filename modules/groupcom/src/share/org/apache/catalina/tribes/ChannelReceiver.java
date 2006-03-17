@@ -35,18 +35,6 @@ public interface ChannelReceiver {
     public void stop();
 
     /**
-     * returns true of the receiver is sending acks when it receives messages
-     * @return boolean
-     */
-    public boolean getSendAck();
-    
-    /**
-     * set ack mode
-     * @param isSendAck
-     */
-    public void setSendAck(boolean sendack);
-    
-    /**
      * get the listing ip interface
      * @return The host
      */
