@@ -27,8 +27,7 @@ Documentation:
 Code Tasks:
 ===========================================
 
-22. sendAck and synchronized should not have to be a XML config,
-    it can be configured on a per packet basis using ClusterData.getOptions()
+23. TotalOrderInterceptor
 
 21. Implement a WAN membership layer, using a WANMbrInterceptor and a 
     WAN Router/Forwarder (Tipi on top of a ManagedChannel)
@@ -126,3 +125,7 @@ Notes: Completed, now you can initialize a transport class
     It can replicate every X seconds, or on dirty flags by the objects stored,
     or a request to scan for dirty flags, or a request with the objects.
 Notes: the map has been completed
+
+22. sendAck and synchronized should not have to be a XML config,
+    it can be configured on a per packet basis using ClusterData.getOptions()
+Notes: see Channel.SEND_OPT_XXXX variables
