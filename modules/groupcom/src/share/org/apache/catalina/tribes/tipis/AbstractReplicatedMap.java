@@ -65,6 +65,8 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
     private transient boolean stateTransferred = false;
     private transient Object stateMutex = new Object();
     private transient ArrayList mapMembers = new ArrayList();
+    
+    private transient int channelSendOptions = Channel.SEND_OPTIONS_DEFAULT;
 
 //------------------------------------------------------------------------------
 //              CONSTRUCTORS
@@ -78,10 +80,15 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
      * @param initialCapacity int - the size of this map, see HashMap
      * @param loadFactor float - load factor, see HashMap
      */
-    public AbstractReplicatedMap(Channel channel, long timeout, String mapContextName, int initialCapacity,
-                                 float loadFactor) {
+    public AbstractReplicatedMap(Channel channel, 
+                                 long timeout, 
+                                 String mapContextName, 
+                                 int initialCapacity,
+                                 float loadFactor,
+                                 int channelSendOptions) {
         super(initialCapacity, loadFactor);
-        init(channel, mapContextName, timeout);
+        init(channel, mapContextName, timeout, channelSendOptions);
+        
     }
 
     /**
@@ -91,9 +98,13 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
      * @param mapContextName String - unique name for this map, to allow multiple maps per channel
      * @param initialCapacity int - the size of this map, see HashMap
      */
-    public AbstractReplicatedMap(Channel channel, long timeout, String mapContextName, int initialCapacity) {
+    public AbstractReplicatedMap(Channel channel, 
+                                 long timeout, 
+                                 String mapContextName, 
+                                 int initialCapacity,
+                                 int channelSendOptions) {
         super(initialCapacity);
-        init(channel, mapContextName, timeout);
+        init(channel, mapContextName, timeout, channelSendOptions);
     }
 
     /**
@@ -102,18 +113,21 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
      * @param timeout long - timeout for RPC messags
      * @param mapContextName String - unique name for this map, to allow multiple maps per channel
      */
-    public AbstractReplicatedMap(Channel channel, long timeout, String mapContextName) {
+    public AbstractReplicatedMap(Channel channel, 
+                                 long timeout, 
+                                 String mapContextName,
+                                 int channelSendOptions) {
         super();
-        init(channel, mapContextName, timeout);
+        init(channel, mapContextName, timeout, channelSendOptions);
     }
     
     protected Member[] wrap(Member m) {
         return new Member[] {m};
     }
 
-    private void init(Channel channel, String mapContextName, long timeout) {
+    private void init(Channel channel, String mapContextName, long timeout, int channelSendOptions) {
         final String chset = "ISO-8859-1";
-
+        this.channelSendOptions = channelSendOptions;
         this.channel = channel;
         this.rpcTimeout = timeout;
 
@@ -134,7 +148,7 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
             //send out a map membership message, only wait for the first reply
             MapMessage msg = new MapMessage(this.mapContextName, MapMessage.MSG_START,
                                             false, null, null, null, wrap(channel.getLocalMember(false)));
-            Response[] resp = rpcChannel.send(channel.getMembers(), msg, rpcChannel.FIRST_REPLY, Channel.SEND_OPTIONS_DEFAULT, timeout);
+            Response[] resp = rpcChannel.send(channel.getMembers(), msg, rpcChannel.FIRST_REPLY, channelSendOptions, timeout);
             for (int i = 0; i < resp.length; i++) {
                 messageReceived(resp[i].getMessage(), resp[i].getSource());
             }
@@ -254,7 +268,7 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
             if (backup != null) {
                 MapMessage msg = new MapMessage(mapContextName, MapMessage.MSG_STATE, false,
                                                 null, null, null, null);
-                Response[] resp = rpcChannel.send(new Member[] {backup}, msg, rpcChannel.FIRST_REPLY, Channel.SEND_OPTIONS_DEFAULT, rpcTimeout);
+                Response[] resp = rpcChannel.send(new Member[] {backup}, msg, rpcChannel.FIRST_REPLY, channelSendOptions, rpcTimeout);
                 if (resp.length > 0) {
                     msg = (MapMessage) resp[0].getMessage();
                     ArrayList list = (ArrayList) msg.getValue();
