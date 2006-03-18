@@ -68,7 +68,7 @@ public class ReplicatedMap extends AbstractReplicatedMap implements RpcCallback,
      */
     public ReplicatedMap(Channel channel, long timeout, String mapContextName, int initialCapacity,
                              float loadFactor) {
-        super(channel, timeout, mapContextName, initialCapacity, loadFactor);
+        super(channel, timeout, mapContextName, initialCapacity, loadFactor, Channel.SEND_OPTIONS_DEFAULT);
     }
 
     /**
@@ -79,7 +79,7 @@ public class ReplicatedMap extends AbstractReplicatedMap implements RpcCallback,
      * @param initialCapacity int - the size of this map, see HashMap
      */
     public ReplicatedMap(Channel channel, long timeout, String mapContextName, int initialCapacity) {
-        super(channel, timeout, mapContextName, initialCapacity);
+        super(channel, timeout, mapContextName, initialCapacity, Channel.SEND_OPTIONS_DEFAULT);
     }
 
     /**
@@ -89,7 +89,7 @@ public class ReplicatedMap extends AbstractReplicatedMap implements RpcCallback,
      * @param mapContextName String - unique name for this map, to allow multiple maps per channel
      */
     public ReplicatedMap(Channel channel, long timeout, String mapContextName) {
-        super(channel, timeout, mapContextName);
+        super(channel, timeout, mapContextName, Channel.SEND_OPTIONS_DEFAULT);
     }
 
 //------------------------------------------------------------------------------
