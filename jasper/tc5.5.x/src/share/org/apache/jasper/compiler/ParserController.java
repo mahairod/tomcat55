@@ -372,8 +372,7 @@ class ParserController implements TagConstants {
 	 * Determine the page encoding from the page directive, unless it's
 	 * specified via JSP config.
 	 */
-	if (jspConfigPageEnc != null)
-	    sourceEnc = jspConfigPageEnc;
+	sourceEnc = jspConfigPageEnc;
 	if (sourceEnc == null) {
 	    sourceEnc = getPageEncodingForJspSyntax(jspReader, startMark);
 	    if (sourceEnc == null) {
