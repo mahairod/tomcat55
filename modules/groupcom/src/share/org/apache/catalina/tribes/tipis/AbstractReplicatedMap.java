@@ -121,8 +121,7 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
             //unique context is more efficient if it is stored as bytes
             this.mapContextName = mapContextName.getBytes(chset);
         } catch (UnsupportedEncodingException x) {
-            log.warn("Unable to encode mapContextName[" + mapContextName + "] using getBytes(" + chset +
-                     ") using default getBytes()", x);
+            log.warn("Unable to encode mapContextName[" + mapContextName + "] using getBytes(" + chset +") using default getBytes()", x);
             this.mapContextName = mapContextName.getBytes();
         }
 
