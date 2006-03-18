@@ -27,7 +27,12 @@ Documentation:
 Code Tasks:
 ===========================================
 
-23. TotalOrderInterceptor
+23. TotalOrderInterceptor - fairly straight forward implementation
+    This interceptor would depend on the fact that there is some sort of 
+    membership coordinator, see task 9.
+    Once there is a coordinator in the group, the total order protocol is the same 
+    as the OrderInterceptor, except that it gets its message number from 
+    the coordinator, prior to sending it out.
 
 21. Implement a WAN membership layer, using a WANMbrInterceptor and a 
     WAN Router/Forwarder (Tipi on top of a ManagedChannel)
