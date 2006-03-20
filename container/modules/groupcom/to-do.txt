@@ -20,9 +20,6 @@ Documentation:
  5. Ability to send on multiple streams at the same time, in parallel, to improve performance
  
  6. Future version will have WAN membership and replication
-    
-    
- 
 
 Code Tasks:
 ===========================================
