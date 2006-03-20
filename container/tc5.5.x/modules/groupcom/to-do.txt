@@ -21,7 +21,9 @@ Documentation:
  
  6. Designed with replication in mind, that some pieces of data don't need to be totally ordered.
  
- 7. Future version will have WAN membership and replication
+ 7. Its not built with the uniform group model in mind, but it can be accomplished using interceptors.
+ 
+ 8. Future version will have WAN membership and replication
 
 Code Tasks:
 ===========================================
