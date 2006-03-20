@@ -67,17 +67,16 @@ public class BioReplicationThread extends WorkerThread {
                 // clear interrupt status
                 Thread.interrupted();
             }
-            if ( this.socket != null ) {
-                try {
-                    drainSocket();
-                } catch ( Exception x ) {
-                    log.error("Unable to service bio socket");
-                }finally {
-                    try {socket.close();}catch ( Exception ignore){}
-                    try {reader.close();}catch ( Exception ignore){}
-                    reader = null;
-                    socket = null;
-                }
+            if ( socket == null ) continue;
+            try {
+                drainSocket();
+            } catch ( Exception x ) {
+                log.error("Unable to service bio socket");
+            }finally {
+                try {socket.close();}catch ( Exception ignore){}
+                try {reader.close();}catch ( Exception ignore){}
+                reader = null;
+                socket = null;
             }
             // done, ready for more, return to pool
             if ( getPool() != null ) getPool().returnWorker (this);

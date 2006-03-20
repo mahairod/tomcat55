@@ -87,13 +87,7 @@ public class NioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
      */
     public void start() {
         try {
-            NioReplicationThread[] receivers = new NioReplicationThread[getTcpThreadCount()];
-            for ( int i=0; i<receivers.length; i++ ) {
-                receivers[i] = new NioReplicationThread(this);
-                receivers[i].setRxBufSize(getRxBufSize());
-                receivers[i].setOptions(getWorkerThreadOptions());
-            }
-            setPool(new ThreadPool(interestOpsMutex, receivers));
+            setPool(new ThreadPool(interestOpsMutex, getMaxThreads(),getMinThreads(),this));
         } catch (Exception e) {
             log.error("ThreadPool can initilzed. Listener not started", e);
             return;
@@ -107,6 +101,13 @@ public class NioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
         } catch (Exception x) {
             log.fatal("Unable to start cluster receiver", x);
         }
+    }
+    
+    public WorkerThread getWorkerThread() {
+        NioReplicationThread thread = new NioReplicationThread(this);
+        thread.setRxBufSize(getRxBufSize());
+        thread.setOptions(getWorkerThreadOptions());
+        return thread;
     }
     
     

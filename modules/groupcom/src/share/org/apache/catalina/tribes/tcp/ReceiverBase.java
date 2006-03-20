@@ -38,7 +38,7 @@ import org.apache.commons.logging.Log;
  * @author not attributable
  * @version 1.0
  */
-public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
+public abstract class ReceiverBase implements ChannelReceiver, ListenCallback, ThreadPool.ThreadCreator {
 
     public static final int OPTION_DIRECT_BUFFER = 0x0004;
 
@@ -51,7 +51,6 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
     private int port;
     private int rxBufSize = 43800;
     private int txBufSize = 25188;
-    private int tcpThreadCount;
     private boolean listen = false;
     private ThreadPool pool;
     private boolean direct = true;
@@ -59,6 +58,8 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
     private String tcpListenAddress;
     //how many times to search for an available socket
     private int autoBind = 1;
+    private int maxThreads = 25;
+    private int minThreads = 6;
 
     public ReceiverBase() {
     }
@@ -89,9 +90,13 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
     public int getTxBufSize() {
         return txBufSize;
     }
-
+    
+    /**
+     * @deprecated use getMinThreads()/getMaxThreads()
+     * @return int
+     */
     public int getTcpThreadCount() {
-        return tcpThreadCount;
+        return getMinThreads();
     }
 
     /**
@@ -121,7 +126,7 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
     }
 
     public void setTcpThreadCount(int tcpThreadCount) {
-        this.tcpThreadCount = tcpThreadCount;
+        setMinThreads(tcpThreadCount);
     }
 
     /**
@@ -235,6 +240,14 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
         return autoBind;
     }
 
+    public int getMaxThreads() {
+        return maxThreads;
+    }
+
+    public int getMinThreads() {
+        return minThreads;
+    }
+
     public void setTcpSelectorTimeout(long selTimeout) {
         tcpSelectorTimeout = selTimeout;
     }
@@ -266,5 +279,13 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback {
     public void setAutoBind(int autoBind) {
         this.autoBind = autoBind;
         if ( this.autoBind <= 0 ) this.autoBind = 1;
+    }
+
+    public void setMaxThreads(int maxThreads) {
+        this.maxThreads = maxThreads;
+    }
+
+    public void setMinThreads(int minThreads) {
+        this.minThreads = minThreads;
     }
 }
