@@ -19,7 +19,7 @@ import java.util.HashMap;
 
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelMessage;
-import org.apache.catalina.tribes.InterceptorPayload;
+import org.apache.catalina.tribes.group.InterceptorPayload;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.group.ChannelInterceptorBase;
 import org.apache.catalina.tribes.io.XByteBuffer;

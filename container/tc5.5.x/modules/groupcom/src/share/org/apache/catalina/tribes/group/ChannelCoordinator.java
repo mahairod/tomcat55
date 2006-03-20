@@ -19,7 +19,7 @@ import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.ChannelReceiver;
 import org.apache.catalina.tribes.ChannelSender;
-import org.apache.catalina.tribes.InterceptorPayload;
+
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipService;
 import org.apache.catalina.tribes.MessageListener;

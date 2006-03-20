@@ -33,6 +33,8 @@ import org.apache.catalina.tribes.MembershipListener;
 import org.apache.catalina.tribes.MembershipService;
 import org.apache.catalina.tribes.io.ClusterData;
 import org.apache.catalina.tribes.io.XByteBuffer;
+import org.apache.catalina.tribes.ErrorHandler;
+import org.apache.catalina.tribes.group.InterceptorPayload;
 
 /**
  * The GroupChannel manages the replication channel. It coordinates
@@ -91,6 +93,9 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
      * @return ClusterMessage[] - the replies from the members, if any.
      */
     public void send(Member[] destination, Serializable msg, int options) throws ChannelException {
+        send(destination,msg,options,null);
+    }
+    public void send(Member[] destination, Serializable msg, int options, ErrorHandler handler) throws ChannelException {
         if ( msg == null ) return;
         try {
             if ( destination == null ) throw new ChannelException("No destination given");
@@ -109,12 +114,19 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
             XByteBuffer buffer = new XByteBuffer(b.length+128,false);
             buffer.append(b,0,b.length);
             data.setMessage(buffer);
-            getFirstInterceptor().sendMessage(destination, data, null);
+            InterceptorPayload payload = null;
+            if ( handler != null ) {
+                payload = new InterceptorPayload();
+                payload.setErrorHandler(handler);
+            }
+            getFirstInterceptor().sendMessage(destination, data, payload);
         }catch ( Exception x ) {
             if ( x instanceof ChannelException ) throw (ChannelException)x;
             throw new ChannelException(x);
         }
     }
+    
+
     
     public void messageReceived(ChannelMessage msg) {
         if ( msg == null ) return;
