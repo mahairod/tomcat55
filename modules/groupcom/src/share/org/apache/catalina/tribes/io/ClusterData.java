@@ -224,6 +224,15 @@ public class ClusterData implements ChannelMessage {
         return clone;
     }
     
+    /**
+     * Complete clone
+     * @return ClusterData
+     */
+    public ClusterData deepclone() {
+        byte[] d = this.getDataPackage();
+        return ClusterData.getDataFromPackage(d);
+    }
+    
     public static boolean sendAckSync(int options) {
         return ( (Channel.SEND_OPTIONS_USE_ACK & options) == Channel.SEND_OPTIONS_USE_ACK) &&
             ( (Channel.SEND_OPTIONS_SYNCHRONIZED_ACK & options) == Channel.SEND_OPTIONS_SYNCHRONIZED_ACK);
