@@ -33,6 +33,11 @@ Code Tasks:
     Once there is a coordinator in the group, the total order protocol is the same 
     as the OrderInterceptor, except that it gets its message number from 
     the coordinator, prior to sending it out.
+    The TotalOrderInterceptor, will keep a order number per member,
+    this way, ordering is kept intact when different messages are sent
+    two different members, ie
+    Message A - all members - total order (mbrA-2, mbrB-2, mbrC-2, mbrD-2)
+    Message B - mbrC,mbrD only - total order (mbrA-2, mbrB-2, mbrC-3, mbrD-3)
 
 21. Implement a WAN membership layer, using a WANMbrInterceptor and a 
     WAN Router/Forwarder (Tipi on top of a ManagedChannel)
