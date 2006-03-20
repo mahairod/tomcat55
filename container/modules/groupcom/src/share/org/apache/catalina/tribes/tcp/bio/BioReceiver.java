@@ -54,11 +54,7 @@ public class BioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
      */
     public void start() throws IOException {
         try {
-            BioReplicationThread[] receivers = new BioReplicationThread[getTcpThreadCount()];
-            for ( int i=0; i<receivers.length; i++ ) {
-                receivers[i] = getReplicationThread();
-            }
-            setPool(new ThreadPool(new Object(), receivers));
+            setPool(new ThreadPool(new Object(),getMaxThreads(),getMinThreads(),this));
         } catch (Exception e) {
             log.error("ThreadPool can initilzed. Listener not started", e);
             return;
@@ -72,6 +68,10 @@ public class BioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
         } catch (Exception x) {
             log.fatal("Unable to start cluster receiver", x);
         }
+    }
+    
+    public WorkerThread getWorkerThread() {
+        return getReplicationThread();
     }
     
     protected BioReplicationThread getReplicationThread() {

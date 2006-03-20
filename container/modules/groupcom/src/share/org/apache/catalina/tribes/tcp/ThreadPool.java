@@ -15,10 +15,9 @@
  */
 
 package org.apache.catalina.tribes.tcp;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Iterator;
-import org.apache.catalina.tribes.tcp.nio.*;
 
 /**
  * @author not attributable
@@ -34,40 +33,41 @@ public class ThreadPool
      */
 
     List idle = new LinkedList();
+    List used = new LinkedList();
+    
     Object mutex = new Object();
     Object interestOpsMutex = null;
     boolean running = true;
+    
+    private static int counter = 1;
+    private int maxThreads;
+    private int minThreads;
+    
+    private ThreadCreator creator = null;
+    
+    private static synchronized int inc() {
+        return counter++;
+    }
 
-    public ThreadPool (Object interestOpsMutex, WorkerThread[] threads) throws Exception {
+    public ThreadPool (Object interestOpsMutex, int maxThreads, int minThreads, ThreadCreator creator) throws Exception {
         // fill up the pool with worker threads
         this.interestOpsMutex = interestOpsMutex;
-        for (int i = 0; i < threads.length; i++) {
-            WorkerThread thread = threads[i];
-            thread.setPool(this);
-            thread.setName (thread.getClass().getName()+"[" + (i + 1)+"]");
-            thread.setDaemon(true);
-            thread.setPriority(Thread.MAX_PRIORITY);
-            thread.start();
+        this.maxThreads = maxThreads;
+        this.minThreads = minThreads;
+        this.creator = creator;
+        for (int i = 0; i < minThreads; i++) {
+            WorkerThread thread = creator.getWorkerThread();
+            setupThread(thread);
             idle.add (thread);
         }
     }
-
-
-    public ThreadPool (int poolSize, Class threadClass, Object interestOpsMutex, int threadOptions) throws Exception {
-        // fill up the pool with worker threads
-        this.interestOpsMutex = interestOpsMutex;
-        for (int i = 0; i < poolSize; i++) {
-            WorkerThread thread = (WorkerThread)threadClass.newInstance();
-            thread.setPool(this);
-            // set thread name for debugging, start it
-            thread.setName (threadClass.getName()+"[" + (i + 1)+"]");
-            thread.setDaemon(true);
-            thread.setPriority(Thread.MAX_PRIORITY);
-            thread.setOptions(threadOptions);
-            thread.start();
-
-            idle.add (thread);
-        }
+    
+    protected void setupThread(WorkerThread thread) {
+        thread.setPool(this);
+        thread.setName (thread.getClass().getName()+"[" + inc()+"]");
+        thread.setDaemon(true);
+        thread.setPriority(Thread.MAX_PRIORITY);
+        thread.start();
     }
 
     /**
@@ -79,7 +79,7 @@ public class ThreadPool
 
         
         synchronized (mutex) {
-            while ( worker == null ) {
+            while ( worker == null && running ) {
                 if (idle.size() > 0) {
                     try {
                         worker = (WorkerThread) idle.remove(0);
@@ -87,12 +87,15 @@ public class ThreadPool
                         //this means that there are no available workers
                         worker = null;
                     }
+                } else if ( used.size() < this.maxThreads && creator != null) {
+                    worker = creator.getWorkerThread();
+                    setupThread(worker);
                 } else {
-                    try { mutex.wait(); } catch ( java.lang.InterruptedException x ) {}
+                    try { mutex.wait(); } catch ( java.lang.InterruptedException x ) {Thread.currentThread().interrupted();}
                 }
-            }
+            }//while
+            if ( worker != null ) used.add(worker);
         }
-
         return (worker);
     }
     
@@ -107,7 +110,12 @@ public class ThreadPool
     public void returnWorker (WorkerThread worker) {
         if ( running ) {
             synchronized (mutex) {
-                idle.add(worker);
+                used.remove(worker);
+                if ( idle.size() < minThreads && !idle.contains(worker)) idle.add(worker);
+                else {
+                    worker.setDoRun(false);
+                    synchronized (worker){worker.notify();}
+                }
                 mutex.notify();
             }
         }else {
@@ -118,7 +126,15 @@ public class ThreadPool
     public Object getInterestOpsMutex() {
         return interestOpsMutex;
     }
-    
+
+    public int getMaxThreads() {
+        return maxThreads;
+    }
+
+    public int getMinThreads() {
+        return minThreads;
+    }
+
     public void stop() {
         running = false;
         synchronized (mutex) {
@@ -129,5 +145,17 @@ public class ThreadPool
                 i.remove();
             }
         }
+    }
+
+    public void setMaxThreads(int maxThreads) {
+        this.maxThreads = maxThreads;
+    }
+
+    public void setMinThreads(int minThreads) {
+        this.minThreads = minThreads;
+    }
+    
+    public static interface ThreadCreator {
+        public WorkerThread getWorkerThread();
     }
 }
