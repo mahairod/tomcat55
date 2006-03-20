@@ -215,7 +215,7 @@ public class NioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
         setListen(false);
         if (selector != null) {
             try {
-                for (int i = 0; i < getTcpThreadCount(); i++) {
+                for (int i = 0; i < getMaxThreads(); i++) {
                     selector.wakeup();
                 }
                 selector.close();
