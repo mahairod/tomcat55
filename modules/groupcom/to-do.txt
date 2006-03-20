@@ -23,7 +23,7 @@ Documentation:
 
 Code Tasks:
 ===========================================
-28. Thread pool should have maxThreads and minThreads and grow/shrink dynamically
+29. Thread pool, shrink dynamically
 
 27. XmlConfigurator - read an XML file to configure the channel.
 
@@ -70,6 +70,7 @@ Code Tasks:
       pros: sequencer is in charge of the sequence
       cons: the sequence can become overloaded, since it has to do all the trafficing
             the requesting member will not know if the message failed/succeeded
+      OPTION C) Research papers on total order, better algorithms exist.
 
 21. Implement a WAN membership layer, using a WANMbrInterceptor and a 
     WAN Router/Forwarder (Tipi on top of a ManagedChannel)
@@ -171,3 +172,5 @@ Notes: the map has been completed
 22. sendAck and synchronized should not have to be a XML config,
     it can be configured on a per packet basis using ClusterData.getOptions()
 Notes: see Channel.SEND_OPT_XXXX variables
+
+28. Thread pool should have maxThreads and minThreads and grow dynamically
