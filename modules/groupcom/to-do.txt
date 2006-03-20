@@ -26,6 +26,13 @@ Documentation:
 
 Code Tasks:
 ===========================================
+24. MessageDispatchInterceptor - for asynchronous sending
+    - looks at the options flag SEND_OPTIONS_ASYNCHRONOUS
+    - has two modes 
+      a) async parallel send - each message to all destinations before next message
+      b) async per/member - one thread per member using the FastAsyncQueue
+    - (optional)persistent - writes messages to persistent store first, then starts processing
+    - Callback error handler - for when messages fail, and the application wishes to become notified
 
 23. TotalOrderInterceptor - fairly straight forward implementation
     This interceptor would depend on the fact that there is some sort of 
