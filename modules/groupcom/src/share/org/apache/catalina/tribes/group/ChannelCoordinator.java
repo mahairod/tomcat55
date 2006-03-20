@@ -76,7 +76,38 @@ public class ChannelCoordinator extends ChannelInterceptorBase implements Messag
      * SND_RX_SEQ - starts the replication receiver<BR>
      * @throws ChannelException if a startup error occurs or the service is already started.
      */
-    public synchronized void start() throws ChannelException {
+    public void start(int svc) throws ChannelException {
+        this.start();
+    }
+
+    /**
+     * Shuts down the channel. This can be called multiple times for individual services to shutdown
+     * The svc parameter can be the logical or value of any constants
+     * @param svc int value of <BR>
+     * DEFAULT - will shutdown all services <BR>
+     * MBR_RX_SEQ - stops the membership receiver <BR>
+     * MBR_TX_SEQ - stops the membership broadcaster <BR>
+     * SND_TX_SEQ - stops the replication transmitter<BR>
+     * SND_RX_SEQ - stops the replication receiver<BR>
+     * @throws ChannelException if a startup error occurs or the service is already started.
+     */
+    public void stop(int svc) throws ChannelException {
+        this.stop();
+    }    
+
+
+    /**
+     * Starts up the channel. This can be called multiple times for individual services to start
+     * The svc parameter can be the logical or value of any constants
+     * @param svc int value of <BR>
+     * DEFAULT - will start all services <BR>
+     * MBR_RX_SEQ - starts the membership receiver <BR>
+     * MBR_TX_SEQ - starts the membership broadcaster <BR>
+     * SND_TX_SEQ - starts the replication transmitter<BR>
+     * SND_RX_SEQ - starts the replication receiver<BR>
+     * @throws ChannelException if a startup error occurs or the service is already started.
+     */
+    protected synchronized void start() throws ChannelException {
         try {
             if (started) return;
             //must start the receiver first so that we can coordinate the port it
@@ -106,8 +137,9 @@ public class ChannelCoordinator extends ChannelInterceptorBase implements Messag
      * SND_RX_SEQ - starts the replication receiver<BR>
      * @throws ChannelException if a startup error occurs or the service is already started.
      */
-    public void stop() throws ChannelException {
+    protected synchronized void stop() throws ChannelException {
         try {
+            if ( !started ) return;
             membershipService.stop();
             clusterReceiver.stop();
             clusterSender.stop();
