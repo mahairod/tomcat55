@@ -132,7 +132,11 @@ public class BioReceiver extends ReceiverBase implements Runnable, ChannelReceiv
             }catch ( Exception x ) {
                 if ( doListen() ) throw x;
             }
-            if ( !doListen() ) break; //regular shutdown
+            if ( !doListen() ) {
+                thread.setDoRun(false);
+                thread.serviceSocket(null,null);
+                break; //regular shutdown
+            }
             if ( socket == null ) continue;
             socket.setReceiveBufferSize(getRxBufSize());
             socket.setSendBufferSize(getRxBufSize());
