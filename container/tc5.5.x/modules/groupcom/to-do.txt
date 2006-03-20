@@ -23,6 +23,16 @@ Documentation:
 
 Code Tasks:
 ===========================================
+30. CookieBasedReplicationMap - a very simple extension to the LazyReplicatedMap
+    but instead of randomly selecting a backup node and then publishing the PROXY to all
+    the other nodes in the group, this will simply 
+    read/write a cookie, for a backup location, so the nodes will 
+    never know until the request comes in.
+    This is useful in extremely large clusters, and essentially reduces
+    very much of the network chatter, this task is dependent on task25
+    Question to be answered: How does the map know of the cookie?
+    Potential answer: Use a thread local and bind the request/response to it
+
 29. Thread pool, shrink dynamically
 
 27. XmlConfigurator - read an XML file to configure the channel.
@@ -41,6 +51,7 @@ Code Tasks:
     - (optional)persistent - writes messages to persistent store first, then starts processing
     - Callback error handler - for when messages fail, and the application wishes to become notified
     - MUST HAVE A LIMIT QUEUE SIZE IN MB, to avoid OOM errors or persist the queue.
+    - MUST USE ClusterData.deepclone() to ensure thread safety if ClusterData objects get recycled
 
 
 23. TotalOrderInterceptor - fairly straight forward implementation
@@ -106,7 +117,7 @@ Code Tasks:
     Once it has received state, it will pretty much take itself out of the loop
     The benefit of the new ParallelNioSender is that it doesn't require to know about
     a member to transfer state, all it has to do is to reply to a message that came in.
-    beee-aaaa-uuuu-tiful. state is a one time deal for the entire channel, so a 
+    State is a one time deal for the entire channel, so a 
     session replication cluster, would transfer state as one block, not one per context
     
 14. Keepalive count and idle kill off for Nio senders
