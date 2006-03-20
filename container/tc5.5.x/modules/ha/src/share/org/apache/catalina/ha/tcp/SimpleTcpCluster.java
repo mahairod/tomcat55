@@ -48,7 +48,7 @@ import org.apache.catalina.tribes.MembershipListener;
 import org.apache.catalina.tribes.group.GroupChannel;
 
 import org.apache.catalina.ha.session.DeltaManager;
-import org.apache.catalina.tribes.util.IDynamicProperty;
+import org.apache.catalina.ha.util.IDynamicProperty;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
@@ -353,7 +353,7 @@ public class SimpleTcpCluster
      * @return Member
      */
     public Member getLocalMember() {
-        return channel.getLocalMember();
+        return channel.getLocalMember(true);
     }
 
     // ------------------------------------------------------------- dynamic
@@ -779,11 +779,11 @@ public class SimpleTcpCluster
             msg.setAddress(getLocalMember());
             if (dest != null) {
                 if (!getLocalMember().equals(dest)) {
-                    channel.send(new Member[] {dest}, msg);
+                    channel.send(new Member[] {dest}, msg,0);
                 } else
                     log.error("Unable to send message to local member " + msg);
             } else {
-                channel.send(channel.getMembers(),msg);
+                channel.send(channel.getMembers(),msg,0);
             }
         } catch (Exception x) {
             log.error("Unable to send message through cluster sender.", x);
