@@ -43,6 +43,7 @@ public interface Channel {
     public static final int SEND_OPTIONS_SYNCHRONIZED_ACK = 0x0002;
     public static final int SEND_OPTIONS_DEFAULT = SEND_OPTIONS_USE_ACK;
     public static final int SEND_OPTIONS_BYTE_MESSAGE = 0x0004;
+    public static final int SEND_OPTIONS_ASYNCHRONOUS = 0x0008;
 
     
     /**
