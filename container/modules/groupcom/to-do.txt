@@ -58,6 +58,18 @@ Code Tasks:
       this way, if a member crashes, we don't hold the queue, instead we start over.
     - A TotalOrder token, will contain the coordinator uniqueId as well.
     - One parameter should be "receive sequence timeout" incase the coordinator is not responding.
+    - OPTION A)
+      the coordinator doesn't forward the message
+      since the app will not receive the proper error message,
+      instead the sequencer just returns the sequence, then the member itself sends the message
+      pros: the app will find out if the send failed/succeeded
+      cons: if the send fails, the sequencer is out of sync for the failed member
+      OPTION B)
+      The coordinator, receives the message, adds on the sequence number
+      then sends the message on behalf of the requesting members
+      pros: sequencer is in charge of the sequence
+      cons: the sequence can become overloaded, since it has to do all the trafficing
+            the requesting member will not know if the message failed/succeeded
 
 21. Implement a WAN membership layer, using a WANMbrInterceptor and a 
     WAN Router/Forwarder (Tipi on top of a ManagedChannel)
