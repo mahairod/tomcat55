@@ -3,9 +3,11 @@ To Do:
 
 Documentation:
 ===========================================
- Why is tribes unique compared to JGroups/Appia
+ Why is tribes unique compared to JGroups/Appia and other group comm protocols
+
  1. Uses NIO and TCP for guaranteed delivery and the ability to join large groups
- 2. Guarantees messages the following way
+ 
+2. Guarantees messages the following way
     a) TCP messaging, with a following READ for NIO to ensure non broken channel
     b) ACK messages from the receiver
     c) ACK after processing
@@ -27,6 +29,7 @@ Documentation:
 
 Code Tasks:
 ===========================================
+
 30. CookieBasedReplicationMap - a very simple extension to the LazyReplicatedMap
     but instead of randomly selecting a backup node and then publishing the PROXY to all
     the other nodes in the group, this will simply 
