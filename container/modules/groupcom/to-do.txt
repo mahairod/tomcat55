@@ -23,6 +23,8 @@ Documentation:
 
 Code Tasks:
 ===========================================
+28. Thread pool should have maxThreads and minThreads and grow/shrink dynamically
+
 27. XmlConfigurator - read an XML file to configure the channel.
 
 26. JNDIChannel - a way to bind the group channel in a JNDI tree, 
