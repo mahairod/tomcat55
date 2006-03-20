@@ -16,7 +16,7 @@
 package org.apache.catalina.tribes.group.interceptors;
 
 import org.apache.catalina.tribes.group.ChannelInterceptorBase;
-import org.apache.catalina.tribes.InterceptorPayload;
+import org.apache.catalina.tribes.group.InterceptorPayload;
 import org.apache.catalina.tribes.Member;
 import java.io.IOException;
 import org.apache.catalina.tribes.ChannelMessage;

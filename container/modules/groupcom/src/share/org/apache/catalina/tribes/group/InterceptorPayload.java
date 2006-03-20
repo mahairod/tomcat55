@@ -13,13 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.catalina.tribes;
+package org.apache.catalina.tribes.group;
 
-import java.util.Stack;
+import org.apache.catalina.tribes.ErrorHandler;
 
 /**
  * @author Filip Hanik
  * @version 1.0
  */
-public class InterceptorPayload extends Stack {
+public class InterceptorPayload  {
+    private ErrorHandler errorHandler;
+    
+    public ErrorHandler getErrorHandler() {
+        return errorHandler;
+    }
+
+    public void setErrorHandler(ErrorHandler errorHandler) {
+        this.errorHandler = errorHandler;
+    }
 }
