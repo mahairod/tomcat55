@@ -21,6 +21,7 @@ import org.apache.catalina.tribes.MembershipListener;
 import org.apache.catalina.tribes.MessageListener;
 import java.io.IOException;
 import org.apache.catalina.tribes.io.ClusterData;
+import org.apache.catalina.tribes.group.*;
 
 /**
  * Abstract class for the interceptor base class.

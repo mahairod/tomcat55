@@ -83,10 +83,18 @@ public interface Channel {
      * @param destination Member[] - the destinations, null or zero length means all
      * @param msg ClusterMessage - the message to send
      * @param options int - sender options, see class documentation
-     * @return ClusterMessage[] - the replies from the members, if any. 
      */
     public void send(Member[] destination, Serializable msg, int options) throws ChannelException;
 
+    /**
+     * Send a message to one or more members in the cluster
+     * @param destination Member[] - the destinations, null or zero length means all
+     * @param msg ClusterMessage - the message to send
+     * @param options int - sender options, see class documentation
+     * @param handler ErrorHandler - handle errors through a callback, rather than throw it
+     * @exception ChannelException - if a serialization error happens.
+     */
+    public void send(Member[] destination, Serializable msg, int options, ErrorHandler handler) throws ChannelException;
     
     /**
      * Sends a heart beat through the interceptor stacks
