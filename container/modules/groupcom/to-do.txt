@@ -26,6 +26,11 @@ Documentation:
 
 Code Tasks:
 ===========================================
+27. XmlConfigurator - read an XML file to configure the channel.
+
+26. JNDIChannel - a way to bind the group channel in a JNDI tree, 
+    so that shared resources can access it.
+
 25. Member.uniqueId - 16 bytes unique for a member, UUID
     Needed to not confuse a crashed member with a revived member on the same port
 
@@ -53,6 +58,7 @@ Code Tasks:
     - The combination of Member uniqueId,orderId is unique, nothing else
       this way, if a member crashes, we don't hold the queue, instead we start over.
     - A TotalOrder token, will contain the coordinator uniqueId as well.
+    - One parameter should be "receive sequence timeout" incase the coordinator is not responding.
 
 21. Implement a WAN membership layer, using a WANMbrInterceptor and a 
     WAN Router/Forwarder (Tipi on top of a ManagedChannel)
