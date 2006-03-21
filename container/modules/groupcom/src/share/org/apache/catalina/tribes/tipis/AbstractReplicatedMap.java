@@ -152,6 +152,7 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
             MapMessage msg = new MapMessage(this.mapContextName, MapMessage.MSG_STOP,
                                             false, null, null, null, wrap(channel.getLocalMember(false)));
             if (channel != null) channel.send(channel.getMembers(), msg,channel.SEND_OPTIONS_DEFAULT);
+
         } catch (ChannelException x) {
             log.warn("Unable to send stop message.", x);
         }
@@ -225,7 +226,9 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
 
             }
             try {
-                channel.send(entry.getBackupNodes(), msg,channel.SEND_OPTIONS_DEFAULT);
+                if ( entry.getBackupNodes()!= null && entry.getBackupNodes().length > 0 ) {
+                    channel.send(entry.getBackupNodes(), msg, channel.SEND_OPTIONS_DEFAULT);
+                }
             } catch (ChannelException x) {
                 log.error("Unable to replicate data.", x);
             }
@@ -401,7 +404,12 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
                         }
                     } else {
                         entry.setValue(mapmsg.getValue());
+                        diff.setOwner(getMapOwner());
                     } //end if
+                } else if  (mapmsg.getValue() instanceof ReplicatedMapEntry) {
+                    ReplicatedMapEntry re = (ReplicatedMapEntry)mapmsg.getValue();
+                    re.setOwner(getMapOwner());
+                    entry.setValue(mapmsg.getValue());
                 } else {
                     entry.setValue(mapmsg.getValue());
                 } //end if
@@ -420,7 +428,7 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
     public void mapMemberAdded(Member member) {
         //select a backup node if we don't have one
         synchronized (mapMembers) {
-            mapMembers.add(member);
+            if (!mapMembers.contains(member) ) mapMembers.add(member);
         }
         synchronized (stateMutex) {
             Iterator i = super.entrySet().iterator();
@@ -725,7 +733,7 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
                     break;
                 }
                 case MSG_START:
-                     MSG_STOP: {
+                case MSG_STOP: {
                         nodes = readMembers(in);
                         break;
                     }
@@ -779,13 +787,17 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
                     break;
                 }
                 case MSG_START:
-                     MSG_STOP: {
-                        writeMembers(out,nodes);
-                        break;
+                case MSG_STOP: {
+                    writeMembers(out,nodes);
+                    break;
                 }
             } //switch
         } //writeExternal
-
+        
+        /**
+         * shallow clone
+         * @return Object
+         */
         public Object clone() {
             return new MapMessage(this.mapId, this.msgtype, this.diff, this.key, this.value, this.diffvalue, this.nodes);
         }

@@ -48,7 +48,7 @@ public abstract class AbstractSender implements DataSender {
     private Member destination;
     private InetAddress address;
     private int port;
-    private int maxRetryAttempts = 0;//zero resends
+    private int maxRetryAttempts = 2;//zero resends
     private int attempt;
     public AbstractSender() {
         
