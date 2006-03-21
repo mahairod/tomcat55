@@ -66,9 +66,8 @@ public class ReplicatedMap extends AbstractReplicatedMap implements RpcCallback,
      * @param initialCapacity int - the size of this map, see HashMap
      * @param loadFactor float - load factor, see HashMap
      */
-    public ReplicatedMap(Channel channel, long timeout, String mapContextName, int initialCapacity,
-                             float loadFactor) {
-        super(channel, timeout, mapContextName, initialCapacity, loadFactor, Channel.SEND_OPTIONS_DEFAULT);
+    public ReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName, int initialCapacity,float loadFactor) {
+        super(owner,channel, timeout, mapContextName, initialCapacity, loadFactor, Channel.SEND_OPTIONS_DEFAULT);
     }
 
     /**
@@ -78,8 +77,8 @@ public class ReplicatedMap extends AbstractReplicatedMap implements RpcCallback,
      * @param mapContextName String - unique name for this map, to allow multiple maps per channel
      * @param initialCapacity int - the size of this map, see HashMap
      */
-    public ReplicatedMap(Channel channel, long timeout, String mapContextName, int initialCapacity) {
-        super(channel, timeout, mapContextName, initialCapacity, Channel.SEND_OPTIONS_DEFAULT);
+    public ReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName, int initialCapacity) {
+        super(owner,channel, timeout, mapContextName, initialCapacity, AbstractReplicatedMap.DEFAULT_LOAD_FACTOR,Channel.SEND_OPTIONS_DEFAULT);
     }
 
     /**
@@ -88,8 +87,8 @@ public class ReplicatedMap extends AbstractReplicatedMap implements RpcCallback,
      * @param timeout long - timeout for RPC messags
      * @param mapContextName String - unique name for this map, to allow multiple maps per channel
      */
-    public ReplicatedMap(Channel channel, long timeout, String mapContextName) {
-        super(channel, timeout, mapContextName, Channel.SEND_OPTIONS_DEFAULT);
+    public ReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName) {
+        super(owner, channel, timeout, mapContextName,AbstractReplicatedMap.DEFAULT_INITIAL_CAPACITY, AbstractReplicatedMap.DEFAULT_LOAD_FACTOR, Channel.SEND_OPTIONS_DEFAULT);
     }
 
 //------------------------------------------------------------------------------
