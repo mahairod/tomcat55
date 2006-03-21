@@ -32,6 +32,9 @@ import java.util.LinkedList;
 
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.catalina.util.StringManager;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 
 public class DeltaRequest implements Externalizable {
@@ -216,8 +219,7 @@ public class DeltaRequest implements Externalizable {
         actionPool.clear();
     }
     
-    public synchronized void readExternal(java.io.ObjectInput in) throws java.io.IOException,
-        java.lang.ClassNotFoundException {
+    public synchronized void readExternal(java.io.ObjectInput in) throws IOException,ClassNotFoundException {
         //sessionId - String
         //recordAll - boolean
         //size - int
@@ -262,6 +264,23 @@ public class DeltaRequest implements Externalizable {
             AttributeInfo info = (AttributeInfo)actions.get(i);
             info.writeExternal(out);
         }
+    }
+    
+    /**
+     * serialize DeltaRequest
+     * @see DeltaRequest#writeExternal(java.io.ObjectOutput)
+     * 
+     * @param deltaRequest
+     * @return serialized delta request
+     * @throws IOException
+     */
+    protected byte[] serialize() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        writeExternal(oos);
+        oos.flush();
+        oos.close();
+        return bos.toByteArray();
     }
     
     private static class AttributeInfo implements java.io.Externalizable {

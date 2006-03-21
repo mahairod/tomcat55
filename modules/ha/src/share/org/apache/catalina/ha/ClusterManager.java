@@ -18,6 +18,8 @@ package org.apache.catalina.ha;
 
 
 import org.apache.catalina.Manager;
+import java.io.IOException;
+import org.apache.catalina.tribes.io.ReplicationStream;
 
 
 /**
@@ -98,4 +100,11 @@ public interface ClusterManager extends Manager {
     * @since 5.5.10
     */
    public boolean isDefaultMode();
+   
+   public ReplicationStream getReplicationStream(byte[] data) throws IOException;
+
+   public ReplicationStream getReplicationStream(byte[] data, int offset, int length) throws IOException;
+   
+   public boolean isNotifyListenersOnReplication();
+
 }

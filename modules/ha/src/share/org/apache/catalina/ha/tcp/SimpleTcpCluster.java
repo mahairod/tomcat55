@@ -168,6 +168,11 @@ public class SimpleTcpCluster
      * dynamic sender <code>properties</code>
      */
     private Map properties = new HashMap();
+    
+    private int channelSendOptions = 
+        Channel.SEND_OPTIONS_ASYNCHRONOUS |
+        Channel.SEND_OPTIONS_SYNCHRONIZED_ACK |
+        Channel.SEND_OPTIONS_USE_ACK;
 
     // ------------------------------------------------------------- Properties
 
@@ -779,11 +784,11 @@ public class SimpleTcpCluster
             msg.setAddress(getLocalMember());
             if (dest != null) {
                 if (!getLocalMember().equals(dest)) {
-                    channel.send(new Member[] {dest}, msg,channel.SEND_OPTIONS_DEFAULT);
+                    channel.send(new Member[] {dest}, msg,channelSendOptions);
                 } else
                     log.error("Unable to send message to local member " + msg);
             } else {
-                channel.send(channel.getMembers(),msg,channel.SEND_OPTIONS_DEFAULT);
+                channel.send(channel.getMembers(),msg,channelSendOptions);
             }
         } catch (Exception x) {
             log.error("Unable to send message through cluster sender.", x);
