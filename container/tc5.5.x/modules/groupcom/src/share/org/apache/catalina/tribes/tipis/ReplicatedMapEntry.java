@@ -15,13 +15,34 @@
  */
 package org.apache.catalina.tribes.tipis;
 
-import java.io.Serializable;
 import java.io.IOException;
-import org.apache.catalina.tribes.tcp.*;
+import java.io.Serializable;
 
 /**
  * 
- * For smarter replication, an object can implement this interface to replicate diffs
+ * For smarter replication, an object can implement this interface to replicate diffs<br>
+ * The replication logic will call the methods in the following order:<br>
+ * <code>
+ * 1. if ( entry.isDirty() ) <br>
+ *      try {
+ * 2.     entry.lock();<br>
+ * 3.     byte[] diff = entry.getDiff();<br>
+ * 4.     entry.reset();<br>
+ *      } finally {<br>
+ * 5.     entry.unlock();<br>
+ *      }<br>
+ *    }<br>
+ * </code>
+ * <br>
+ * <br>
+ * When the data is deserialized the logic is called in the following order<br>
+ * <code>
+ * 1. ReplicatedMapEntry entry = (ReplicatedMapEntry)objectIn.readObject();<br>
+ * 2. if ( isBackup(entry)||isPrimary(entry) ) entry.setOwner(owner); <br>
+ * </code>
+ * <br>
+ * 
+ * 
  * @author Filip Hanik
  * @version 1.0
  */
@@ -33,8 +54,6 @@ public interface ReplicatedMapEntry extends Serializable {
      * @return boolean
      */
     public boolean isDirty();
-    
-    public boolean setDirty(boolean dirty);
     
     /**
      * If this returns true, the map will extract the diff using getDiff()
@@ -58,7 +77,33 @@ public interface ReplicatedMapEntry extends Serializable {
      * @param length int
      * @throws IOException
      */
-    public void applyDiff(byte[] diff, int offset, int length) throws IOException;
+    public void applyDiff(byte[] diff, int offset, int length) throws IOException, ClassNotFoundException;
+    
+    /**
+     * Resets the current diff state and resets the dirty flag
+     */
+    public void resetDiff();
+    
+    /**
+     * Lock during serialization
+     */
+    public void lock();
+    
+    /**
+     * Unlock after serialization
+     */
+    public void unlock();
+    
+    /**
+     * This method is called after the object has been 
+     * created on a remote map. On this method,
+     * the object can initialize itself for any data that wasn't 
+     * 
+     * @param owner Object
+     */
+    public void setOwner(Object owner);
+    
+    
     
     
 }

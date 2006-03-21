@@ -174,6 +174,7 @@ public class FastQueue {
         enabled = enable;
         if (!enabled) {
             lock.abortRemove();
+            last = first = null;
         }
     }
 

@@ -15,6 +15,8 @@
 
 package org.apache.catalina.tribes.group.interceptors;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelMessage;
@@ -23,7 +25,6 @@ import org.apache.catalina.tribes.group.ChannelInterceptorBase;
 import org.apache.catalina.tribes.group.InterceptorPayload;
 import org.apache.catalina.tribes.tcp.bio.util.FastQueue;
 import org.apache.catalina.tribes.tcp.bio.util.LinkObject;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  *
@@ -44,22 +45,23 @@ public class MessageDispatchInterceptor extends ChannelInterceptorBase implement
     private boolean run = false;
     private Thread msgDispatchThread = null;
     private AtomicLong currentSize = new AtomicLong(0);
-
+    private boolean useDeepClone = false;
 
     public void sendMessage(Member[] destination, ChannelMessage msg, InterceptorPayload payload) throws ChannelException {
         boolean async = (msg.getOptions() & Channel.SEND_OPTIONS_ASYNCHRONOUS) == Channel.SEND_OPTIONS_ASYNCHRONOUS;
         if ( async && run ) {
             if ( (currentSize.get()+msg.getMessage().getLength()) > maxQueueSize ) throw new ChannelException("Asynchronous queue is full, reached its limit of "+maxQueueSize+" bytes, current:"+currentSize+" bytes.");
             //add to queue
-            queue.add(msg, destination, payload);
+            if ( useDeepClone ) msg = msg.deepclone();
+            if (!queue.add(msg, destination, payload) ) {
+                throw new ChannelException("Unable to add the message to the async queue, queue bug?");
+            }
             currentSize.addAndGet(msg.getMessage().getLength());
         } else {
             super.sendMessage(destination, msg, payload);
         }
     }
     
-    
-
     public void messageReceived(ChannelMessage msg) {
         super.messageReceived(msg);
     }
@@ -78,10 +80,18 @@ public class MessageDispatchInterceptor extends ChannelInterceptorBase implement
         this.maxQueueSize = maxQueueSize;
     }
 
+    public void setUseDeepClone(boolean useDeepClone) {
+        this.useDeepClone = useDeepClone;
+    }
+
     public long getMaxQueueSize() {
         return maxQueueSize;
     }
-    
+
+    public boolean getUseDeepClone() {
+        return useDeepClone;
+    }
+
     public void start(int svc) throws ChannelException {
         //start the thread
         if (!run ) {

@@ -55,6 +55,16 @@ import org.apache.commons.logging.LogFactory;
 public abstract class AbstractReplicatedMap extends LinkedHashMap implements RpcCallback, ChannelListener, MembershipListener {
     protected static Log log = LogFactory.getLog(AbstractReplicatedMap.class);
 
+    /**
+     * The default initial capacity - MUST be a power of two.
+     */
+    public static final int DEFAULT_INITIAL_CAPACITY = 16;
+
+    /**
+     * The load factor used when none specified in constructor.
+     **/
+    public static final float DEFAULT_LOAD_FACTOR = 0.75f;
+
 //------------------------------------------------------------------------------
 //              INSTANCE VARIABLES
 //------------------------------------------------------------------------------
@@ -65,8 +75,8 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
     private transient boolean stateTransferred = false;
     private transient Object stateMutex = new Object();
     private transient ArrayList mapMembers = new ArrayList();
-    
     private transient int channelSendOptions = Channel.SEND_OPTIONS_DEFAULT;
+    private transient Object mapOwner;
 
 //------------------------------------------------------------------------------
 //              CONSTRUCTORS
@@ -80,52 +90,24 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
      * @param initialCapacity int - the size of this map, see HashMap
      * @param loadFactor float - load factor, see HashMap
      */
-    public AbstractReplicatedMap(Channel channel, 
+    public AbstractReplicatedMap(Object owner,
+                                 Channel channel, 
                                  long timeout, 
                                  String mapContextName, 
                                  int initialCapacity,
                                  float loadFactor,
                                  int channelSendOptions) {
         super(initialCapacity, loadFactor);
-        init(channel, mapContextName, timeout, channelSendOptions);
+        init(owner, channel, mapContextName, timeout, channelSendOptions);
         
     }
 
-    /**
-     * Creates a new map
-     * @param channel The channel to use for communication
-     * @param timeout long - timeout for RPC messags
-     * @param mapContextName String - unique name for this map, to allow multiple maps per channel
-     * @param initialCapacity int - the size of this map, see HashMap
-     */
-    public AbstractReplicatedMap(Channel channel, 
-                                 long timeout, 
-                                 String mapContextName, 
-                                 int initialCapacity,
-                                 int channelSendOptions) {
-        super(initialCapacity);
-        init(channel, mapContextName, timeout, channelSendOptions);
-    }
-
-    /**
-     * Creates a new map
-     * @param channel The channel to use for communication
-     * @param timeout long - timeout for RPC messags
-     * @param mapContextName String - unique name for this map, to allow multiple maps per channel
-     */
-    public AbstractReplicatedMap(Channel channel, 
-                                 long timeout, 
-                                 String mapContextName,
-                                 int channelSendOptions) {
-        super();
-        init(channel, mapContextName, timeout, channelSendOptions);
-    }
-    
     protected Member[] wrap(Member m) {
         return new Member[] {m};
     }
 
-    private void init(Channel channel, String mapContextName, long timeout, int channelSendOptions) {
+    private void init(Object owner, Channel channel, String mapContextName, long timeout, int channelSendOptions) {
+        this.mapOwner = owner;
         final String chset = "ISO-8859-1";
         this.channelSendOptions = channelSendOptions;
         this.channel = channel;
@@ -277,9 +259,12 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
 
                         //make sure we don't store that actual object as primary or backup
                         MapEntry local = (MapEntry)super.get(m.getKey());
-                        if (local != null && (!local.isProxy()))continue;
+                        if (local != null && (!local.isProxy())) continue;
 
                         //store the object
+                        if (m.getValue()!=null && m.getValue() instanceof ReplicatedMapEntry ) {
+                            ((ReplicatedMapEntry)m.getValue()).setOwner(getMapOwner());
+                        }
                         MapEntry entry = new MapEntry(m.getKey(), m.getValue());
                         entry.setBackup(false);
                         entry.setProxy(true);
@@ -390,6 +375,9 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
                 entry.setBackup(true);
                 entry.setProxy(false);
                 entry.setBackupNodes(mapmsg.getBackupNodes());
+                if (mapmsg.getValue()!=null && mapmsg.getValue() instanceof ReplicatedMapEntry ) {
+                    ((ReplicatedMapEntry)mapmsg.getValue()).setOwner(getMapOwner());
+                }
                 super.put(entry.getKey(), entry);
             } else {
                 entry.setBackup(true);
@@ -400,7 +388,7 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
                     if (mapmsg.isDiff()) {
                         try {
                             diff.applyDiff(mapmsg.getDiffValue(), 0, mapmsg.getDiffValue().length);
-                        } catch (IOException x) {
+                        } catch (Exception x) {
                             log.error("Unable to apply diff to key:" + entry.getKey(), x);
                         }
                     } else {
@@ -865,6 +853,14 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
 
     public boolean isStateTransferred() {
         return stateTransferred;
+    }
+
+    public Object getMapOwner() {
+        return mapOwner;
+    }
+
+    public void setMapOwner(Object mapOwner) {
+        this.mapOwner = mapOwner;
     }
 
 }
