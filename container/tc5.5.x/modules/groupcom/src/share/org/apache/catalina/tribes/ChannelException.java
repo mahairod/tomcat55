@@ -43,6 +43,21 @@ public class ChannelException
         super(cause);
     }
     
+    public String getMessage() {
+        StringBuffer buf = new StringBuffer(super.getMessage());
+        if (faultyMembers==null || faultyMembers.size() == 0 ) {
+            buf.append("; No faulty members identified.");
+        } else {
+            buf.append("; Faulty members:");
+            for ( int i=0; i<faultyMembers.size(); i++ ) {
+                Member mbr = (Member)faultyMembers.get(i);
+                buf.append(mbr.getName());
+                buf.append("; ");
+            }
+        }
+        return buf.toString();
+    }
+    
     public void addFaultyMember(Member mbr) {
         if ( this.faultyMembers==null ) this.faultyMembers = new ArrayList();
         faultyMembers.add(mbr);

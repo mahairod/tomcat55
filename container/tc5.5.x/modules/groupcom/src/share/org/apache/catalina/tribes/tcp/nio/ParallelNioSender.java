@@ -120,7 +120,7 @@ public class ParallelNioSender extends AbstractSender implements MultiPointSende
                 state.setSuspect();
                 byte[] data = sender.getMessage();
                 int attempt = sender.getAttempt()+1;
-                if ( sender.getAttempt() >= maxAttempts && maxAttempts>0 ) {
+                if ( sender.getAttempt() <= maxAttempts && maxAttempts>0 ) {
                     try { 
                         sender.disconnect(); 
                         sender.connect();
@@ -130,7 +130,7 @@ public class ParallelNioSender extends AbstractSender implements MultiPointSende
                         state.setFailing();
                     }
                 } else {
-                    ChannelException cx = new ChannelException(x);
+                    ChannelException cx = new ChannelException("Send failed, attempt:"+sender.getAttempt()+" max:"+maxAttempts,x);
                     cx.addFaultyMember(sender.getDestination());
                     throw cx;
                 }//end if
