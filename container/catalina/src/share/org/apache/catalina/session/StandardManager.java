@@ -671,7 +671,7 @@ public class StandardManager
         // Expire all active sessions
         Session sessions[] = findSessions();
         for (int i = 0; i < sessions.length; i++) {
-            StandardSession session = (StandardSession) sessions[i];
+            Session session = sessions[i];
             try {
                 if (session.isValid()) {
                     session.expire();
