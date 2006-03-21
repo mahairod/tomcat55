@@ -24,8 +24,8 @@ import org.apache.catalina.tribes.ChannelListener;
 import org.apache.catalina.tribes.ManagedChannel;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
+import org.apache.catalina.tribes.tipis.AbstractReplicatedMap;
 import org.apache.catalina.tribes.tipis.LazyReplicatedMap;
-import org.apache.catalina.tribes.tcp.*;
 
 /**
  * <p>Title: </p>
@@ -162,7 +162,6 @@ public class MapDemo implements ChannelListener, MembershipListener{
                 }
                 if ( row == 0 ) return columnNames[col];
                 Object[] entries = map.entrySetFull().toArray();
-                
                 Map.Entry e = (Map.Entry)entries [row-1];
                 LazyReplicatedMap.MapEntry entry = (LazyReplicatedMap.MapEntry)e.getValue();
                 switch (col) {

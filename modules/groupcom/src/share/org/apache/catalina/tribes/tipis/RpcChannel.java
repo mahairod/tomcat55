@@ -89,6 +89,7 @@ public class RpcChannel implements ChannelListener{
                 collector.wait(timeout);
             }
         } catch ( InterruptedException ix ) {
+            Thread.currentThread().interrupted();
             throw new ChannelException(ix);
         }finally {
             responseMap.remove(key);
@@ -120,7 +121,7 @@ public class RpcChannel implements ChannelListener{
             rmsg.reply = true;
             rmsg.message = reply;
             try {
-                channel.send(new Member[] {sender}, rmsg,Channel.SEND_OPTIONS_DEFAULT);
+                channel.send(new Member[] {sender}, rmsg,0);
             }catch ( Exception x )  {
                 log.error("Unable to send back reply in RpcChannel.",x);
             }
