@@ -25,6 +25,6 @@ import java.io.Serializable;
  */
 public interface ErrorHandler {
     
-    public void handleError(ChannelException x, Member[] destination, Serializable msg);
+    public void handleError(Exception x, Member[] destination, Serializable msg);
     
 }

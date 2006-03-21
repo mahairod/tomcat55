@@ -16,6 +16,11 @@
 
 package org.apache.catalina.tribes.tcp.bio.util;
 
+import org.apache.catalina.tribes.ChannelMessage;
+import org.apache.catalina.tribes.ErrorHandler;
+import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.group.InterceptorPayload;
+
 /**
  * The class <b>LinkObject</b> implements an element
  * for a linked list, consisting of a general
@@ -23,16 +28,19 @@ package org.apache.catalina.tribes.tcp.bio.util;
  *
  * @author Rainer Jung
  * @author Peter Rossbach
+ * @author Filip Hanik
  * @version $Revision: 304032 $ $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
 
  */
 
 public class LinkObject {
 
-    private Object payload;
+    private ChannelMessage msg;
     private LinkObject next;
-    private String key ;
-    
+    private byte[] key ;
+    private Member[] destination;
+    private InterceptorPayload payload;
+
     /**
      * Construct a new element from the data object.
      * Sets the pointer to null.
@@ -40,10 +48,12 @@ public class LinkObject {
      * @param key The key
      * @param payload The data object.
      */
-    public LinkObject(String key,Object payload) {
-        this.payload = payload;
+    public LinkObject(ChannelMessage msg, Member[] destination, InterceptorPayload payload) {
+        this.msg = msg;
         this.next = null;
-        this.key = key ;
+        this.key = msg.getUniqueId();
+        this.payload = payload;
+        this.destination = destination;
     }
 
     /**
@@ -66,16 +76,28 @@ public class LinkObject {
      * Get the data object from the element.
      * @return The data object from the element.
      */
-    public Object data() {
-        return payload;
+    public ChannelMessage data() {
+        return msg;
     }
 
     /**
      * Get the unique message id
      * @return the unique message id
      */
-    public Object getKey() {
+    public byte[] getKey() {
         return key;
+    }
+
+    public ErrorHandler getHandler() {
+        return payload!=null?payload.getErrorHandler():null;
+    }
+
+    public InterceptorPayload getPayload() {
+        return payload;
+    }
+
+    public Member[] getDestination() {
+        return destination;
     }
 
 }

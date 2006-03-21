@@ -15,16 +15,10 @@
  */
 package org.apache.catalina.tribes.group;
 
+import org.apache.catalina.tribes.ChannelException;
+import org.apache.catalina.tribes.ChannelInterceptor;
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.Member;
-import org.apache.catalina.tribes.MembershipListener;
-import org.apache.catalina.tribes.MessageListener;
-import java.io.IOException;
-import org.apache.catalina.tribes.ChannelInterceptor;
-
-import org.apache.catalina.tribes.io.ClusterData;
-import org.apache.catalina.tribes.ChannelException;
-import org.apache.catalina.tribes.tcp.*;
 
 /**
  * Abstract class for the interceptor base class.
