@@ -120,10 +120,10 @@ public interface Channel {
 
     /**
      * Return the member that represents this node.
-     * 
+     * @param incAlive - optimization, true if you want it to calculate alive time
      * @return Member
      */
-    public Member getLocalMember(boolean incAlive) ;
+    public Member getLocalMember(boolean incAlive);
     
     /**
      * 
