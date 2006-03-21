@@ -147,9 +147,7 @@ public class NioSender extends AbstractSender implements DataSender{
         ackbuf.append(readbuf,read);
         readbuf.clear();
         if (ackbuf.doesPackageExist() ) {
-            System.out.print("Reading ack:");
             boolean result = Arrays.equals(ackbuf.extractDataPackage(true),org.apache.catalina.tribes.tcp.Constants.ACK_DATA);
-            System.out.println(result);
             return result;
         } else {
             return false;

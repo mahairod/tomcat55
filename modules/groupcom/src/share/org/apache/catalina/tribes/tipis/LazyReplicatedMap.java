@@ -158,7 +158,10 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
                 msg = (MapMessage) resp[0].getMessage();
                 
                 Member[] backup = entry.getBackupNodes();
-
+                if ( entry.getValue() instanceof ReplicatedMapEntry ) {
+                    ReplicatedMapEntry val = (ReplicatedMapEntry)entry.getValue();
+                    val.setOwner(getMapOwner());
+                }
                 if (entry.isBackup()) {
                     //select a new backup node
                     backup = publishEntryInfo(key, msg.getValue());
