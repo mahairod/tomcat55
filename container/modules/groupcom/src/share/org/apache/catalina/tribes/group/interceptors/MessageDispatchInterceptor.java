@@ -62,20 +62,6 @@ public class MessageDispatchInterceptor extends ChannelInterceptorBase implement
         }
     }
     
-    public void messageReceived(ChannelMessage msg) {
-        super.messageReceived(msg);
-    }
-
-    public void memberAdded(Member member) {
-        //todo, nothing
-        super.memberAdded(member);
-    }
-
-    public void memberDisappeared(Member member) {
-        super.memberDisappeared(member);
-        //clean up existing queue items
-    }
-
     public void setMaxQueueSize(long maxQueueSize) {
         this.maxQueueSize = maxQueueSize;
     }
