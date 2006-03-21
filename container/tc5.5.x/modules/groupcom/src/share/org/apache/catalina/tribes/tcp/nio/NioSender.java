@@ -64,6 +64,9 @@ public class NioSender extends AbstractSender implements DataSender{
     protected XByteBuffer ackbuf = new XByteBuffer(128,true);
     protected int remaining = 0;
     protected boolean complete;
+    
+    protected boolean connecting = false;
+    
     public NioSender(Member destination) throws UnknownHostException {
         super(destination);
         
@@ -82,6 +85,7 @@ public class NioSender extends AbstractSender implements DataSender{
             if ( socketChannel.finishConnect() ) {
                 //we connected, register ourselves for writing
                 setConnected(true);
+                connecting = false;
                 setRequestCount(0);
                 setConnectTime(System.currentTimeMillis());
                 socketChannel.socket().setSendBufferSize(getTxBufSize());
@@ -143,7 +147,10 @@ public class NioSender extends AbstractSender implements DataSender{
         ackbuf.append(readbuf,read);
         readbuf.clear();
         if (ackbuf.doesPackageExist() ) {
-            return Arrays.equals(ackbuf.extractDataPackage(true),org.apache.catalina.tribes.tcp.Constants.ACK_DATA);
+            System.out.print("Reading ack:");
+            boolean result = Arrays.equals(ackbuf.extractDataPackage(true),org.apache.catalina.tribes.tcp.Constants.ACK_DATA);
+            System.out.println(result);
+            return result;
         } else {
             return false;
         }
@@ -183,6 +190,8 @@ public class NioSender extends AbstractSender implements DataSender{
      * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
      */
     public synchronized void connect() throws IOException {
+        if ( connecting ) return;
+        connecting = true;
         if ( isConnected() ) throw new IOException("NioSender is already in connected state.");
         if ( readbuf == null ) {
             readbuf = getReadBuffer();
@@ -205,16 +214,20 @@ public class NioSender extends AbstractSender implements DataSender{
      */
     public void disconnect() {
         try {
+            connecting = false;
             setConnected(false);
             if ( socketChannel != null ) {
-                Socket socket = socketChannel.socket();
-                //error free close, all the way
-                try {socket.shutdownOutput();}catch ( Exception x){}
-                try {socket.shutdownInput();}catch ( Exception x){}
-                try {socket.close();}catch ( Exception x){}
-                try {socketChannel.close();}catch ( Exception x){}
-                socket = null;
-                socketChannel = null;
+                try {
+                    Socket socket = socketChannel.socket();
+                    //error free close, all the way
+                    try {socket.shutdownOutput();}catch ( Exception x){}
+                    try {socket.shutdownInput();}catch ( Exception x){}
+                    try {socket.close();}catch ( Exception x){}
+                    try {socketChannel.close();}catch ( Exception x){}
+                    socket = null;
+                }finally {
+                    socketChannel = null;
+                }
             }
         } catch ( Exception x ) {
             log.error("Unable to disconnect NioSender. msg="+x.getMessage());
