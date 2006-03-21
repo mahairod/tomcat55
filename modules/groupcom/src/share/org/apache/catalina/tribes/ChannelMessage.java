@@ -72,6 +72,15 @@ public interface ChannelMessage extends Serializable {
     public int getOptions();
     public void setOptions(int options);
     
+    /**
+     * Shallow clone, only the actual message(getMessage()) is cloned, the rest remains as references
+     * @return ChannelMessage
+     */
     public ChannelMessage clone();
 
+    /**
+     * Deep clone, everything gets cloned
+     * @return ChannelMessage
+     */
+    public ChannelMessage deepclone();
 }

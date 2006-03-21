@@ -55,6 +55,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
     public int statsInterval = 10000;
     public long pause = 0;
     public boolean breakonChannelException = false;
+    public boolean async = false;
     public long receiveStart = 0;
     public int channelOptions = Channel.SEND_OPTIONS_DEFAULT;
     
@@ -144,7 +145,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
                             Thread.sleep(pause);
                         }
                     } catch (ChannelException x) {
-                        log.error("Unable to send message.");
+                        log.error("Unable to send message:"+x.getMessage());
                         Member[] faulty = x.getFaultyMembers();
                         for (int i=0; i<faulty.length; i++ ) log.error("Faulty: "+faulty[i]);
                         --counter;

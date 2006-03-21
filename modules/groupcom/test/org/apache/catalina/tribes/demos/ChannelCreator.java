@@ -30,6 +30,7 @@ import org.apache.catalina.tribes.tcp.ReceiverBase;
 import org.apache.catalina.tribes.tcp.ReplicationTransmitter;
 import org.apache.tomcat.util.IntrospectionUtils;
 import org.apache.catalina.tribes.tcp.*;
+import org.apache.catalina.tribes.group.interceptors.MessageDispatchInterceptor;
 
 /**
  * <p>Title: </p>
@@ -64,7 +65,9 @@ public class ChannelCreator {
            .append("\n\t\t[-order]")
            .append("\n\t\t[-ordersize maxorderqueuesize]")
            .append("\n\t\t[-frag]")
-           .append("\n\t\t[-fragsize maxmsgsize]");
+           .append("\n\t\t[-fragsize maxmsgsize]")
+           .append("\n\t\t[-async]")
+           .append("\n\t\t[-asyncsize maxqueuesizeinbytes]");
        return buf;
 
     }
@@ -89,6 +92,8 @@ public class ChannelCreator {
         Properties transportProperties = new Properties();
         String transport = "org.apache.catalina.tribes.tcp.nio.PooledParallelSender";
         String receiver = "org.apache.catalina.tribes.tcp.nio.NioReceiver";
+        boolean async = false;
+        int asyncsize = 1024*1024*50; //50MB
         
         for (int i = 0; i < args.length; i++) {
             if ("-bind".equals(args[i])) {
@@ -103,6 +108,11 @@ public class ChannelCreator {
                 tcpthreadcount = Integer.parseInt(args[++i]);
             } else if ("-gzip".equals(args[i])) {
                 gzip = true;
+            } else if ("-async".equals(args[i])) {
+                async = true;
+            } else if ("-asyncsize".equals(args[i])) {
+                asyncsize = Integer.parseInt(args[++i]);
+                System.out.println("Setting MessageDispatchInterceptor.maxQueueSize="+asyncsize);
             } else if ("-order".equals(args[i])) {
                 order = true;
             } else if ("-ordersize".equals(args[i])) {
@@ -187,6 +197,13 @@ public class ChannelCreator {
             oi.setMaxQueue(ordersize);
             channel.addInterceptor(oi);
         }
+        
+        if ( async ) {
+            MessageDispatchInterceptor mi = new MessageDispatchInterceptor();
+            mi.setMaxQueueSize(asyncsize);
+            channel.addInterceptor(mi);
+        }
+        
         return channel;
         
     }
