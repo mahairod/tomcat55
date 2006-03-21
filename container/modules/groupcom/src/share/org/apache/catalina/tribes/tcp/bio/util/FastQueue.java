@@ -16,6 +16,11 @@
 
 package org.apache.catalina.tribes.tcp.bio.util;
 
+import org.apache.catalina.tribes.ChannelMessage;
+import org.apache.catalina.tribes.ErrorHandler;
+import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.group.InterceptorPayload;
+
 
 
 /**
@@ -27,7 +32,7 @@ package org.apache.catalina.tribes.tcp.bio.util;
  * @author Peter Rossbach
  * @version $Revision: 345567 $ $Date: 2005-11-18 15:07:23 -0600 (Fri, 18 Nov 2005) $
  */
-public class FastQueue implements IQueue {
+public class FastQueue {
 
     private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(FastQueue.class);
 
@@ -234,12 +239,16 @@ public class FastQueue implements IQueue {
         return size;
     }
 
+    public SingleRemoveSynchronizedAddLock getLock() {
+        return lock;
+    }
+
     /**
      * Add new data to the queue
      * @see org.apache.catalina.tribes.util.IQueue#add(java.lang.String, java.lang.Object)
      * FIXME extract some method
      */
-    public boolean add(String key, Object data) {
+    public boolean add(ChannelMessage msg, Member[] destination, InterceptorPayload payload) {
         boolean ok = true;
         long time = 0;
 
@@ -272,7 +281,7 @@ public class FastQueue implements IQueue {
                     log.trace("FastQueue.add: Could not add, since queue is full (" + size + ">=" + maxQueueLength + ")");
                 }
             } else {
-                LinkObject element = new LinkObject(key, data);
+                LinkObject element = new LinkObject(msg,destination, payload);
                 if (size == 0) {
                     first = last = element;
                     size = 1;
