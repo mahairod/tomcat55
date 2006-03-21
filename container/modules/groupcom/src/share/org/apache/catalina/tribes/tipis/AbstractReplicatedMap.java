@@ -201,15 +201,20 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
             boolean diff = ( (value instanceof ReplicatedMapEntry) && ( (ReplicatedMapEntry) value).isDiffable());
             MapMessage msg = null;
             if (diff) {
+                ReplicatedMapEntry rentry = (ReplicatedMapEntry)entry.getValue();
                 try {
+                    rentry.lock();
                     //construct a diff message
                     msg = new MapMessage(mapContextName, MapMessage.MSG_BACKUP,
                                          true, (Serializable) entry.getKey(), null,
-                                         ( (ReplicatedMapEntry) entry.getValue()).getDiff(),
+                                         rentry.getDiff(),
                                          entry.getBackupNodes());
                 } catch (IOException x) {
                     log.error("Unable to diff object. Will replicate the entire object instead.", x);
+                } finally {
+                    rentry.unlock();
                 }
+                
             }
             if (msg == null) {
                 //construct a complete
@@ -387,9 +392,12 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
                     ReplicatedMapEntry diff = (ReplicatedMapEntry) entry.getValue();
                     if (mapmsg.isDiff()) {
                         try {
+                            diff.lock();
                             diff.applyDiff(mapmsg.getDiffValue(), 0, mapmsg.getDiffValue().length);
                         } catch (Exception x) {
                             log.error("Unable to apply diff to key:" + entry.getKey(), x);
+                        } finally {
+                            diff.unlock();
                         }
                     } else {
                         entry.setValue(mapmsg.getValue());
@@ -522,7 +530,8 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
         }
 
         public boolean isDiffable() {
-            return (value instanceof ReplicatedMapEntry);
+            return (value instanceof ReplicatedMapEntry) &&
+                   ((ReplicatedMapEntry)value).isDiffable();
         }
 
         public void setBackupNodes(Member[] nodes) {
@@ -583,7 +592,13 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
          */
         public void apply(byte[] data, int offset, int length, boolean diff) throws IOException, ClassNotFoundException {
             if (isDiffable() && diff) {
-                ( (ReplicatedMapEntry) value).applyDiff(data, offset, length);
+                ReplicatedMapEntry rentry = (ReplicatedMapEntry) value;
+                try {
+                    rentry.lock();
+                    rentry.applyDiff(data, offset, length);
+                } finally {
+                    rentry.unlock();
+                }
             } else if (length == 0) {
                 value = null;
                 proxy = true;
