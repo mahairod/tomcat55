@@ -32,6 +32,8 @@ import org.apache.catalina.Realm;
  * @version $Revision: 303587 $ $Date: 2004-12-09 08:36:43 -0600 (Thu, 09 Dec 2004) $
  */
 import org.apache.catalina.realm.GenericPrincipal;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 public class SerializablePrincipal  implements java.io.Serializable {
 
 
@@ -165,7 +167,7 @@ public class SerializablePrincipal  implements java.io.Serializable {
         return new GenericPrincipal(realm,name,password,getRoles()!=null?Arrays.asList(getRoles()):null);
     }
     
-    public static GenericPrincipal readPrincipal(java.io.ObjectInputStream in, Realm realm) throws java.io.IOException{
+    public static GenericPrincipal readPrincipal(ObjectInput in, Realm realm) throws java.io.IOException{
         String name = in.readUTF();
         boolean hasPwd = in.readBoolean();
         String pwd = null;
@@ -176,7 +178,7 @@ public class SerializablePrincipal  implements java.io.Serializable {
         return new GenericPrincipal(realm,name,pwd,Arrays.asList(roles));
     }
     
-    public static void writePrincipal(GenericPrincipal p, java.io.ObjectOutputStream out) throws java.io.IOException {
+    public static void writePrincipal(GenericPrincipal p, ObjectOutput out) throws java.io.IOException {
         out.writeUTF(p.getName());
         out.writeBoolean(p.getPassword()!=null);
         if ( p.getPassword()!= null ) out.writeUTF(p.getPassword());

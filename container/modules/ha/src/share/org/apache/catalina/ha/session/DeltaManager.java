@@ -611,7 +611,7 @@ public class DeltaManager extends ClusterManagerBase{
      * @throws ClassNotFoundException
      * @throws IOException
      */
-    protected DeltaRequest loadDeltaRequest(DeltaSession session, byte[] data) throws ClassNotFoundException, IOException {
+    protected DeltaRequest deserializeDeltaRequest(DeltaSession session, byte[] data) throws ClassNotFoundException, IOException {
         ReplicationStream ois = getReplicationStream(data);
         session.getDeltaRequest().readExternal(ois);
         ois.close();
@@ -626,13 +626,8 @@ public class DeltaManager extends ClusterManagerBase{
      * @return serialized delta request
      * @throws IOException
      */
-    protected byte[] unloadDeltaRequest(DeltaRequest deltaRequest) throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(bos);
-        deltaRequest.writeExternal(oos);
-        oos.flush();
-        oos.close();
-        return bos.toByteArray();
+    protected byte[] serializeDeltaRequest(DeltaRequest deltaRequest) throws IOException {
+        return deltaRequest.serialize();
     }
 
     /**
@@ -1115,7 +1110,7 @@ public class DeltaManager extends ClusterManagerBase{
                 isDeltaRequest = deltaRequest.getSize() > 0 ;
                 if (isDeltaRequest) {    
                     counterSend_EVT_SESSION_DELTA++;
-                    byte[] data = unloadDeltaRequest(deltaRequest);
+                    byte[] data = serializeDeltaRequest(deltaRequest);
                     msg = new SessionMessageImpl(getName(),
                                                  SessionMessage.EVT_SESSION_DELTA, 
                                                  data, 
@@ -1365,7 +1360,7 @@ public class DeltaManager extends ClusterManagerBase{
         DeltaSession session = (DeltaSession) findSession(msg.getSessionID());
         if (session != null) {
             if (log.isDebugEnabled()) log.debug(sm.getString("deltaManager.receiveMessage.delta",getName(), msg.getSessionID()));
-            DeltaRequest dreq = loadDeltaRequest(session, delta);
+            DeltaRequest dreq = deserializeDeltaRequest(session, delta);
             dreq.execute(session, notifyListenersOnReplication);
             session.setPrimarySession(false);
         }

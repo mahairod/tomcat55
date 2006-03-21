@@ -50,6 +50,14 @@ import org.apache.catalina.ha.ClusterSession;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.StringManager;
+import org.apache.catalina.tribes.tipis.ReplicatedMapEntry;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.Lock;
+import org.apache.catalina.ha.ClusterManager;
+import org.apache.catalina.tribes.io.ReplicationStream;
+import java.io.Externalizable;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 /**
  *
@@ -74,12 +82,9 @@ import org.apache.catalina.util.StringManager;
  * @version $Revision: 372887 $ $Date: 2006-01-27 09:58:58 -0600 (Fri, 27 Jan 2006) $
  */
 
-public class DeltaSession
-    implements HttpSession, Session, Serializable,
-    ClusterSession {
+public class DeltaSession implements HttpSession, Session, Externalizable,ClusterSession,ReplicatedMapEntry {
 
-    public static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
-        .getLog(DeltaManager.class);
+    public static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(DeltaManager.class);
 
     /**
      * The string manager for this package.
@@ -245,6 +250,8 @@ public class DeltaSession
      * The access count for this session
      */
     protected transient int accessCount = 0;
+    
+    protected Lock diffLock = new ReentrantReadWriteLock().writeLock();
 
     // ----------------------------------------------------------- Constructors
 
@@ -260,8 +267,84 @@ public class DeltaSession
         this.resetDeltaRequest();
     }
 
-    // ----------------------------------------------------- Session Properties
+    // ----------------------------------------------------- ReplicatedMapEntry
 
+    /**
+         * Has the object changed since last replication
+         * and is not in a locked state
+         * @return boolean
+         */
+        public boolean isDirty() {
+            return getDeltaRequest().getSize()>0;
+        }
+    
+        /**
+         * If this returns true, the map will extract the diff using getDiff()
+         * Otherwise it will serialize the entire object.
+         * @return boolean
+         */
+        public boolean isDiffable() {
+            return true;
+        }
+    
+        /**
+         * Returns a diff and sets the dirty map to false
+         * @return byte[]
+         * @throws IOException
+         */
+        public byte[] getDiff() throws IOException {
+            return getDeltaRequest().serialize();
+        }
+    
+    
+        /**
+         * Applies a diff to an existing object.
+         * @param diff byte[]
+         * @param offset int
+         * @param length int
+         * @throws IOException
+         */
+        public void applyDiff(byte[] diff, int offset, int length) throws IOException, ClassNotFoundException {
+            ReplicationStream stream = ((ClusterManager)getManager()).getReplicationStream(diff,offset,length);
+            getDeltaRequest().readExternal(stream);
+            getDeltaRequest().execute(this);
+        }
+    
+        /**
+         * Resets the current diff state and resets the dirty flag
+         */
+        public void resetDiff() {
+            resetDeltaRequest();
+        }
+    
+        /**
+         * Lock during serialization
+         */
+        public void lock() {
+            diffLock.lock();
+        }
+    
+        /**
+         * Unlock after serialization
+         */
+        public void unlock() {
+            diffLock.unlock();
+        }
+        
+        public void setOwner(Object owner) {
+            if ( owner instanceof ClusterManager ) {
+                ClusterManager cm = (ClusterManager)owner;
+                this.setManager(cm);
+                this.setValid(true);
+                this.setPrimarySession(false);
+                this.access();
+                if (cm.isNotifyListenersOnReplication()) this.setId(getIdInternal());
+                this.resetDeltaRequest();
+                this.endAccess();
+            }
+        }
+    // ----------------------------------------------------- Session Properties
+    
     /**
      * returns true if this session is the primary session, if that is the case,
      * the manager can expire it upon timeout.
@@ -285,9 +368,7 @@ public class DeltaSession
      * if any.
      */
     public String getAuthType() {
-
         return (this.authType);
-
     }
 
     /**
@@ -298,11 +379,9 @@ public class DeltaSession
      *            The new cached authentication type
      */
     public void setAuthType(String authType) {
-
         String oldAuthType = this.authType;
         this.authType = authType;
         support.firePropertyChange("authType", oldAuthType, this.authType);
-
     }
 
     /**
@@ -313,11 +392,9 @@ public class DeltaSession
      *            The new creation time
      */
     public void setCreationTime(long time) {
-
         this.creationTime = time;
         this.lastAccessedTime = time;
         this.thisAccessedTime = time;
-
     }
 
     /**
@@ -325,16 +402,13 @@ public class DeltaSession
      */
     public String getId() {
         return (this.id);
-
     }
 
     /**
      * Return the session identifier for this session.
      */
     public String getIdInternal() {
-
         return (this.id);
-
     }
 
     /**
@@ -367,7 +441,6 @@ public class DeltaSession
      *
      */
     public void tellNew() {
-
         // Notify interested session event listeners
         fireSessionEvent(Session.SESSION_CREATED_EVENT, null);
 
@@ -404,9 +477,7 @@ public class DeltaSession
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
      */
     public String getInfo() {
-
         return (info);
-
     }
 
     /**
@@ -416,12 +487,10 @@ public class DeltaSession
      * value associated with the session, do not affect the access time.
      */
     public long getLastAccessedTime() {
-
         if (!isValid()) {
             throw new IllegalStateException(sm.getString("standardSession.getId.ise"));
         }
         return (this.lastAccessedTime);
-
     }
 
     /**
@@ -648,12 +717,10 @@ public class DeltaSession
         String expiredId = getIdInternal();
 
         synchronized (this) {
-
             if (manager == null)
                 return;
 
             expiring = true;
-
             // Notify interested application event listeners
             // FIXME - Assumes we call listeners in reverse order
             Context context = (Context) manager.getContainer();
@@ -803,6 +870,11 @@ public class DeltaSession
 
     // ------------------------------------------------ Session Package Methods
 
+    public synchronized void readExternal(ObjectInput in) throws IOException,ClassNotFoundException {
+        readObjectData(in);
+    }
+
+
     /**
      * Read a serialized version of the contents of this session object from the
      * specified object input stream, without requiring that the StandardSession
@@ -816,7 +888,7 @@ public class DeltaSession
      * @exception IOException
      *                if an input/output error occurs
      */
-    public void readObjectData(ObjectInputStream stream) throws ClassNotFoundException, IOException {
+    public void readObjectData(ObjectInput stream) throws ClassNotFoundException, IOException {
         readObject(stream);
     }
 
@@ -831,7 +903,7 @@ public class DeltaSession
      * @exception IOException
      *                if an input/output error occurs
      */
-    public void writeObjectData(ObjectOutputStream stream) throws IOException {
+    public void writeObjectData(ObjectOutput stream) throws IOException {
         writeObject(stream);
     }
 
@@ -1112,93 +1184,97 @@ public class DeltaSession
             return;
         }
 
-        // Validate our current state
-        if (!isValid())
-            throw new IllegalStateException(sm.getString("standardSession.setAttribute.ise"));
-        if (! (value instanceof java.io.Serializable)) {
-            throw new IllegalArgumentException("Attribute [" + name + "] is not serializable");
-        }
+        try {
+            lock();
+            // Validate our current state
+            if (!isValid())
+                throw new IllegalStateException(sm.getString("standardSession.setAttribute.ise"));
+            if (! (value instanceof java.io.Serializable)) {
+                throw new IllegalArgumentException("Attribute [" + name + "] is not serializable");
+            }
 
-        if (addDeltaRequest && (deltaRequest != null))
-            deltaRequest.setAttribute(name, value);
+            if (addDeltaRequest && (deltaRequest != null))
+                deltaRequest.setAttribute(name, value);
 
-        // Construct an event with the new value
-        HttpSessionBindingEvent event = null;
+            // Construct an event with the new value
+            HttpSessionBindingEvent event = null;
 
-        // Call the valueBound() method if necessary
-        if (value instanceof HttpSessionBindingListener && notify) {
-            // Don't call any notification if replacing with the same value
-            Object oldValue = attributes.get(name);
-            if (value != oldValue) {
-                event = new HttpSessionBindingEvent(getSession(), name, value);
-                try {
-                    ( (HttpSessionBindingListener) value).valueBound(event);
-                } catch (Exception x) {
-                    log.error(sm.getString("deltaSession.valueBound.ex"), x);
+            // Call the valueBound() method if necessary
+            if (value instanceof HttpSessionBindingListener && notify) {
+                // Don't call any notification if replacing with the same value
+                Object oldValue = attributes.get(name);
+                if (value != oldValue) {
+                    event = new HttpSessionBindingEvent(getSession(), name, value);
+                    try {
+                        ( (HttpSessionBindingListener) value).valueBound(event);
+                    } catch (Exception x) {
+                        log.error(sm.getString("deltaSession.valueBound.ex"), x);
+                    }
                 }
             }
-        }
 
-        // Replace or add this attribute
-        Object unbound = attributes.put(name, value);
-        // Call the valueUnbound() method if necessary
-        if ( (unbound != null) && (unbound != value) && notify
-            && (unbound instanceof HttpSessionBindingListener)) {
-            try {
-                ( (HttpSessionBindingListener) unbound).valueUnbound(new HttpSessionBindingEvent((HttpSession) getSession(), name));
-            } catch (Exception x) {
-                log.error(sm.getString("deltaSession.valueBinding.ex"), x);
+            // Replace or add this attribute
+            Object unbound = attributes.put(name, value);
+            // Call the valueUnbound() method if necessary
+            if ( (unbound != null) && (unbound != value) && notify
+                && (unbound instanceof HttpSessionBindingListener)) {
+                try {
+                    ( (HttpSessionBindingListener) unbound).valueUnbound(new HttpSessionBindingEvent((HttpSession) getSession(), name));
+                } catch (Exception x) {
+                    log.error(sm.getString("deltaSession.valueBinding.ex"), x);
+                }
+
             }
 
-        }
-
-        //dont notify any listeners
-        if (!notify)
-            return;
-
-        // Notify interested application event listeners
-        Context context = (Context) manager.getContainer();
-        //fix for standalone manager without container
-        if (context != null) {
-            Object listeners[] = context.getApplicationEventListeners();
-            if (listeners == null)
+            //dont notify any listeners
+            if (!notify)
                 return;
-            for (int i = 0; i < listeners.length; i++) {
-                if (! (listeners[i] instanceof HttpSessionAttributeListener))
-                    continue;
-                HttpSessionAttributeListener listener = (HttpSessionAttributeListener) listeners[i];
-                try {
-                    if (unbound != null) {
-                        fireContainerEvent(context,"beforeSessionAttributeReplaced", listener);
-                        if (event == null) {
-                            event = new HttpSessionBindingEvent(getSession(),name, unbound);
-                        }
-                        listener.attributeReplaced(event);
-                        fireContainerEvent(context,"afterSessionAttributeReplaced", listener);
-                    } else {
-                        fireContainerEvent(context,"beforeSessionAttributeAdded", listener);
-                        if (event == null) {
-                            event = 
-                                new HttpSessionBindingEvent(getSession(),name, value);
-                        }
-                        listener.attributeAdded(event);
-                        fireContainerEvent(context,"afterSessionAttributeAdded", listener);
-                    }
-                } catch (Throwable t) {
+
+            // Notify interested application event listeners
+            Context context = (Context) manager.getContainer();
+            //fix for standalone manager without container
+            if (context != null) {
+                Object listeners[] = context.getApplicationEventListeners();
+                if (listeners == null)
+                    return;
+                for (int i = 0; i < listeners.length; i++) {
+                    if (! (listeners[i] instanceof HttpSessionAttributeListener))
+                        continue;
+                    HttpSessionAttributeListener listener = (HttpSessionAttributeListener) listeners[i];
                     try {
                         if (unbound != null) {
+                            fireContainerEvent(context,"beforeSessionAttributeReplaced", listener);
+                            if (event == null) {
+                                event = new HttpSessionBindingEvent(getSession(),name, unbound);
+                            }
+                            listener.attributeReplaced(event);
                             fireContainerEvent(context,"afterSessionAttributeReplaced", listener);
                         } else {
+                            fireContainerEvent(context,"beforeSessionAttributeAdded", listener);
+                            if (event == null) {
+                                event = 
+                                    new HttpSessionBindingEvent(getSession(),name, value);
+                            }
+                            listener.attributeAdded(event);
                             fireContainerEvent(context,"afterSessionAttributeAdded", listener);
                         }
-                    } catch (Exception e) {}
-                    // FIXME - should we do anything besides log these?
-                    log.error(sm.getString("standardSession.attributeEvent"),t);
-                }
-            } //for
-        } //end if
-        //end fix
-
+                    } catch (Throwable t) {
+                        try {
+                            if (unbound != null) {
+                                fireContainerEvent(context,"afterSessionAttributeReplaced", listener);
+                            } else {
+                                fireContainerEvent(context,"afterSessionAttributeAdded", listener);
+                            }
+                        } catch (Exception e) {}
+                        // FIXME - should we do anything besides log these?
+                        log.error(sm.getString("standardSession.attributeEvent"),t);
+                    }
+                } //for
+            } //end if
+            //end fix
+        } finally {
+            unlock();
+        }
     }
 
     // -------------------------------------------- HttpSession Private Methods
@@ -1218,7 +1294,7 @@ public class DeltaSession
      * @exception IOException
      *                if an input/output error occurs
      */
-    private void readObject(ObjectInputStream stream) throws ClassNotFoundException, IOException {
+    private void readObject(ObjectInput stream) throws ClassNotFoundException, IOException {
 
         // Deserialize the scalar instance variables (except Manager)
         authType = null; // Transient only
@@ -1260,6 +1336,11 @@ public class DeltaSession
             notes = new Hashtable();
         }
     }
+    
+    public synchronized void writeExternal(ObjectOutput out ) throws java.io.IOException {
+        writeObject(out);
+    }
+
 
     /**
      * Write a serialized version of this session object to the specified object
@@ -1282,7 +1363,7 @@ public class DeltaSession
      * @exception IOException
      *                if an input/output error occurs
      */
-    private void writeObject(ObjectOutputStream stream) throws IOException {
+    private void writeObject(ObjectOutput stream) throws IOException {
 
         // Write the scalar instance variables (except Manager)
         stream.writeObject(new Long(creationTime));
@@ -1413,60 +1494,65 @@ public class DeltaSession
     protected void removeAttributeInternal(String name, boolean notify,
                                            boolean addDeltaRequest) {
 
-        // Remove this attribute from our collection
-        Object value = attributes.remove(name);
-        if (value == null)
-            return;
+        try {
+            lock();
 
-        if (addDeltaRequest && (deltaRequest != null))
-            deltaRequest.removeAttribute(name);
-
-        // Do we need to do valueUnbound() and attributeRemoved() notification?
-        if (!notify) {
-            return;
-        }
-
-        // Call the valueUnbound() method if necessary
-        HttpSessionBindingEvent event = null;
-        if (value instanceof HttpSessionBindingListener) {
-            event = new HttpSessionBindingEvent((HttpSession) getSession(), name, value);
-            try {
-                ( (HttpSessionBindingListener) value).valueUnbound(event);
-            } catch (Exception x) {
-                log.error(sm.getString("deltaSession.valueUnbound.ex"), x);
-            }
-        }
-        // Notify interested application event listeners
-        Context context = (Context) manager.getContainer();
-        //fix for standalone manager without container
-        if (context != null) {
-            Object listeners[] = context.getApplicationEventListeners();
-            if (listeners == null)
+            // Remove this attribute from our collection
+            Object value = attributes.remove(name);
+            if (value == null)
                 return;
-            for (int i = 0; i < listeners.length; i++) {
-                if (! (listeners[i] instanceof HttpSessionAttributeListener))
-                    continue;
-                HttpSessionAttributeListener listener = (HttpSessionAttributeListener) listeners[i];
-                try {
-                    fireContainerEvent(context,"beforeSessionAttributeRemoved", listener);
-                    if (event == null) {
-                        event = new HttpSessionBindingEvent(getSession(), name, value);
-                    }
-                    listener.attributeRemoved(event);
-                    fireContainerEvent(context, "afterSessionAttributeRemoved",listener);
-                } catch (Throwable t) {
-                    try {
-                        fireContainerEvent(context,"afterSessionAttributeRemoved", listener);
-                    } catch (Exception e) {
-                        ;
-                    }
-                    // FIXME - should we do anything besides log these?
-                    log.error(sm.getString("standardSession.attributeEvent"),t);
-                }
-            } //for
-        } //end if
-        //end fix
 
+            if (addDeltaRequest && (deltaRequest != null))
+                deltaRequest.removeAttribute(name);
+
+            // Do we need to do valueUnbound() and attributeRemoved() notification?
+            if (!notify) {
+                return;
+            }
+
+            // Call the valueUnbound() method if necessary
+            HttpSessionBindingEvent event = null;
+            if (value instanceof HttpSessionBindingListener) {
+                event = new HttpSessionBindingEvent((HttpSession) getSession(), name, value);
+                try {
+                    ( (HttpSessionBindingListener) value).valueUnbound(event);
+                } catch (Exception x) {
+                    log.error(sm.getString("deltaSession.valueUnbound.ex"), x);
+                }
+            }
+            // Notify interested application event listeners
+            Context context = (Context) manager.getContainer();
+            //fix for standalone manager without container
+            if (context != null) {
+                Object listeners[] = context.getApplicationEventListeners();
+                if (listeners == null)
+                    return;
+                for (int i = 0; i < listeners.length; i++) {
+                    if (! (listeners[i] instanceof HttpSessionAttributeListener))
+                        continue;
+                    HttpSessionAttributeListener listener = (HttpSessionAttributeListener) listeners[i];
+                    try {
+                        fireContainerEvent(context,"beforeSessionAttributeRemoved", listener);
+                        if (event == null) {
+                            event = new HttpSessionBindingEvent(getSession(), name, value);
+                        }
+                        listener.attributeRemoved(event);
+                        fireContainerEvent(context, "afterSessionAttributeRemoved",listener);
+                    } catch (Throwable t) {
+                        try {
+                            fireContainerEvent(context,"afterSessionAttributeRemoved", listener);
+                        } catch (Exception e) {
+                            ;
+                        }
+                        // FIXME - should we do anything besides log these?
+                        log.error(sm.getString("standardSession.attributeEvent"),t);
+                    }
+                } //for
+            } //end if
+            //end fix
+        }finally {
+            unlock();
+        }
     }
 
     protected long getLastTimeReplicated() {
