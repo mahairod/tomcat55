@@ -40,7 +40,7 @@ import org.apache.catalina.tribes.tcp.bio.util.LinkObject;
 public class MessageDispatchInterceptor extends ChannelInterceptorBase implements Runnable {
     private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(MessageDispatchInterceptor.class);
 
-    private long maxQueueSize;
+    private long maxQueueSize = 1024*1024*64; //64MB
     private FastQueue queue = new FastQueue();
     private boolean run = false;
     private Thread msgDispatchThread = null;
