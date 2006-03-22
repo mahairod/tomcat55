@@ -59,11 +59,9 @@ import org.apache.catalina.Loader;
  * When a session is replicated (not an attribute added/removed) the session is serialized into
  * a byte array using the StandardSession.readObjectData, StandardSession.writeObjectData methods.
  */
-public class SimpleTcpReplicationManager extends StandardManager
-implements ClusterManager
+public class SimpleTcpReplicationManager extends StandardManager implements ClusterManager
 {
-    public static org.apache.commons.logging.Log log =
-        org.apache.commons.logging.LogFactory.getLog( SimpleTcpReplicationManager.class );
+    public static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog( SimpleTcpReplicationManager.class );
 
     //the channel configuration
     protected String mChannelConfig = null;

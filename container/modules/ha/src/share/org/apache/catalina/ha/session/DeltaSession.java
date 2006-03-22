@@ -261,10 +261,13 @@ public class DeltaSession implements HttpSession, Session, Externalizable,Cluste
      * @param manager
      *            The manager with which this Session is associated
      */
-    public DeltaSession(Manager manager) {
-        super();
-        this.manager = manager;
+    public DeltaSession() {
         this.resetDeltaRequest();
+    }
+    
+    public DeltaSession(Manager manager) {
+        this();
+        this.manager = manager;
     }
 
     // ----------------------------------------------------- ReplicatedMapEntry
@@ -332,7 +335,8 @@ public class DeltaSession implements HttpSession, Session, Externalizable,Cluste
         }
         
         public void setOwner(Object owner) {
-            if ( owner instanceof ClusterManager ) {
+            if ( owner instanceof ClusterManager && getManager()==null) {
+                System.out.println("Setting owner for session:"+getIdInternal()+" to:"+owner);
                 ClusterManager cm = (ClusterManager)owner;
                 this.setManager(cm);
                 this.setValid(true);
@@ -777,7 +781,9 @@ public class DeltaSession implements HttpSession, Session, Externalizable,Cluste
                                            ((DeltaManager)manager).getName(), 
                                            new Boolean(isPrimarySession()), 
                                            expiredId));
-                ( (DeltaManager) manager).sessionExpired(expiredId);
+                if ( manager instanceof DeltaManager ) {
+                    ( (DeltaManager) manager).sessionExpired(expiredId);
+                }
             }
         }
 
