@@ -29,7 +29,6 @@ import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelListener;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
-import org.apache.catalina.tribes.tipis.AbstractReplicatedMap.MapOwner;
 
 /**
  * A smart implementation of a stateful replicated map. uses primary/secondary backup strategy. 
@@ -85,7 +84,7 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
          * @param initialCapacity int - the size of this map, see HashMap
          * @param loadFactor float - load factor, see HashMap
          */
-        public LazyReplicatedMap(MapOwner owner, Channel channel, long timeout, String mapContextName, int initialCapacity, float loadFactor) {
+        public LazyReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName, int initialCapacity, float loadFactor) {
             super(owner,channel,timeout,mapContextName,initialCapacity,loadFactor, Channel.SEND_OPTIONS_DEFAULT);
         }
 
@@ -96,7 +95,7 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
          * @param mapContextName String - unique name for this map, to allow multiple maps per channel
          * @param initialCapacity int - the size of this map, see HashMap
          */
-        public LazyReplicatedMap(MapOwner owner, Channel channel, long timeout, String mapContextName, int initialCapacity) {
+        public LazyReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName, int initialCapacity) {
             super(owner, channel,timeout,mapContextName,initialCapacity, LazyReplicatedMap.DEFAULT_LOAD_FACTOR, Channel.SEND_OPTIONS_DEFAULT);
         }
 
@@ -106,7 +105,7 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
          * @param timeout long - timeout for RPC messags
          * @param mapContextName String - unique name for this map, to allow multiple maps per channel
          */
-        public LazyReplicatedMap(MapOwner owner, Channel channel, long timeout, String mapContextName) {
+        public LazyReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName) {
             super(owner, channel,timeout,mapContextName, LazyReplicatedMap.DEFAULT_INITIAL_CAPACITY,LazyReplicatedMap.DEFAULT_LOAD_FACTOR,Channel.SEND_OPTIONS_DEFAULT);
         }
 
@@ -143,19 +142,15 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
     }
     
     public Object get(Object key) {
-        System.out.println("Getting session id:"+key);
-        printMap();
         MapEntry entry = (MapEntry)super.get(key);
         if ( entry == null ) return null;
         if ( !entry.isPrimary() ) {
             //if the message is not primary, we need to retrieve the latest value
             try {
-                
                 Member[] backup = null;
                 MapMessage msg = null;
                 if ( !entry.isBackup() ) {
                     //make sure we don't retrieve from ourselves
-                    System.out.println("Retrieving from remote session id:"+key);
                     msg = new MapMessage(getMapContextName(), MapMessage.MSG_RETRIEVE_BACKUP, false,
                                          (Serializable) key, null, null, null);
                     Response[] resp = getRpcChannel().send(entry.getBackupNodes(),msg, this.getRpcChannel().FIRST_REPLY, Channel.SEND_OPTIONS_DEFAULT, getRpcTimeout());
@@ -228,7 +223,6 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
             log.error("Unable to replicate out data for a LazyReplicatedMap.put operation", x);
         }
         super.put(key,entry);
-        printMap();
         return old;
     }
 

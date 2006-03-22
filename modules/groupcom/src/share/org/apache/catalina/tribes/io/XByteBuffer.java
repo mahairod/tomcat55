@@ -518,12 +518,18 @@ public class XByteBuffer
         return deserialize(data,0,data.length);
     }
     
-    public static Serializable deserialize(byte[] data, int offset, int length) 
-             throws IOException, ClassNotFoundException, ClassCastException {
+    public static Serializable deserialize(byte[] data, int offset, int length)  
+        throws IOException, ClassNotFoundException, ClassCastException {
+        return deserialize(data,offset,length,new ClassLoader[] {XByteBuffer.class.getClassLoader()});     
+    }
+
+    public static Serializable deserialize(byte[] data, int offset, int length, ClassLoader[] cls) 
+        throws IOException, ClassNotFoundException, ClassCastException {
         Object message = null;
+        if ( cls == null ) cls = new ClassLoader[] {XByteBuffer.class.getClassLoader()};
         if (data != null) {
             InputStream  instream = new ByteArrayInputStream(data,offset,length);
-            ReplicationStream stream = new ReplicationStream(instream,new ClassLoader[] {XByteBuffer.class.getClassLoader()});
+            ReplicationStream stream = new ReplicationStream(instream,cls);
             message = stream.readObject();
             instream.close();
         }
