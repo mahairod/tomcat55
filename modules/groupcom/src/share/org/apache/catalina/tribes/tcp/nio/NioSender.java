@@ -216,11 +216,12 @@ public class NioSender extends AbstractSender implements DataSender{
             setConnected(false);
             if ( socketChannel != null ) {
                 try {
-                    Socket socket = socketChannel.socket();
+                    Socket socket = null;
+                    //socket = socketChannel.socket();
                     //error free close, all the way
-                    try {socket.shutdownOutput();}catch ( Exception x){}
-                    try {socket.shutdownInput();}catch ( Exception x){}
-                    try {socket.close();}catch ( Exception x){}
+                    //try {socket.shutdownOutput();}catch ( Exception x){}
+                    //try {socket.shutdownInput();}catch ( Exception x){}
+                    //try {socket.close();}catch ( Exception x){}
                     try {socketChannel.close();}catch ( Exception x){}
                     socket = null;
                 }finally {

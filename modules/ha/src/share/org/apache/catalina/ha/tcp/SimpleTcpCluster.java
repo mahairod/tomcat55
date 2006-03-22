@@ -474,9 +474,7 @@ public class SimpleTcpCluster
      * @see DeltaManager#start()
      */
     public synchronized Manager createManager(String name) {
-        if (log.isDebugEnabled())
-            log.debug("Creating ClusterManager for context " + name
-                    + " using class " + getManagerClassName());
+        if (log.isDebugEnabled()) log.debug("Creating ClusterManager for context " + name + " using class " + getManagerClassName());
         Manager manager = null;
         try {
             manager = (Manager) getClass().getClassLoader().loadClass(getManagerClassName()).newInstance();
@@ -505,14 +503,11 @@ public class SimpleTcpCluster
     public void removeManager(String name,Manager manager) {
         if (manager != null) {
             // Notify our interested LifecycleListeners
-            lifecycle.fireLifecycleEvent(BEFORE_MANAGERUNREGISTER_EVENT,
-                    manager);
+            lifecycle.fireLifecycleEvent(BEFORE_MANAGERUNREGISTER_EVENT,manager);
             managers.remove(getManagerName(name,manager));
-            if (manager instanceof ClusterManager)
-                ((ClusterManager) manager).setCluster(null);
+            if (manager instanceof ClusterManager) ((ClusterManager) manager).setCluster(null);
             // Notify our interested LifecycleListeners
-            lifecycle
-                    .fireLifecycleEvent(AFTER_MANAGERUNREGISTER_EVENT, manager);
+            lifecycle.fireLifecycleEvent(AFTER_MANAGERUNREGISTER_EVENT, manager);
         }
     }
 
@@ -528,8 +523,7 @@ public class SimpleTcpCluster
      */
     public void addManager(String name, Manager manager) {
         if (!manager.getDistributable()) {
-            log.warn("Manager with name " + name
-                    + " is not distributable, can't add as cluster manager");
+            log.warn("Manager with name " + name + " is not distributable, can't add as cluster manager");
             return;
         }
         // Notify our interested LifecycleListeners
@@ -539,8 +533,7 @@ public class SimpleTcpCluster
             ClusterManager cmanager = (ClusterManager) manager ;
             cmanager.setName(clusterName);
             cmanager.setCluster(this);
-            if(cmanager.isDefaultMode())
-                transferProperty("manager",cmanager);
+            if(cmanager.isDefaultMode()) transferProperty("manager",cmanager);
         }
         managers.put(clusterName, manager);
         // Notify our interested LifecycleListeners
@@ -552,7 +545,7 @@ public class SimpleTcpCluster
      * @param manager
      * @return
      */
-    private String getManagerName(String name, Manager manager) {
+    public String getManagerName(String name, Manager manager) {
         String clusterName = name ;
         if(getContainer() instanceof Engine) {
             Container context = manager.getContainer() ;
@@ -627,8 +620,7 @@ public class SimpleTcpCluster
      */
     public void lifecycleEvent(LifecycleEvent lifecycleEvent) {
         if (log.isTraceEnabled())
-            log.trace(sm.getString("SimpleTcpCluster.event.log", lifecycleEvent
-                    .getType(), lifecycleEvent.getData()));
+            log.trace(sm.getString("SimpleTcpCluster.event.log", lifecycleEvent.getType(), lifecycleEvent.getData()));
     }
 
     // ------------------------------------------------------ public
