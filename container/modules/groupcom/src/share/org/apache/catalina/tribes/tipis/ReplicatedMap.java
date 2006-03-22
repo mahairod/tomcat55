@@ -29,7 +29,6 @@ import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelListener;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
-import org.apache.catalina.tribes.tipis.AbstractReplicatedMap.MapOwner;
 
 /**
  * All-to-all replication for a hash map implementation. Each node in the cluster will carry an identical 
@@ -67,7 +66,7 @@ public class ReplicatedMap extends AbstractReplicatedMap implements RpcCallback,
      * @param initialCapacity int - the size of this map, see HashMap
      * @param loadFactor float - load factor, see HashMap
      */
-    public ReplicatedMap(MapOwner owner, Channel channel, long timeout, String mapContextName, int initialCapacity,float loadFactor) {
+    public ReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName, int initialCapacity,float loadFactor) {
         super(owner,channel, timeout, mapContextName, initialCapacity, loadFactor, Channel.SEND_OPTIONS_DEFAULT);
     }
 
@@ -78,7 +77,7 @@ public class ReplicatedMap extends AbstractReplicatedMap implements RpcCallback,
      * @param mapContextName String - unique name for this map, to allow multiple maps per channel
      * @param initialCapacity int - the size of this map, see HashMap
      */
-    public ReplicatedMap(MapOwner owner, Channel channel, long timeout, String mapContextName, int initialCapacity) {
+    public ReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName, int initialCapacity) {
         super(owner,channel, timeout, mapContextName, initialCapacity, AbstractReplicatedMap.DEFAULT_LOAD_FACTOR,Channel.SEND_OPTIONS_DEFAULT);
     }
 
@@ -88,7 +87,7 @@ public class ReplicatedMap extends AbstractReplicatedMap implements RpcCallback,
      * @param timeout long - timeout for RPC messags
      * @param mapContextName String - unique name for this map, to allow multiple maps per channel
      */
-    public ReplicatedMap(MapOwner owner, Channel channel, long timeout, String mapContextName) {
+    public ReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName) {
         super(owner, channel, timeout, mapContextName,AbstractReplicatedMap.DEFAULT_INITIAL_CAPACITY, AbstractReplicatedMap.DEFAULT_LOAD_FACTOR, Channel.SEND_OPTIONS_DEFAULT);
     }
 

@@ -336,7 +336,6 @@ public class DeltaSession implements HttpSession, Session, Externalizable,Cluste
         
         public void setOwner(Object owner) {
             if ( owner instanceof ClusterManager && getManager()==null) {
-                System.out.println("Setting owner for session:"+getIdInternal()+" to:"+owner);
                 ClusterManager cm = (ClusterManager)owner;
                 this.setManager(cm);
                 this.setValid(true);

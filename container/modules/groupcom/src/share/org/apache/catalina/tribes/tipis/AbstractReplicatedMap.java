@@ -20,7 +20,6 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ChannelListener;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
-import org.apache.catalina.tribes.io.DirectByteArrayOutputStream;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.mcast.MemberImpl;
 import org.apache.commons.logging.Log;
@@ -81,7 +79,9 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
     private transient Object stateMutex = new Object();
     private transient ArrayList mapMembers = new ArrayList();
     private transient int channelSendOptions = Channel.SEND_OPTIONS_DEFAULT;
-    private transient MapOwner mapOwner;
+    private transient Object mapOwner;
+    private transient ClassLoader[] externalLoaders;
+    
 
 //------------------------------------------------------------------------------
 //              CONSTRUCTORS
@@ -95,7 +95,7 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
      * @param initialCapacity int - the size of this map, see HashMap
      * @param loadFactor float - load factor, see HashMap
      */
-    public AbstractReplicatedMap(MapOwner owner,
+    public AbstractReplicatedMap(Object owner,
                                  Channel channel, 
                                  long timeout, 
                                  String mapContextName, 
@@ -111,7 +111,7 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
         return new Member[] {m};
     }
 
-    private void init(MapOwner owner, Channel channel, String mapContextName, long timeout, int channelSendOptions) {
+    private void init(Object owner, Channel channel, String mapContextName, long timeout, int channelSendOptions) {
         this.mapOwner = owner;
         
         this.channelSendOptions = channelSendOptions;
@@ -131,22 +131,29 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
         this.channel.addChannelListener(this);
         this.channel.addMembershipListener(this);
 
+        broadcast(MapMessage.MSG_START,true);
+
+        //transfer state from another map
+        transferState();
+    }
+
+    private void broadcast(int msgtype, boolean rpc) {
         try {
             //send out a map membership message, only wait for the first reply
-            MapMessage msg = new MapMessage(this.mapContextName, MapMessage.MSG_START,
+            MapMessage msg = new MapMessage(this.mapContextName, msgtype,
                                             false, null, null, null, wrap(channel.getLocalMember(false)));
-            Response[] resp = rpcChannel.send(channel.getMembers(), msg, rpcChannel.FIRST_REPLY, channelSendOptions, timeout);
-            for (int i = 0; i < resp.length; i++) {
-                mapMemberAdded(resp[i].getSource());
-                messageReceived(resp[i].getMessage(), resp[i].getSource());
+            if ( rpc) {
+                Response[] resp = rpcChannel.send(channel.getMembers(), msg, rpcChannel.FIRST_REPLY, channelSendOptions,rpcTimeout);
+                for (int i = 0; i < resp.length; i++) {
+                    mapMemberAdded(resp[i].getSource());
+                    messageReceived(resp[i].getMessage(), resp[i].getSource());
+                }
+            } else {
+                channel.send(channel.getMembers(),msg,channelSendOptions);
             }
         } catch (ChannelException x) {
             log.warn("Unable to send map start message.");
         }
-
-        //transfer state from another map
-        transferState();
-        printMap();
     }
 
     public void breakdown() {
@@ -154,16 +161,7 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
     }
 
     public void finalize() {
-        try {
-            //send a map membership stop message
-            MapMessage msg = new MapMessage(this.mapContextName, MapMessage.MSG_STOP,
-                                            false, null, null, null, wrap(channel.getLocalMember(false)));
-            if (channel != null) channel.send(channel.getMembers(), msg,channel.SEND_OPTIONS_DEFAULT);
-
-        } catch (ChannelException x) {
-            log.warn("Unable to send stop message.", x);
-        }
-
+        broadcast(MapMessage.MSG_STOP,false);
         //cleanup
         if (this.rpcChannel != null) {
             this.rpcChannel.breakdown();
@@ -177,9 +175,10 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
         this.mapMembers.clear();
         super.clear();
         this.stateTransferred = false;
+        this.externalLoaders = null;
     }
 
-    //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //              GROUP COM INTERFACES
 //------------------------------------------------------------------------------
     public Member[] getMapMembers() {
@@ -270,22 +269,29 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
                     msg = (MapMessage) resp[0].getMessage();
                     ArrayList list = (ArrayList) msg.getValue();
                     for (int i = 0; i < list.size(); i++) {
-                        MapMessage m = (MapMessage) list.get(i);
-
-                        //make sure we don't store that actual object as primary or backup
-                        MapEntry local = (MapEntry)super.get(m.getKey());
-                        if (local != null && (!local.isProxy())) continue;
-
-                        //store the object
-                        if (m.getValue()!=null && m.getValue() instanceof ReplicatedMapEntry ) {
-                            ((ReplicatedMapEntry)m.getValue()).setOwner(getMapOwner());
-                        }
-                        MapEntry entry = new MapEntry(m.getKey(), m.getValue());
-                        entry.setBackup(false);
-                        entry.setProxy(true);
-                        entry.setBackupNodes(m.getBackupNodes());
-                        super.put(entry.getKey(), entry);
-                    }
+                        messageReceived((Serializable)list.get(i),resp[0].getSource());
+//                        MapMessage m = (MapMessage) list.get(i);
+//                        try {
+//                            m.deserialize(getExternalLoaders());
+//                            //make sure we don't store that actual object as primary or backup
+//                            MapEntry local = (MapEntry)super.get(m.getKey());
+//                            if (local != null && (!local.isProxy())) continue;
+//
+//                            //store the object
+//                            if (m.getValue()!=null && m.getValue() instanceof ReplicatedMapEntry ) {
+//                                ((ReplicatedMapEntry)m.getValue()).setOwner(getMapOwner());
+//                            }
+//                            MapEntry entry = new MapEntry(m.getKey(), m.getValue());
+//                            entry.setBackup(false);
+//                            entry.setProxy(true);
+//                            entry.setBackupNodes(m.getBackupNodes());
+//                            super.put(entry.getKey(), entry);
+//                        } catch (IOException x) {
+//                            log.error("Unable to deserialize MapMessage.", x);
+//                        } catch (ClassNotFoundException x) {
+//                            log.error("Unable to deserialize MapMessage.", x);
+//                        }
+                    }//for
                 }
             }
         } catch (ChannelException x) {
@@ -312,7 +318,6 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
 
         //backup request
         if (mapmsg.getMsgType() == mapmsg.MSG_RETRIEVE_BACKUP) {
-            System.out.println("Received a retrieve request for id:"+mapmsg.getKey());
             MapEntry entry = (MapEntry)super.get(mapmsg.getKey());
             if (entry == null)return null;
             mapmsg.setValue( (Serializable) entry.getValue());
@@ -352,18 +357,29 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
         if (! (msg instanceof MapMessage))return;
 
         MapMessage mapmsg = (MapMessage) msg;
-        if (mapmsg.getMsgType() == MapMessage.MSG_START) {
-            mapMemberAdded(mapmsg.getBackupNodes()[0]);
+        try {
+            mapmsg.deserialize(getExternalLoaders());
+            if (mapmsg.getMsgType() == MapMessage.MSG_START) {
+                mapMemberAdded(mapmsg.getBackupNodes()[0]);
+            }
+        } catch (IOException x ) {
+            log.error("Unable to deserialize MapMessage.",x);
+        } catch (ClassNotFoundException x ) {
+            log.error("Unable to deserialize MapMessage.",x);
         }
     }
 
     public void messageReceived(Serializable msg, Member sender) {
-        //todo implement all the messages that we can receive
-        //messages we can receive are MSG_PROXY, MSG_BACKUP
-        if (! (msg instanceof MapMessage))return;
+        if (! (msg instanceof MapMessage)) return;
 
         MapMessage mapmsg = (MapMessage) msg;
-
+        try {
+            mapmsg.deserialize(getExternalLoaders());
+        } catch (IOException x) {
+            log.error("Unable to deserialize MapMessage.", x);
+        } catch (ClassNotFoundException x) {
+            log.error("Unable to deserialize MapMessage.", x);
+        }
         if (mapmsg.getMsgType() == MapMessage.MSG_START) {
             mapMemberAdded(mapmsg.getBackupNodes()[0]);
         }
@@ -385,7 +401,6 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
         }
 
         if (mapmsg.getMsgType() == MapMessage.MSG_BACKUP) {
-            System.out.println("Received a backup request for id:"+mapmsg.getKey());
             MapEntry entry = (MapEntry)super.get(mapmsg.getKey());
             if (entry == null) {
                 entry = new MapEntry(mapmsg.getKey(), mapmsg.getValue());
@@ -424,7 +439,6 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
             } //end if
             super.put(entry.getKey(), entry);
         } //end if
-        printMap();
     }
 
     public boolean accept(Serializable msg, Member sender) {
@@ -435,15 +449,11 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
     }
 
     public void mapMemberAdded(Member member) {
-        System.out.println("Received Member added:"+member.getName());
         if ( member.equals(getChannel().getLocalMember(false)) ) return;        
-        System.out.println("Received Member added2:"+member.getName());
         //select a backup node if we don't have one
         synchronized (mapMembers) {
             if (!mapMembers.contains(member) ) mapMembers.add(member);
         }
-        System.out.println("Received Member added3:"+member.getName());
-        printMap();
         synchronized (stateMutex) {
             Iterator i = super.entrySet().iterator();
             while (i.hasNext()) {
@@ -514,9 +524,10 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
 //              METHODS TO OVERRIDE    
 //------------------------------------------------------------------------------
   
-    protected void printMap() {
+    protected void printMap(String header) {
         try {
-            System.out.println("\nMap["+((Object)this).toString()+"; " + new String(mapContextName, chset) + ", Map Size:" + super.size());
+            System.out.println("\nDEBUG MAP:"+header);
+            System.out.println("Map["+((Object)this).toString()+"; " + new String(mapContextName, chset) + ", Map Size:" + super.size());
             Member[] mbrs = getMapMembers();
             for ( int i=0; i<mbrs.length;i++ ) {
                 System.out.println("Mbr["+(i+1)+"="+mbrs[i].getName());
@@ -532,17 +543,6 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
         }catch ( Exception ignore) {
             ignore.printStackTrace();
         }
-    }
-
-//------------------------------------------------------------------------------
-//                Map Owner - serialization/deserialization
-//------------------------------------------------------------------------------
-    public static interface MapOwner {
-        
-        public byte[] serialize(Object mapObject) throws IOException;
-        
-        public Serializable deserialize(byte[] data) throws ClassNotFoundException,IOException;
-        
     }
 
 //------------------------------------------------------------------------------
@@ -672,6 +672,8 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
         private boolean diff;
         private Serializable key;
         private Serializable value;
+        private byte[] valuedata;
+        private byte[] keydata;
         private byte[] diffvalue;
         private Member[] nodes;
 
@@ -688,6 +690,11 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
             this.diffvalue = diffvalue;
             this.nodes = nodes;
         }
+        
+        public void deserialize(ClassLoader[] cls) throws IOException, ClassNotFoundException {
+            key(cls);
+            value(cls);
+        }
 
         public int getMsgType() {
             return msgtype;
@@ -698,11 +705,43 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
         }
 
         public Serializable getKey() {
-            return key;
+            try {
+                return key(null);
+            } catch ( Exception x ) {
+                log.error("Deserialization error of the MapMessage.key",x);
+                return null;
+            }
         }
 
+        public Serializable key(ClassLoader[] cls) throws IOException, ClassNotFoundException {
+            if ( key!=null ) return key;
+            if ( keydata == null || keydata.length == 0 ) return null;
+            key = XByteBuffer.deserialize(keydata,0,keydata.length,cls);
+            return key;
+        }
+        
+        public byte[] getKeyData() {
+            return keydata;
+        }
+        
         public Serializable getValue() {
+            try {
+                return value(null);
+            } catch ( Exception x ) {
+                log.error("Deserialization error of the MapMessage.value",x);
+                return null;
+            }
+        }
+
+        public Serializable value(ClassLoader[] cls) throws IOException, ClassNotFoundException  {
+            if ( value!=null ) return value;
+            if ( valuedata == null || valuedata.length == 0 ) return null;
+            value = XByteBuffer.deserialize(valuedata,0,valuedata.length,cls);
             return value;
+        }
+        
+        public byte[] getValueData() {
+            return valuedata;
         }
 
         public byte[] getDiffValue() {
@@ -735,6 +774,12 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
             }
             return members;
         }
+        
+        protected byte[] readBytes(ObjectInput in) throws IOException {
+            byte[] data = new byte[in.readInt()];
+            in.read(data);
+            return data;
+        }
 
         public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
             mapId = new byte[in.readInt()];
@@ -744,27 +789,26 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
                 case MSG_BACKUP:
                 case MSG_STATE: {
                     diff = in.readBoolean();
-                    key = (Serializable) in.readObject();
+                    keydata = readBytes(in);
                     if (diff) {
-                        diffvalue = new byte[in.readInt()];
-                        in.read(diffvalue);
+                        diffvalue = readBytes(in);
                     } else {
-                        value = (Serializable) in.readObject();
+                        valuedata = readBytes(in);
                     } //endif
                     nodes = readMembers(in);
                     break;
                 }
                 case MSG_RETRIEVE_BACKUP: {
-                    key = (Serializable) in.readObject();
-                    value = (Serializable) in.readObject();
+                    keydata = readBytes(in);
+                    valuedata = readBytes(in);
                     break;
                 }
                 case MSG_REMOVE: {
-                    key = (Serializable) in.readObject();
+                    keydata = readBytes(in);
                     break;
                 }
                 case MSG_PROXY: {
-                    key = (Serializable) in.readObject();
+                    keydata = readBytes(in);
                     this.nodes = readMembers(in);
                     break;
                 }
@@ -772,8 +816,7 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
                 case MSG_STOP: {
                         nodes = readMembers(in);
                         break;
-                    }
-
+                }
             } //switch
         } //readExternal
         
@@ -789,6 +832,16 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
             }
         }
         
+        protected void writeBytes(ObjectOutput out, byte[] data) throws IOException {
+            out.writeInt(data.length);
+            out.write(data);
+        }
+        
+        protected void writeObject(ObjectOutput out, Serializable o) throws IOException {
+            byte[] data = XByteBuffer.serialize(o);
+            writeBytes(out,data);
+        }
+        
         public void writeExternal(ObjectOutput out) throws IOException {
             out.writeInt(mapId.length);
             out.write(mapId);
@@ -797,27 +850,27 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
                 case MSG_BACKUP:
                 case MSG_STATE: {
                     out.writeBoolean(diff);
-                    out.writeObject(key);
+                    writeObject(out,key);
                     if (diff) {
                         out.writeInt(diffvalue.length);
                         out.write(diffvalue);
                     } else {
-                        out.writeObject(value);
+                        writeObject(out,value);
                     } //endif
                     writeMembers(out,nodes);
                     break;
                 }
                 case MSG_RETRIEVE_BACKUP: {
-                    out.writeObject(key);
-                    out.writeObject(value);
+                    writeObject(out,key);
+                    writeObject(out,value);
                     break;
                 }
                 case MSG_REMOVE: {
-                    out.writeObject(key);
+                    writeObject(out,key);
                     break;
                 }
                 case MSG_PROXY: {
-                    out.writeObject(key);
+                    writeObject(out,key);
                     writeMembers(out,nodes);
                     break;
                 }
@@ -834,7 +887,10 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
          * @return Object
          */
         public Object clone() {
-            return new MapMessage(this.mapId, this.msgtype, this.diff, this.key, this.value, this.diffvalue, this.nodes);
+            MapMessage msg = new MapMessage(this.mapId, this.msgtype, this.diff, this.key, this.value, this.diffvalue, this.nodes);
+            msg.keydata = this.keydata;
+            msg.valuedata = this.valuedata;
+            return msg;
         }
     } //MapMessage
 
@@ -867,8 +923,16 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
         return mapOwner;
     }
 
-    public void setMapOwner(MapOwner mapOwner) {
+    public ClassLoader[] getExternalLoaders() {
+        return externalLoaders;
+    }
+
+    public void setMapOwner(Object mapOwner) {
         this.mapOwner = mapOwner;
+    }
+
+    public void setExternalLoaders(ClassLoader[] externalLoaders) {
+        this.externalLoaders = externalLoaders;
     }
 
 }

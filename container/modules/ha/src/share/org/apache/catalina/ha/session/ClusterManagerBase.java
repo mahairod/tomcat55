@@ -32,6 +32,20 @@ import org.apache.catalina.tribes.io.ReplicationStream;
  */
 
 public abstract class ClusterManagerBase extends ManagerBase implements Lifecycle, PropertyChangeListener, ClusterManager{
+    
+    public ClassLoader[] getClassLoaders() {
+        Loader loader = null;
+        ClassLoader classLoader = null;
+        if (container != null) loader = container.getLoader();
+        if (loader != null) classLoader = loader.getClassLoader();
+        else classLoader = Thread.currentThread().getContextClassLoader();
+        if ( classLoader == Thread.currentThread().getContextClassLoader() ) {
+            return new ClassLoader[] {classLoader};
+        } else {
+            return new ClassLoader[] {classLoader,Thread.currentThread().getContextClassLoader()};
+        }
+    }
+
     /**
      * Open Stream and use correct ClassLoader (Container) Switch
      * ThreadClassLoader
@@ -45,27 +59,9 @@ public abstract class ClusterManagerBase extends ManagerBase implements Lifecycl
     }
 
     public ReplicationStream getReplicationStream(byte[] data, int offset, int length) throws IOException {
-        ByteArrayInputStream fis =null;
-        ReplicationStream ois = null;
-        Loader loader = null;
-        ClassLoader classLoader = null;
-        //fix to be able to run the DeltaManager
-        //stand alone without a container.
-        //use the Threads context class loader
-        if (container != null)
-            loader = container.getLoader();
-        if (loader != null)
-            classLoader = loader.getClassLoader();
-        else
-            classLoader = Thread.currentThread().getContextClassLoader();
-        //end fix
-        fis = new ByteArrayInputStream(data,offset,length);
-        if ( classLoader == Thread.currentThread().getContextClassLoader() ) {
-            ois = new ReplicationStream(fis, new ClassLoader[] {classLoader});
-        } else {
-            ois = new ReplicationStream(fis, new ClassLoader[] {classLoader,Thread.currentThread().getContextClassLoader()});
-        }
-        return ois;
+        ByteArrayInputStream fis = new ByteArrayInputStream(data, offset, length);
+        return new ReplicationStream(fis, getClassLoaders());
     }    
+
 
 }
