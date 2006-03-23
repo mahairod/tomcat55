@@ -124,6 +124,7 @@ public class BackupManager extends StandardManager implements ClusterManager
     }
     
     public ClusterMessage requestCompleted(String sessionId) {
+        if ( !this.started ) return null;
         LazyReplicatedMap map = (LazyReplicatedMap)sessions;
         map.replicate(sessionId,false);
         return null;
@@ -221,16 +222,21 @@ public class BackupManager extends StandardManager implements ClusterManager
      */
     public void stop() throws LifecycleException
     {
-        if ( !this.started ) return;
-        super.stop();
-        try {
-            cluster.removeManager(getName(),this);
-            LazyReplicatedMap map = (LazyReplicatedMap)sessions;
+        
+        LazyReplicatedMap map = (LazyReplicatedMap)sessions;
+        if ( map!=null ) {
             map.breakdown();
+        }
+        if ( !this.started ) return;
+        try {
         } catch ( Exception x ){
             log.error("Unable to stop BackupManager",x);
             throw new LifecycleException("Failed to stop BackupManager",x);
+        } finally {
+            super.stop();
         }
+        cluster.removeManager(getName(),this);
+
     }
 
     public void setDistributable(boolean dist) {
