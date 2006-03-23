@@ -60,7 +60,7 @@ public class BackupManager extends StandardManager implements ClusterManager
     /**
      * 
      */
-    private int mapSendOptions = Channel.SEND_OPTIONS_ASYNCHRONOUS|Channel.SEND_OPTIONS_SYNCHRONIZED_ACK|Channel.SEND_OPTIONS_USE_ACK;
+    private int mapSendOptions = Channel.SEND_OPTIONS_SYNCHRONIZED_ACK|Channel.SEND_OPTIONS_USE_ACK;
 
     /**
      * Constructor, just calls super()
