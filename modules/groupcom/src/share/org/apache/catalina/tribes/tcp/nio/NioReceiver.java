@@ -17,7 +17,6 @@
 package org.apache.catalina.tribes.tcp.nio;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
@@ -26,15 +25,14 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 
-import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.ChannelReceiver;
-import org.apache.catalina.tribes.MessageListener;
 import org.apache.catalina.tribes.io.ListenCallback;
 import org.apache.catalina.tribes.io.ObjectReader;
 import org.apache.catalina.tribes.tcp.Constants;
-import org.apache.catalina.util.StringManager;
 import org.apache.catalina.tribes.tcp.ReceiverBase;
-import org.apache.catalina.tribes.tcp.*;
+import org.apache.catalina.tribes.tcp.ThreadPool;
+import org.apache.catalina.tribes.tcp.WorkerThread;
+import org.apache.catalina.util.StringManager;
 
 /**
  * @author Filip Hanik

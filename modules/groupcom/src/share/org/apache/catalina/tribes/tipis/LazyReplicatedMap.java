@@ -125,27 +125,33 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
      */
     protected Member[] publishEntryInfo(Object key, Object value) throws ChannelException {
         //select a backup node
-        Member backup = getNextBackupNode();
+        Member next = getNextBackupNode();
         
-        if ( backup == null ) return null;
+        if ( next == null ) return null;
         
+        Member[] backup = wrap(next);
+        MapMessage msg = null;
         //publish the data out to all nodes
-        MapMessage msg = new MapMessage(getMapContextName(), MapMessage.MSG_PROXY, false,
-                                        (Serializable) key, null, null, wrap(backup));
-        getChannel().send(getMapMembers(), msg,getChannelSendOptions());
-
+        Member[] proxies = excludeFromSet(backup,getMapMembers());
+        if ( proxies.length > 0 ) {
+            msg = new MapMessage(getMapContextName(), MapMessage.MSG_PROXY, false,
+                                            (Serializable) key, null, null, backup);
+            getChannel().send(proxies, msg, getChannelSendOptions());
+        }
         //publish the backup data to one node
         msg = new MapMessage(getMapContextName(), MapMessage.MSG_BACKUP, false,
-                             (Serializable) key, (Serializable) value, null, wrap(backup));
-        getChannel().send(new Member[] {backup}, msg, getChannelSendOptions());
-        return wrap(backup);
+                             (Serializable) key, (Serializable) value, null, backup);
+        getChannel().send(backup, msg, getChannelSendOptions());
+        return backup;
     }
     
     public Object get(Object key) {
         MapEntry entry = (MapEntry)super.get(key);
+        if (log.isTraceEnabled()) log.trace("Requesting id:"+key+" entry:"+entry);
         System.out.println("Requesting id:"+key+" entry:"+entry);
         if ( entry == null ) return null;
         if ( !entry.isPrimary() ) {
+            if ( entry.isProxy() ) System.out.println("PROXY:Requesting id:"+key+" entry:"+entry);
             //if the message is not primary, we need to retrieve the latest value
             try {
                 Member[] backup = null;
@@ -188,7 +194,7 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
                 return null;
             }
         }
-        System.out.println("Requesting id:"+key+" result:"+entry.getValue());
+        if (log.isTraceEnabled()) log.trace("Requesting id:"+key+" result:"+entry.getValue());
         return entry.getValue();
     }
 
