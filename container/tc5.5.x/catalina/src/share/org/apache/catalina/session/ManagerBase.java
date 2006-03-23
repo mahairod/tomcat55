@@ -987,7 +987,7 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
                 buffer.append('.').append(jvmRoute);
             }
             result = buffer.toString();
-        } while (sessions.get(result) != null);
+        } while (sessions.containsKey(result));
         return (result);
 
     }
