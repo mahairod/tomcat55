@@ -133,10 +133,10 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
         this.channel.addChannelListener(this);
         this.channel.addMembershipListener(this);
 
-        broadcast(MapMessage.MSG_START,true);
-
         //transfer state from another map
         transferState();
+        broadcast(MapMessage.MSG_START,true);
+
     }
 
     private void broadcast(int msgtype, boolean rpc) {
@@ -365,8 +365,10 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
             mapmsg.deserialize(getExternalLoaders());
         } catch (IOException x) {
             log.error("Unable to deserialize MapMessage.", x);
+            return;
         } catch (ClassNotFoundException x) {
             log.error("Unable to deserialize MapMessage.", x);
+            return;
         }
         if (mapmsg.getMsgType() == MapMessage.MSG_START) {
             mapMemberAdded(mapmsg.getBackupNodes()[0]);
