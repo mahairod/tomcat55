@@ -23,6 +23,7 @@ import java.io.ObjectOutput;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import java.util.Arrays;
+import org.apache.catalina.tribes.tcp.SenderState;
 
 /**
  * A <b>membership</b> implementation using simple multicast.
@@ -106,6 +107,17 @@ public class MemberImpl implements Member, java.io.Externalizable {
         this.port = port;
         this.domain = domain.getBytes();
         this.memberAliveTime=aliveTime;
+    }
+    
+    
+    public boolean isReady() {
+        return SenderState.getSenderState(this).isReady();
+    }
+    public boolean isSuspect() {
+        return SenderState.getSenderState(this).isSuspect();
+    }
+    public boolean isFailing() {
+        return SenderState.getSenderState(this).isFailing();
     }
 
     /**

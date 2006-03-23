@@ -136,7 +136,7 @@ public class GroupChannel extends ChannelInterceptorBase implements ManagedChann
             if ( (msg.getOptions() & SEND_OPTIONS_BYTE_MESSAGE) == SEND_OPTIONS_BYTE_MESSAGE ) {
                 fwd = new ByteMessage(msg.getMessage().getBytes());
             } else {
-                fwd = XByteBuffer.deserialize(msg.getMessage().getBytes());
+                fwd = XByteBuffer.deserialize(msg.getMessage().getBytesDirect(),0,msg.getMessage().getLength());
             }
             //get the actual member with the correct alive time
             Member source = msg.getAddress();

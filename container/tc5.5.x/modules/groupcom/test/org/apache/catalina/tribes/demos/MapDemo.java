@@ -45,10 +45,14 @@ public class MapDemo implements ChannelListener, MembershipListener{
     protected SimpleTableDemo table;
     
     public MapDemo(Channel channel ) {
-        map = new LazyReplicatedMap(null,channel,5000, "MapDemo");
+        map = new LazyReplicatedMap(null,channel,5000, "MapDemo",null);
         table = SimpleTableDemo.createAndShowGUI(map,channel.getLocalMember(false).getName());
         channel.addChannelListener(this);
         channel.addMembershipListener(this);
+        for ( int i=0; i<1000; i++ ) {
+            map.put("MyKey-"+i,"My String Value-"+i);
+        }
+        this.messageReceived(null,null);
     }
     
     public boolean accept(Serializable msg, Member source) {
