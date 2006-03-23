@@ -7,7 +7,7 @@ Documentation:
 
  1. Uses NIO and TCP for guaranteed delivery and the ability to join large groups
  
-2. Guarantees messages the following way
+ 2. Guarantees messages the following way
     a) TCP messaging, with a following READ for NIO to ensure non broken channel
     b) ACK messages from the receiver
     c) ACK after processing
