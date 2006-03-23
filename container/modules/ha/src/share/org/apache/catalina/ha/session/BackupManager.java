@@ -28,6 +28,7 @@ import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.io.ReplicationStream;
 import org.apache.catalina.tribes.tipis.LazyReplicatedMap;
+import org.apache.catalina.tribes.Channel;
 
 /**
  *@author Filip Hanik
@@ -56,7 +57,10 @@ public class BackupManager extends StandardManager implements ClusterManager
      * Should listeners be notified?
      */
     private boolean notifyListenersOnReplication;
-
+    /**
+     * 
+     */
+    private int mapSendOptions = Channel.SEND_OPTIONS_ASYNCHRONOUS|Channel.SEND_OPTIONS_SYNCHRONIZED_ACK|Channel.SEND_OPTIONS_USE_ACK;
 
     /**
      * Constructor, just calls super()
@@ -139,7 +143,7 @@ public class BackupManager extends StandardManager implements ClusterManager
         ClassLoader classLoader = null;
         if (container != null) loader = container.getLoader();
         if (loader != null) classLoader = loader.getClassLoader();
-        else classLoader = Thread.currentThread().getContextClassLoader();
+        if ( classLoader == null ) classLoader = Thread.currentThread().getContextClassLoader();
         if ( classLoader == Thread.currentThread().getContextClassLoader() ) {
             return new ClassLoader[] {classLoader};
         } else {
@@ -189,8 +193,9 @@ public class BackupManager extends StandardManager implements ClusterManager
             LazyReplicatedMap map = new LazyReplicatedMap(this,
                                                           catclust.getChannel(),
                                                           DEFAULT_REPL_TIMEOUT,
-                                                          getMapName());
-            map.setExternalLoaders(getClassLoaders());
+                                                          getMapName(),
+                                                          getClassLoaders());
+            map.setChannelSendOptions(mapSendOptions);
             this.sessions = map;
             super.start();
         }  catch ( Exception x ) {
@@ -246,6 +251,9 @@ public class BackupManager extends StandardManager implements ClusterManager
         this.notifyListenersOnReplication = notifyListenersOnReplication;
     }
 
+    public void setMapSendOptions(int mapSendOptions) {
+        this.mapSendOptions = mapSendOptions;
+    }
 
     /* 
      * @see org.apache.catalina.ha.ClusterManager#getCluster()
@@ -253,7 +261,11 @@ public class BackupManager extends StandardManager implements ClusterManager
     public CatalinaCluster getCluster() {
         return cluster;
     }
-    
+
+    public int getMapSendOptions() {
+        return mapSendOptions;
+    }
+
     public String[] getInvalidatedSessions() {
         return new String[0];
     }

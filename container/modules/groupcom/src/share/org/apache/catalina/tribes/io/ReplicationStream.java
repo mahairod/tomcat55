@@ -93,9 +93,7 @@ public final class ReplicationStream extends ObjectInputStream {
         return clazz;
     }
 
-    public Class findExternalClass(String name)
-        throws ClassNotFoundException  {
-
+    public Class findExternalClass(String name) throws ClassNotFoundException  {
         ClassNotFoundException cnfe = null;
         for (int i=0; i<classLoaders.length; i++ ) {
             try {
@@ -107,6 +105,11 @@ public final class ReplicationStream extends ObjectInputStream {
         }
         if ( cnfe != null ) throw cnfe;
         else throw new ClassNotFoundException(name);
+    }
+    
+    public void close() throws IOException  {
+        this.classLoaders = null;
+        super.close();
     }
 
 

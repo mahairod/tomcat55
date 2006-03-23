@@ -159,16 +159,22 @@ public class DeltaRequest implements Externalizable {
             switch ( info.getType() ) {
                 case TYPE_ATTRIBUTE: {
                     if ( info.getAction() == ACTION_SET ) {
+                        if ( log.isTraceEnabled() ) log.trace("Session.setAttribute('"+info.getName()+"', '"+info.getValue()+"')");
                         session.setAttribute(info.getName(), info.getValue(),notifyListeners,false);
-                    }  else
+                    }  else {
+                        if ( log.isTraceEnabled() ) log.trace("Session.removeAttribute('"+info.getName()+"')");
                         session.removeAttribute(info.getName(),notifyListeners,false);
+                    }
+                        
                     break;
                 }//case
                 case TYPE_ISNEW: {
+                if ( log.isTraceEnabled() ) log.trace("Session.setNew('"+info.getValue()+"')");
                     session.setNew(((Boolean)info.getValue()).booleanValue(),false);
                     break;
                 }//case
                 case TYPE_MAXINTERVAL: {
+                    if ( log.isTraceEnabled() ) log.trace("Session.setMaxInactiveInterval('"+info.getValue()+"')");
                     session.setMaxInactiveInterval(((Integer)info.getValue()).intValue(),false);
                     break;
                 }//case
@@ -341,28 +347,30 @@ public class DeltaRequest implements Externalizable {
             return other.getName().equals(this.getName());
         }
         
-        public synchronized void readExternal(java.io.ObjectInput in ) throws java.io.IOException,
-            java.lang.ClassNotFoundException {
+        public synchronized void readExternal(java.io.ObjectInput in ) throws IOException,ClassNotFoundException {
             //type - int
             //action - int
             //name - String
+            //hasvalue - boolean
             //value - object
             type = in.readInt();
             action = in.readInt();
             name = in.readUTF();
-            value = in.readObject();
+            boolean hasValue = in.readBoolean();
+            if ( hasValue ) value = in.readObject();
         }
 
-        public synchronized void writeExternal(java.io.ObjectOutput out) throws java.io.
-            IOException {
+        public synchronized void writeExternal(java.io.ObjectOutput out) throws IOException {
             //type - int
             //action - int
             //name - String
+            //hasvalue - boolean
             //value - object
             out.writeInt(getType());
             out.writeInt(getAction());
             out.writeUTF(getName());
-            out.writeObject(getValue());
+            out.writeBoolean(getValue()!=null);
+            if (getValue()!=null) out.writeObject(getValue());
         }
         
         public String toString() {

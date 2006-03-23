@@ -155,13 +155,18 @@ public class NioReplicationThread extends WorkerThread {
                  * This is considered an asynchronized request
                  */
                 if (ClusterData.sendAckAsync(msgs[i].getOptions())) sendAck(key,channel);
-                //process the message
-                getCallback().messageDataReceived(msgs[i]);
+                try {
+                    //process the message
+                    getCallback().messageDataReceived(msgs[i]);
+                }catch ( Exception e ) {
+                    log.error("Processing of cluster message failed.",e);
+                } 
                 /**
                  * Use send ack here if you want the request to complete on this 
                  * server before sending the ack to the remote server
                  * This is considered a synchronized request
                  */
+                
                 if (ClusterData.sendAckSync(msgs[i].getOptions())) sendAck(key,channel);
             }                        
         }
