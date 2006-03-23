@@ -283,7 +283,8 @@
                  managerClassName="org.apache.catalina.ha.session.BackupManager"
                  expireSessionsOnShutdown="false"
                  notifyListenersOnReplication="true"
-                 channelSendOptions="11">
+                 channelSendOptions="11"
+                 manager.mapSendOptions="11">
 
             <Channel className="org.apache.catalina.tribes.group.GroupChannel">
                 <Membership 
