@@ -46,18 +46,17 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback, T
     protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(ReceiverBase.class);
     
     private MessageListener listener;
-    private String host;
+    private String host = "auto";
     private InetAddress bind;
-    private int port;
+    private int port  = 4000;
     private int rxBufSize = 43800;
     private int txBufSize = 25188;
     private boolean listen = false;
     private ThreadPool pool;
     private boolean direct = true;
-    private long tcpSelectorTimeout;
-    private String tcpListenAddress;
+    private long tcpSelectorTimeout = 100;
     //how many times to search for an available socket
-    private int autoBind = 1;
+    private int autoBind = 10;
     private int maxThreads = 25;
     private int minThreads = 6;
 
@@ -233,7 +232,7 @@ public abstract class ReceiverBase implements ChannelReceiver, ListenCallback, T
     }
 
     public String getTcpListenAddress() {
-        return tcpListenAddress;
+        return getHost();
     }
 
     public int getAutoBind() {

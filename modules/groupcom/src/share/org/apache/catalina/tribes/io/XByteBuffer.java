@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
+import java.io.ObjectInputStream;
 
 /**
  * The XByteBuffer provides a dual functionality.
@@ -520,18 +521,21 @@ public class XByteBuffer
     
     public static Serializable deserialize(byte[] data, int offset, int length)  
         throws IOException, ClassNotFoundException, ClassCastException {
-        return deserialize(data,offset,length,new ClassLoader[] {XByteBuffer.class.getClassLoader()});     
+        return deserialize(data,offset,length,null);     
     }
-
+    public static int invokecount = 0;
     public static Serializable deserialize(byte[] data, int offset, int length, ClassLoader[] cls) 
         throws IOException, ClassNotFoundException, ClassCastException {
+        synchronized (XByteBuffer.class) { invokecount++;}
         Object message = null;
-        if ( cls == null ) cls = new ClassLoader[] {XByteBuffer.class.getClassLoader()};
+        if ( cls == null ) cls = new ClassLoader[0];
         if (data != null) {
             InputStream  instream = new ByteArrayInputStream(data,offset,length);
-            ReplicationStream stream = new ReplicationStream(instream,cls);
+            ObjectInputStream stream = null;
+            stream = (cls.length>0)? new ReplicationStream(instream,cls):new ObjectInputStream(instream);
             message = stream.readObject();
             instream.close();
+            stream.close();
         }
         if ( message == null ) {
             return null;
@@ -553,6 +557,7 @@ public class XByteBuffer
         ByteArrayOutputStream outs = new ByteArrayOutputStream();
         ObjectOutputStream out = new ObjectOutputStream(outs);
         out.writeObject(msg);
+        out.flush();
         byte[] data = outs.toByteArray();
         return data;
     }

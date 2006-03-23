@@ -79,6 +79,10 @@ public class RpcChannel implements ChannelListener{
                            long timeout) throws ChannelException {
         
         if ( destination==null || destination.length == 0 ) return new Response[0];
+        
+        //avoid dead lock
+        channelOptions = channelOptions & ~Channel.SEND_OPTIONS_SYNCHRONIZED_ACK;
+        
         RpcCollectorKey key = new RpcCollectorKey(UUIDGenerator.randomUUID(false));
         RpcCollector collector = new RpcCollector(key,rpcOptions,destination.length,timeout);
         try {

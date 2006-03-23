@@ -62,4 +62,8 @@ public interface Member {
      */
     public long getMemberAliveTime();
     
+    public boolean isReady();
+    public boolean isSuspect();
+    public boolean isFailing();
+    
 }

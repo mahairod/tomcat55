@@ -50,6 +50,9 @@ import org.apache.catalina.tribes.MembershipListener;
  * @todo implement periodic sync/transfer thread
  * @author Filip Hanik
  * @version 1.0
+ * 
+ * @todo memberDisappeared, should do nothing except change map membership
+ *       by default it relocates the primary objects
  */
 public class ReplicatedMap extends AbstractReplicatedMap implements RpcCallback, ChannelListener, MembershipListener {
 
@@ -66,8 +69,8 @@ public class ReplicatedMap extends AbstractReplicatedMap implements RpcCallback,
      * @param initialCapacity int - the size of this map, see HashMap
      * @param loadFactor float - load factor, see HashMap
      */
-    public ReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName, int initialCapacity,float loadFactor) {
-        super(owner,channel, timeout, mapContextName, initialCapacity, loadFactor, Channel.SEND_OPTIONS_DEFAULT);
+    public ReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName, int initialCapacity,float loadFactor, ClassLoader[] cls) {
+        super(owner,channel, timeout, mapContextName, initialCapacity, loadFactor, Channel.SEND_OPTIONS_DEFAULT, cls);
     }
 
     /**
@@ -77,8 +80,8 @@ public class ReplicatedMap extends AbstractReplicatedMap implements RpcCallback,
      * @param mapContextName String - unique name for this map, to allow multiple maps per channel
      * @param initialCapacity int - the size of this map, see HashMap
      */
-    public ReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName, int initialCapacity) {
-        super(owner,channel, timeout, mapContextName, initialCapacity, AbstractReplicatedMap.DEFAULT_LOAD_FACTOR,Channel.SEND_OPTIONS_DEFAULT);
+    public ReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName, int initialCapacity, ClassLoader[] cls) {
+        super(owner,channel, timeout, mapContextName, initialCapacity, AbstractReplicatedMap.DEFAULT_LOAD_FACTOR,Channel.SEND_OPTIONS_DEFAULT, cls);
     }
 
     /**
@@ -87,8 +90,8 @@ public class ReplicatedMap extends AbstractReplicatedMap implements RpcCallback,
      * @param timeout long - timeout for RPC messags
      * @param mapContextName String - unique name for this map, to allow multiple maps per channel
      */
-    public ReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName) {
-        super(owner, channel, timeout, mapContextName,AbstractReplicatedMap.DEFAULT_INITIAL_CAPACITY, AbstractReplicatedMap.DEFAULT_LOAD_FACTOR, Channel.SEND_OPTIONS_DEFAULT);
+    public ReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName, ClassLoader[] cls) {
+        super(owner, channel, timeout, mapContextName,AbstractReplicatedMap.DEFAULT_INITIAL_CAPACITY, AbstractReplicatedMap.DEFAULT_LOAD_FACTOR, Channel.SEND_OPTIONS_DEFAULT, cls);
     }
 
 //------------------------------------------------------------------------------

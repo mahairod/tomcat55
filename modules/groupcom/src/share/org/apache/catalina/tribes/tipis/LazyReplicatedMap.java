@@ -84,8 +84,8 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
          * @param initialCapacity int - the size of this map, see HashMap
          * @param loadFactor float - load factor, see HashMap
          */
-        public LazyReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName, int initialCapacity, float loadFactor) {
-            super(owner,channel,timeout,mapContextName,initialCapacity,loadFactor, Channel.SEND_OPTIONS_DEFAULT);
+        public LazyReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName, int initialCapacity, float loadFactor, ClassLoader[] cls) {
+            super(owner,channel,timeout,mapContextName,initialCapacity,loadFactor, Channel.SEND_OPTIONS_DEFAULT,cls);
         }
 
         /**
@@ -95,8 +95,8 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
          * @param mapContextName String - unique name for this map, to allow multiple maps per channel
          * @param initialCapacity int - the size of this map, see HashMap
          */
-        public LazyReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName, int initialCapacity) {
-            super(owner, channel,timeout,mapContextName,initialCapacity, LazyReplicatedMap.DEFAULT_LOAD_FACTOR, Channel.SEND_OPTIONS_DEFAULT);
+        public LazyReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName, int initialCapacity, ClassLoader[] cls) {
+            super(owner, channel,timeout,mapContextName,initialCapacity, LazyReplicatedMap.DEFAULT_LOAD_FACTOR, Channel.SEND_OPTIONS_DEFAULT, cls);
         }
 
         /**
@@ -105,8 +105,8 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
          * @param timeout long - timeout for RPC messags
          * @param mapContextName String - unique name for this map, to allow multiple maps per channel
          */
-        public LazyReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName) {
-            super(owner, channel,timeout,mapContextName, LazyReplicatedMap.DEFAULT_INITIAL_CAPACITY,LazyReplicatedMap.DEFAULT_LOAD_FACTOR,Channel.SEND_OPTIONS_DEFAULT);
+        public LazyReplicatedMap(Object owner, Channel channel, long timeout, String mapContextName, ClassLoader[] cls) {
+            super(owner, channel,timeout,mapContextName, LazyReplicatedMap.DEFAULT_INITIAL_CAPACITY,LazyReplicatedMap.DEFAULT_LOAD_FACTOR,Channel.SEND_OPTIONS_DEFAULT, cls);
         }
 
 
@@ -166,7 +166,7 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
                         ReplicatedMapEntry val = (ReplicatedMapEntry)entry.getValue();
                         val.setOwner(getMapOwner());
                     }
-                    entry.setValue(msg.getValue());
+                    if ( msg.getValue()!=null ) entry.setValue(msg.getValue());
                 }
                 if (entry.isBackup()) {
                     //select a new backup node
@@ -203,7 +203,6 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
 
     
     public Object put(Object key, Object value) {
-        System.out.println("Adding session id:"+key);
         if ( !(key instanceof Serializable) ) throw new IllegalArgumentException("Key is not serializable:"+key.getClass().getName());
         if ( value == null ) return remove(key);
         if ( !(value instanceof Serializable) ) throw new IllegalArgumentException("Value is not serializable:"+value.getClass().getName());
@@ -247,8 +246,9 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
      */
     public Object remove(Object key) {
         MapEntry entry = (MapEntry)super.remove(key);
-        MapMessage msg = new MapMessage(getMapContextName(),MapMessage.MSG_REMOVE,false,(Serializable)key,null,null,null);
+        
         try {
+            MapMessage msg = new MapMessage(getMapContextName(),MapMessage.MSG_REMOVE,false,(Serializable)key,null,null,null);
             getChannel().send(getMapMembers(), msg,Channel.SEND_OPTIONS_DEFAULT);
         } catch ( ChannelException x ) {
             log.error("Unable to replicate out data for a LazyReplicatedMap.remove operation",x);
@@ -294,6 +294,10 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
         return super.keySet();
     }
     
+    public int sizeFull() {
+        return super.size();
+    }
+
     public Set entrySet() {
         LinkedHashSet set = new LinkedHashSet(super.size());
         Iterator i = super.entrySet().iterator();
@@ -318,9 +322,6 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
         return Collections.unmodifiableSet(set);
     }
     
-    public int sizeFull() {
-        return super.size();
-    }
     
     public int size() {
         //todo, implement a counter variable instead
@@ -330,7 +331,7 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
         while ( i.hasNext() ) {
             Map.Entry e = (Map.Entry)i.next();
             MapEntry entry = (MapEntry)e.getValue();
-            if ( entry.isPrimary() ) counter++;
+            if ( entry.isPrimary() && entry.getValue()!=null ) counter++;
         }
         return counter;
     }
