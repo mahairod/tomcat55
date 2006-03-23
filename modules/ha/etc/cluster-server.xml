@@ -280,10 +280,10 @@
         -->
         
         <Cluster className="org.apache.catalina.ha.tcp.SimpleTcpCluster"
-                 managerClassName="org.apache.catalina.ha.session.DeltaManager"
+                 managerClassName="org.apache.catalina.ha.session.BackupManager"
                  expireSessionsOnShutdown="false"
-                 useDirtyFlag="true"
-                 notifyListenersOnReplication="true">
+                 notifyListenersOnReplication="true"
+                 channelSendOptions="11">
 
             <Channel className="org.apache.catalina.tribes.group.GroupChannel">
                 <Membership 
@@ -294,25 +294,27 @@
                     mcastDropTime="3000"/>
 
                 <Receiver 
-                    className="org.apache.catalina.tribes.tcp.ReplicationListener"
+                    className="org.apache.catalina.tribes.tcp.nio.NioReceiver"
                     tcpListenAddress="auto"
                     tcpListenPort="4001"
-                    tcpSelectorTimeout="100"
-                    tcpThreadCount="6"
-                    sendAck="true"
-                    synchronized="true"
+                    minThreads="6"
+                    maxThreads="25"
                     rxBufSize="43800"
-                    txBufSize="25188"/>
+                    txBufSize="25188"
+                    autoBind="10"/>
 
                 <Sender
-                    className="org.apache.catalina.tribes.tcp.ReplicationTransmitter"
-                    replicationMode="parallel"
-                    ackTimeout="15000"
-                    waitForAck="true"
-                    rxBufSize="43800"
-                    txBufSize="25188"/>
-                    
-                <!--<Interceptor className="org.apache.catalina.tribes.group.interceptors.GzipInterceptor"/>-->
+                    className="org.apache.catalina.tribes.tcp.ReplicationTransmitter">
+                    <Transport className="org.apache.catalina.tribes.tcp.nio.PooledParallelSender"
+                        rxBufSize="43800"
+                        txBufSize="25188"/>
+                </Sender>
+                <!--
+                <Interceptor className="org.apache.catalina.tribes.group.interceptors.GzipInterceptor"/>
+                <Interceptor className="org.apache.catalina.tribes.group.interceptors.FragmentationInterceptor"/>
+                <Interceptor className="org.apache.catalina.tribes.group.interceptors.OrderInterceptor"/>
+                <Interceptor className="org.apache.catalina.tribes.group.interceptors.MessageDispatchInterceptor"/>
+                -->
             </Channel>
             
             <Valve className="org.apache.catalina.ha.tcp.ReplicationValve"
@@ -362,6 +364,22 @@
         -->
         <!--
         <Valve className="org.apache.catalina.valves.FastCommonAccessLogValve"
+                 directory="logs"  prefix="localhost_access_log." suffix=".txt"
+                 pattern="common" resolveHosts="false"/>
+        -->
+        <!-- Access log processes all requests for this virtual host.  By
+             default, log files are created in the "logs" directory relative to
+             $CATALINA_HOME.  If you wish, you can specify a different
+             directory with the "directory" attribute.  Specify either a relative
+             (to $CATALINA_HOME) or absolute path to the desired directory.
+             This access log implementation is optimized for maximum performance,
+             but is hardcoded to support only the "common" and "combined" patterns.
+
+             This valve use NIO direct Byte Buffer to asynchornously store the
+             log.
+        -->
+        <!--
+        <Valve className="org.apache.catalina.valves.ByteBufferAccessLogValve"
                  directory="logs"  prefix="localhost_access_log." suffix=".txt"
                  pattern="common" resolveHosts="false"/>
         -->
