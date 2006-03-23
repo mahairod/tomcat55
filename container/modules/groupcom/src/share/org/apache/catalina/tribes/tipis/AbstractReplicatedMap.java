@@ -449,7 +449,6 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
             }
         }
         if ( memberAdded ) {
-            printMap("BEFORE MEMBER ADD");
             synchronized (stateMutex) {
                 Iterator i = super.entrySet().iterator();
                 while (i.hasNext()) {
@@ -466,7 +465,6 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
                     } //end if
                 } //while
             } //synchronized
-            printMap("AFTER MEMBER ADD");
         }//end if
     }
     
@@ -494,7 +492,6 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
     }
 
     public void memberDisappeared(Member member) {
-        printMap("BEFORE MEMBER GONE");
         boolean removed = false;
         synchronized (mapMembers) {
             removed = mapMembers.remove(member);
@@ -512,7 +509,6 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
                 }
             } //end if
         } //while
-        printMap("AFTER MEMBER GONE");
     }
 
     int currentNode = 0;
