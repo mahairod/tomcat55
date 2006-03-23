@@ -114,7 +114,7 @@ public class ReplicatedMap extends AbstractReplicatedMap implements RpcCallback,
         MapMessage msg = new MapMessage(getMapContextName(), MapMessage.MSG_BACKUP, false,
                                         (Serializable) key, null, null, backup);
 
-        getChannel().send(getMapMembers(), msg, Channel.SEND_OPTIONS_DEFAULT);
+        getChannel().send(getMapMembers(), msg, getChannelSendOptions());
 
         return backup;
     }
@@ -275,7 +275,7 @@ public class ReplicatedMap extends AbstractReplicatedMap implements RpcCallback,
         while (i.hasNext()) {
             Map.Entry e = (Map.Entry) i.next();
             MapEntry entry = (MapEntry) e.getValue();
-            if (entry.isPrimary()) values.add(entry.getValue());
+            values.add(entry);
         }
         return Collections.unmodifiableCollection(values);
     }
