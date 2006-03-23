@@ -139,8 +139,6 @@ public class NioReplicationThread extends WorkerThread {
                 reader.append(buffer.array(),0,count,false);
             else 
                 reader.append(buffer,count,false);
-            
-            
             buffer.clear();		// make buffer empty
         }
         
@@ -176,6 +174,7 @@ public class NioReplicationThread extends WorkerThread {
         
         if (count < 0) {
             // close channel on EOF, invalidates the key
+            if ( log.isDebugEnabled() ) log.debug("Channel closed on the remote end, disconnecting");
             channel.close();
             return;
         }

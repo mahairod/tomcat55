@@ -101,7 +101,6 @@ public class RpcChannel implements ChannelListener{
         return collector.getResponses();
     }
     
-    
     public void messageReceived(Serializable msg, Member sender) {
         RpcMessage rmsg = (RpcMessage)msg;
         RpcCollectorKey key = new RpcCollectorKey(rmsg.uuid);

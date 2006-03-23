@@ -21,9 +21,6 @@ import java.util.HashMap;
 
 
 /**
- * Send cluster messages with a pool of sockets (25).
- * 
- * FIXME support processing stats
  * 
  * @author Filip Hanik
  * @version 1.0
@@ -84,7 +81,7 @@ public class SenderState {
      * @return boolean
      */
     public boolean isSuspect() {
-        return state == SUSPECT;
+        return (state == SUSPECT) || (state == FAILING);
     }
 
     public void setSuspect() {

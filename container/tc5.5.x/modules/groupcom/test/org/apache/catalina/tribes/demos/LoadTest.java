@@ -145,7 +145,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
                             Thread.sleep(pause);
                         }
                     } catch (ChannelException x) {
-                        log.error("Unable to send message:"+x.getMessage());
+                        log.error("Unable to send message:"+x.getMessage(),x);
                         Member[] faulty = x.getFaultyMembers();
                         for (int i=0; i<faulty.length; i++ ) log.error("Faulty: "+faulty[i]);
                         --counter;

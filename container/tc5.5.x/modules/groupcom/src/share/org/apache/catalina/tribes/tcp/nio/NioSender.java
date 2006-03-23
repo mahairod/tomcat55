@@ -81,6 +81,10 @@ public class NioSender extends AbstractSender implements DataSender{
     public boolean process(SelectionKey key, boolean waitForAck) throws IOException {
         int ops = key.readyOps();
         key.interestOps(key.interestOps() & ~ops);
+        
+        //in case disconnect has been called
+        if ((!isConnected()) && (!connecting)) throw new IOException("Sender has been disconnected, can't selection key.");
+        if ( !key.isValid() ) throw new IOException("Key is not valid, it must have been cancelled.");
         if ( key.isConnectable() ) {
             if ( socketChannel.finishConnect() ) {
                 //we connected, register ourselves for writing
@@ -91,6 +95,7 @@ public class NioSender extends AbstractSender implements DataSender{
                 socketChannel.socket().setSendBufferSize(getTxBufSize());
                 socketChannel.socket().setReceiveBufferSize(getRxBufSize());
                 socketChannel.socket().setSoTimeout((int)getTimeout());
+                socketChannel.socket().setSoLinger(false,0);
                 if ( current != null ) key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
                 return false;
             } else  { 
@@ -109,7 +114,7 @@ public class NioSender extends AbstractSender implements DataSender{
                     //if not, we are ready, setMessage will reregister us for another write interest
                     //do a health check, we have no way of verify a disconnected
                     //socket since we don't register for OP_READ on waitForAck=false
-                    read(key);//this causes overhead.
+                    read(key);//this causes overhead
                     setRequestCount(getRequestCount()+1);
                     return true;
                 }
@@ -216,14 +221,12 @@ public class NioSender extends AbstractSender implements DataSender{
             setConnected(false);
             if ( socketChannel != null ) {
                 try {
-                    Socket socket = null;
-                    //socket = socketChannel.socket();
+                    try {socketChannel.socket().close();}catch ( Exception x){}
                     //error free close, all the way
                     //try {socket.shutdownOutput();}catch ( Exception x){}
                     //try {socket.shutdownInput();}catch ( Exception x){}
                     //try {socket.close();}catch ( Exception x){}
                     try {socketChannel.close();}catch ( Exception x){}
-                    socket = null;
                 }finally {
                     socketChannel = null;
                 }
@@ -232,7 +235,6 @@ public class NioSender extends AbstractSender implements DataSender{
             log.error("Unable to disconnect NioSender. msg="+x.getMessage());
             if ( log.isDebugEnabled() ) log.debug("Unable to disconnect NioSender. msg="+x.getMessage(),x);
         } finally {
-            reset();
         }
 
     }
@@ -264,11 +266,11 @@ public class NioSender extends AbstractSender implements DataSender{
     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
     */
    public synchronized void setMessage(byte[] data) throws IOException {
-       reset();
        if ( data != null ) {
            current = data;
            remaining = current.length;
            curPos = 0;
+           ackbuf.clear();
            if (isConnected()) {
                socketChannel.register(getSelector(), SelectionKey.OP_WRITE, this);
            }

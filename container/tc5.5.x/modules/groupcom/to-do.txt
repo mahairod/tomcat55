@@ -27,6 +27,11 @@ Documentation:
  
  8. Future version will have WAN membership and replication
 
+Bugs:
+===========================================
+ a) Somehow the first NIO connection made, always closes down, why
+ b) State synchronization for the map
+
 Code Tasks:
 ===========================================
 32. Replicated JNDI entries in Tomcat in the format

@@ -58,6 +58,12 @@ public class ChannelException
         return buf.toString();
     }
     
+    public void addFaultyMember(Member[] mbrs) {
+        for (int i=0; mbrs!=null && i<mbrs.length; i++ ) {
+            addFaultyMember(mbrs[i]);
+        }
+    }
+
     public void addFaultyMember(Member mbr) {
         if ( this.faultyMembers==null ) this.faultyMembers = new ArrayList();
         faultyMembers.add(mbr);

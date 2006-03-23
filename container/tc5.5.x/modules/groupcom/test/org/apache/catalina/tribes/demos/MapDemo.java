@@ -49,9 +49,9 @@ public class MapDemo implements ChannelListener, MembershipListener{
         table = SimpleTableDemo.createAndShowGUI(map,channel.getLocalMember(false).getName());
         channel.addChannelListener(this);
         channel.addMembershipListener(this);
-        for ( int i=0; i<1000; i++ ) {
-            map.put("MyKey-"+i,"My String Value-"+i);
-        }
+//        for ( int i=0; i<1000; i++ ) {
+//            map.put("MyKey-"+i,"My String Value-"+i);
+//        }
         this.messageReceived(null,null);
     }
     
