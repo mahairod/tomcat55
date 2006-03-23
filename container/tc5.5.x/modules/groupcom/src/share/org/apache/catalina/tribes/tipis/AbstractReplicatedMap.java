@@ -234,7 +234,7 @@ public abstract class AbstractReplicatedMap extends LinkedHashMap implements Rpc
 
             }
             try {
-                if ( entry.getBackupNodes()!= null && entry.getBackupNodes().length > 0 ) {
+                if ( channel!=null && entry.getBackupNodes()!= null && entry.getBackupNodes().length > 0 ) {
                     channel.send(entry.getBackupNodes(), msg, channelSendOptions);
                 }
             } catch (ChannelException x) {
