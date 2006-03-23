@@ -148,10 +148,8 @@ public class LazyReplicatedMap extends AbstractReplicatedMap
     public Object get(Object key) {
         MapEntry entry = (MapEntry)super.get(key);
         if (log.isTraceEnabled()) log.trace("Requesting id:"+key+" entry:"+entry);
-        System.out.println("Requesting id:"+key+" entry:"+entry);
         if ( entry == null ) return null;
         if ( !entry.isPrimary() ) {
-            if ( entry.isProxy() ) System.out.println("PROXY:Requesting id:"+key+" entry:"+entry);
             //if the message is not primary, we need to retrieve the latest value
             try {
                 Member[] backup = null;
