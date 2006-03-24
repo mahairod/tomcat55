@@ -34,6 +34,9 @@ Bugs:
 
 Code Tasks:
 ===========================================
+34. Configurable payload for the membership heartbeat, so that the app can decide what to heartbeat.
+    such as JMX management port, ala Andy Piper's suggestion.
+
 33. PerfectFDInterceptor, when a member is reported missing, first check TCP path too.
 
 32. Replicated JNDI entries in Tomcat in the format

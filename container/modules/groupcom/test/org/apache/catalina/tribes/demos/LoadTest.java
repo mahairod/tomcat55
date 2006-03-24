@@ -26,6 +26,7 @@ import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.catalina.tribes.Channel;
+import java.io.Externalizable;
 
 
 /**
@@ -245,7 +246,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
     
     
     //public static class LoadMessage extends ByteMessage implements Serializable  {
-    public static class LoadMessage implements Serializable  {
+    public static class LoadMessage extends ByteMessage  implements Serializable {
         
         public static byte[] outdata = new byte[size];
         public static Random r = new Random(System.currentTimeMillis());
@@ -261,7 +262,7 @@ public class LoadTest implements MembershipListener,ChannelListener, Runnable {
             return messageSize;
         }
         
-        protected byte[] message = null;
+        protected byte[] message = getMessage();
         protected int nr = -1;
         static {
             r.nextBytes(outdata);
