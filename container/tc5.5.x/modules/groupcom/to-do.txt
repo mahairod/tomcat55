@@ -34,6 +34,13 @@ Bugs:
 
 Code Tasks:
 ===========================================
+36. UDP Sender and Receiver, initially without flow control and guaranteed delivery.
+    This can be easily done as an interceptor, and operate in parallel with the TCP sender.
+    It can implement an auto detect, so that if the message is going to a destination in the same network 
+    patch, then send it over UDP.
+
+35. The ability to share one channel amongst multiple processes
+
 34. Configurable payload for the membership heartbeat, so that the app can decide what to heartbeat.
     such as JMX management port, ala Andy Piper's suggestion.
 
