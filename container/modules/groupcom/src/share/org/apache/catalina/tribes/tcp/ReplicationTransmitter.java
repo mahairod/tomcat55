@@ -21,6 +21,7 @@ import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.ChannelSender;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.util.StringManager;
+import org.apache.catalina.tribes.tcp.nio.PooledParallelSender;
 
 /**
  * Transmit message to other cluster members
@@ -48,7 +49,7 @@ public class ReplicationTransmitter implements ChannelSender {
     public ReplicationTransmitter() {
     }
 
-    private MultiPointSender transport;
+    private MultiPointSender transport = new PooledParallelSender();
 
     /**
      * Return descriptive information about this implementation and the
