@@ -115,6 +115,7 @@ public class ChannelCoordinator extends ChannelInterceptorBase implements Messag
             if (started) return;
             //must start the receiver first so that we can coordinate the port it
             //listens to with the local membership settings
+            clusterReceiver.setMessageListener(this);
             clusterReceiver.start();
             clusterSender.start();
             //synchronize, big time FIXME
