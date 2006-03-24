@@ -17,19 +17,13 @@
 package org.apache.catalina.tribes.mcast;
 
 import java.util.Properties;
-
-import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.catalina.Cluster;
-import org.apache.catalina.Container;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
 import org.apache.catalina.tribes.MembershipService;
-import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.modeler.Registry;
-import org.apache.catalina.tribes.tcp.*;
 
 /**
  * A <b>membership</b> implementation using simple multicast.
@@ -87,7 +81,13 @@ public class McastService implements MembershipService,MembershipListener {
      * Create a membership service.
      */
     public McastService() {
+        //default values
         properties.setProperty("mcastClusterDomain", "catalina");
+        properties.setProperty("mcastPort","45564");
+        properties.setProperty("mcastAddress","228.0.0.4");
+        properties.setProperty("memberDropTime","3000");
+        properties.setProperty("mcastFrequency","500");
+
     }
 
     /**
@@ -121,7 +121,7 @@ public class McastService implements MembershipService,MembershipListener {
      * 3. mcastClusterDomain - the mcast cluster domain<BR>
      * 4. bindAddress - the bind address if any - only one that can be null<BR>
      * 5. memberDropTime - the time a member is gone before it is considered gone.<BR>
-     * 6. msgFrequency - the frequency of sending messages<BR>
+     * 6. mcastFrequency - the frequency of sending messages<BR>
      * 7. tcpListenPort - the port this member listens to<BR>
      * 8. tcpListenHost - the bind address of this member<BR>
      * @exception java.lang.IllegalArgumentException if a property is missing.
@@ -131,7 +131,7 @@ public class McastService implements MembershipService,MembershipListener {
         hasProperty(properties,"mcastAddress");
         hasProperty(properties,"mcastClusterDomain");
         hasProperty(properties,"memberDropTime");
-        hasProperty(properties,"msgFrequency");
+        hasProperty(properties,"mcastFrequency");
         hasProperty(properties,"tcpListenPort");
         hasProperty(properties,"tcpListenHost");
         this.properties = properties;
@@ -201,11 +201,11 @@ public class McastService implements MembershipService,MembershipListener {
     }
     
     public void setMcastFrequency(long time) {
-        properties.setProperty("msgFrequency", String.valueOf(time));
+        properties.setProperty("mcastFrequency", String.valueOf(time));
     }
 
     public long getMcastFrequency() {
-        String p = properties.getProperty("msgFrequency");
+        String p = properties.getProperty("mcastFrequency");
         return new Long(p).longValue();
     }
 
@@ -275,7 +275,7 @@ public class McastService implements MembershipService,MembershipListener {
             }
         }
 
-        impl = new McastServiceImpl((MemberImpl)localMember,Long.parseLong(properties.getProperty("msgFrequency")),
+        impl = new McastServiceImpl((MemberImpl)localMember,Long.parseLong(properties.getProperty("mcastFrequency")),
                                     Long.parseLong(properties.getProperty("memberDropTime")),
                                     Integer.parseInt(properties.getProperty("mcastPort")),
                                     bind,
@@ -285,7 +285,7 @@ public class McastService implements MembershipService,MembershipListener {
                                     this);
         
         impl.start(level);
-		long memberwait = (Long.parseLong(properties.getProperty("msgFrequency"))*4);
+		long memberwait = (Long.parseLong(properties.getProperty("mcastFrequency"))*4);
         if(log.isInfoEnabled())
             log.info("Sleeping for "+memberwait+" milliseconds to establish cluster membership");
         Thread.sleep(memberwait);
@@ -424,7 +424,7 @@ public class McastService implements MembershipService,MembershipListener {
         p.setProperty("mcastClusterDomain","catalina");
         p.setProperty("bindAddress","localhost");
         p.setProperty("memberDropTime","3000");
-        p.setProperty("msgFrequency","500");
+        p.setProperty("mcastFrequency","500");
         p.setProperty("tcpListenPort",args[1]);
         p.setProperty("tcpListenHost",args[0]);
         service.setProperties(p);
