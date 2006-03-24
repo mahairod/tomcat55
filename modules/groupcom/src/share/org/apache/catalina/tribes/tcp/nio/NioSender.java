@@ -59,6 +59,7 @@ public class NioSender extends AbstractSender implements DataSender{
      * STATE VARIABLES *
      */
     protected ByteBuffer readbuf = null;
+    protected ByteBuffer writebuf = null;
     protected byte[] current = null;
     protected int curPos=0;
     protected XByteBuffer ackbuf = new XByteBuffer(128,true);
@@ -169,7 +170,6 @@ public class NioSender extends AbstractSender implements DataSender{
                 //weve written everything, or we are starting a new package
                 //protect against buffer overwrite
                 int length = current.length-curPos;
-                ByteBuffer writebuf = ByteBuffer.wrap(current,curPos,length);
                 int byteswritten = socketChannel.write(writebuf);
                 curPos += byteswritten;
                 remaining -= byteswritten;
@@ -201,6 +201,12 @@ public class NioSender extends AbstractSender implements DataSender{
         } else {
             readbuf.clear();
         }
+        if ( writebuf == null ) {
+            writebuf = getWriteBuffer();
+        } else {
+            writebuf.clear();
+        }
+        
         InetSocketAddress addr = new InetSocketAddress(getAddress(),getPort());
         if ( socketChannel != null ) throw new IOException("Socket channel has already been established. Connection might be in progress.");
         socketChannel = SocketChannel.open();
@@ -244,6 +250,7 @@ public class NioSender extends AbstractSender implements DataSender{
             readbuf = getReadBuffer();
         }
         if ( readbuf != null ) readbuf.clear();
+        if ( writebuf != null ) writebuf.clear();
         current = null;
         curPos = 0;
         ackbuf.clear();
@@ -254,8 +261,16 @@ public class NioSender extends AbstractSender implements DataSender{
         setConnectTime(-1);
     }
 
-    private ByteBuffer getReadBuffer() {
-        return (getDirectBuffer()?ByteBuffer.allocateDirect(getRxBufSize()):ByteBuffer.allocate(getRxBufSize()));
+    private ByteBuffer getReadBuffer() { 
+        return getBuffer(getRxBufSize());
+    }
+    
+    private ByteBuffer getWriteBuffer() {
+        return getBuffer(getTxBufSize());
+    }
+
+    private ByteBuffer getBuffer(int size) {
+        return (getDirectBuffer()?ByteBuffer.allocateDirect(size):ByteBuffer.allocate(size));
     }
     
     /**
@@ -266,11 +281,20 @@ public class NioSender extends AbstractSender implements DataSender{
     * @todo Implement this org.apache.catalina.tribes.tcp.IDataSender method
     */
    public synchronized void setMessage(byte[] data) throws IOException {
+       setMessage(data,0,data.length);
+   }
+
+   public synchronized void setMessage(byte[] data,int offset, int length) throws IOException {
        if ( data != null ) {
            current = data;
            remaining = current.length;
            curPos = 0;
            ackbuf.clear();
+           if ( writebuf != null ) writebuf.clear();
+           else writebuf = getBuffer(length);
+           if ( writebuf.capacity() > length ) writebuf = getBuffer(length);
+           writebuf.put(data,offset,length);
+           writebuf.rewind();
            if (isConnected()) {
                socketChannel.register(getSelector(), SelectionKey.OP_WRITE, this);
            }
