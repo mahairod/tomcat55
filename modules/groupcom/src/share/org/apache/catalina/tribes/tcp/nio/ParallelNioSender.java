@@ -51,7 +51,7 @@ public class ParallelNioSender extends AbstractSender implements MultiPointSende
     
     protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(ParallelNioSender.class);
     
-    protected long selectTimeout = 1000; 
+    protected long selectTimeout = 1000; //default 1 second
     protected Selector selector;
     protected HashMap nioSenders = new HashMap();
 
