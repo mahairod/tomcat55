@@ -34,6 +34,8 @@ Bugs:
 
 Code Tasks:
 ===========================================
+33. PerfectFDInterceptor, when a member is reported missing, first check TCP path too.
+
 32. Replicated JNDI entries in Tomcat in the format
     cluster:<map name>/<entry key> for example
     cluster:myapps/db/shared/dbinfo
