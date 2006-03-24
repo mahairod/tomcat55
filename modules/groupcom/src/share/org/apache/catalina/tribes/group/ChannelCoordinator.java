@@ -24,6 +24,9 @@ import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipService;
 import org.apache.catalina.tribes.MessageListener;
 import org.apache.catalina.tribes.tcp.SenderState;
+import org.apache.catalina.tribes.tcp.ReplicationTransmitter;
+import org.apache.catalina.tribes.mcast.McastService;
+import org.apache.catalina.tribes.tcp.nio.NioReceiver;
 
 
 /**
@@ -34,9 +37,9 @@ import org.apache.catalina.tribes.tcp.SenderState;
  * @version $Revision: 304032 $, $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
  */
 public class ChannelCoordinator extends ChannelInterceptorBase implements MessageListener {
-    private ChannelReceiver clusterReceiver;
-    private ChannelSender clusterSender;
-    private MembershipService membershipService;
+    private ChannelReceiver clusterReceiver = new NioReceiver();
+    private ChannelSender clusterSender = new ReplicationTransmitter();
+    private MembershipService membershipService = new McastService();
     private boolean started = false;
 
     public ChannelCoordinator() {
