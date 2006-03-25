@@ -46,18 +46,22 @@ Apache Tomcat powers numerous large-scale, mission-critical web applications acr
         <browse rdf:resource="http://svn.apache.org/repos/asf/tomcat/"/>
       </SVNRepository>
     </repository>
-    <asfext:standard>
-      <asfext:title>Java Servlets</asfext:title>
-      <asfext:body>JCP</asfext:body>
-      <asfext:id>JSR 154</asfext:id>
-      <asfext:url rdf:resource="http://www.jcp.org/en/jsr/detail?id=154"/>
-    </asfext:standard>
-    <asfext:standard>
-      <asfext:title>Java Server Pages</asfext:title>
-      <asfext:body>JCP</asfext:body>
-      <asfext:id>JSR 152</asfext:id>
-      <asfext:url rdf:resource="http://www.jcp.org/en/jsr/detail?id=152"/>
-    </asfext:standard>
+    <asfext:implements>
+      <asfext:Standard>
+        <asfext:title>Java Servlets</asfext:title>
+        <asfext:body>JCP</asfext:body>
+        <asfext:id>JSR 154</asfext:id>
+        <asfext:url rdf:resource="http://www.jcp.org/en/jsr/detail?id=154"/>
+      </asfext:Standard>
+    </asfext:implements>
+    <asfext:implements>
+      <asfext:Standard>
+        <asfext:title>Java Server Pages</asfext:title>
+        <asfext:body>JCP</asfext:body>
+        <asfext:id>JSR 152</asfext:id>
+        <asfext:url rdf:resource="http://www.jcp.org/en/jsr/detail?id=152"/>
+      </asfext:Standard>
+    </asfext:implements>
   </Project>
 </rdf:RDF>
 
