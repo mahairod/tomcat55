@@ -34,6 +34,13 @@ Bugs:
 
 Code Tasks:
 ===========================================
+37. Interceptor.getOptionFlag() - lets the system configure a flag to be used
+    for the interceptor. that way, all constants don't have to be configured 
+    in Channel.SEND_FLAG_XXXX.
+    Also, the GroupChannel will make a conflict check upon startup, 
+    so that there is no conflict. I will change options to a long,
+    so that we can have 63 flags, hence up to 60 interceptors.
+
 36. UDP Sender and Receiver, initially without flow control and guaranteed delivery.
     This can be easily done as an interceptor, and operate in parallel with the TCP sender.
     It can implement an auto detect, so that if the message is going to a destination in the same network 
