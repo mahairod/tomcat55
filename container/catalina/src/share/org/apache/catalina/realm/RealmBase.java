@@ -152,6 +152,12 @@ public abstract class RealmBase
      */
     protected boolean validate = true;
 
+    
+    /**
+     * The all role mode.
+     */
+    protected AllRolesMode allRolesMode = AllRolesMode.STRICT_MODE;
+    
 
     // ------------------------------------------------------------- Properties
 
@@ -176,6 +182,25 @@ public abstract class RealmBase
         Container oldContainer = this.container;
         this.container = container;
         support.firePropertyChange("container", oldContainer, this.container);
+
+    }
+
+    /**
+     * Return the all roles mode.
+     */
+    public String getAllRolesMode() {
+
+        return allRolesMode.toString();
+
+    }
+
+
+    /**
+     * Set the all roles mode.
+     */
+    public void setAllRolesMode(String allRolesMode) {
+
+        this.allRolesMode = AllRolesMode.toMode(allRolesMode);
 
     }
 
@@ -767,6 +792,38 @@ public abstract class RealmBase
                 }
             }
         }
+
+        if (allRolesMode != AllRolesMode.STRICT_MODE && !status && principal != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Checking for all roles mode: " + allRolesMode);
+            }
+            // Check for an all roles(role-name="*")
+            for (int i = 0; i < constraints.length; i++) {
+                SecurityConstraint constraint = constraints[i];
+                String roles[];
+                // If the all roles mode exists, sets
+                if (constraint.getAllRoles()) {
+                    if (allRolesMode == AllRolesMode.AUTH_ONLY_MODE) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Granting access for role-name=*, auth-only");
+                        }
+                        status = true;
+                        break;
+                    }
+                    
+                    // For AllRolesMode.STRICT_AUTH_ONLY_MODE there must be zero roles
+                    roles = request.getContext().findSecurityRoles();
+                    if (roles.length == 0 && allRolesMode == AllRolesMode.STRICT_AUTH_ONLY_MODE) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Granting access for role-name=*, strict auth-only");
+                        }
+                        status = true;
+                        break;
+                    }
+                }
+            }
+        }
+        
         // Return a "Forbidden" message denying access to this resource
         if(!status) {
             response.sendError
@@ -1310,6 +1367,60 @@ public abstract class RealmBase
             }
         }
 
+    }
+
+
+    protected static class AllRolesMode {
+        
+        private String name;
+        /** Use the strict servlet spec interpretation which requires that the user
+         * have one of the web-app/security-role/role-name 
+         */
+        public static final AllRolesMode STRICT_MODE = new AllRolesMode("strict");
+        /** Allow any authenticated user
+         */
+        public static final AllRolesMode AUTH_ONLY_MODE = new AllRolesMode("authOnly");
+        /** Allow any authenticated user only if there are no web-app/security-roles
+         */
+        public static final AllRolesMode STRICT_AUTH_ONLY_MODE = new AllRolesMode("strictAuthOnly");
+        
+        static AllRolesMode toMode(String name)
+        {
+            AllRolesMode mode;
+            if( name.equalsIgnoreCase(STRICT_MODE.name) )
+                mode = STRICT_MODE;
+            else if( name.equalsIgnoreCase(AUTH_ONLY_MODE.name) )
+                mode = AUTH_ONLY_MODE;
+            else if( name.equalsIgnoreCase(STRICT_AUTH_ONLY_MODE.name) )
+                mode = STRICT_AUTH_ONLY_MODE;
+            else
+                throw new IllegalStateException("Unknown mode, must be one of: strict, authOnly, strictAuthOnly");
+            return mode;
+        }
+        
+        private AllRolesMode(String name)
+        {
+            this.name = name;
+        }
+        
+        public boolean equals(Object o)
+        {
+            boolean equals = false;
+            if( o instanceof AllRolesMode )
+            {
+                AllRolesMode mode = (AllRolesMode) o;
+                equals = name.equals(mode.name);
+            }
+            return equals;
+        }
+        public int hashCode()
+        {
+            return name.hashCode();
+        }
+        public String toString()
+        {
+            return name;
+        }
     }
 
 }
